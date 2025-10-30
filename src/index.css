@@ -1,0 +1,93 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f5f5f5;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #008aff;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0070cc;
+}
+
+/* Remove Bootstrap default styling for cards */
+.card {
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+}
+
+/* Custom colors for status badges */
+.status-received {
+  background-color: #008aff;
+  color: white;
+}
+
+.status-washing {
+  background-color: #1976d2;
+  color: white;
+}
+
+.status-ironing {
+  background-color: #ff9800;
+  color: white;
+}
+
+.status-ready {
+  background-color: #9c27b0;
+  color: white;
+}
+
+.status-delivered {
+  background-color: #17c100;
+  color: white;
+}
+
+.status-paid {
+  background-color: #17c100;
+  color: white;
+}
+
+.status-unpaid {
+  background-color: #f44336;
+  color: white;
+}
+
+.status-partially-paid {
+  background-color: #ff9800;
+  color: white;
+}
+
+/* Animations */
+@keyframes twinkle {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.4;
+  }
+}
