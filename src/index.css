@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "DM Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  color: "#201B1D";
+  overflow-y: hidden;
+}
+
+button {
+  outline: none;
+}
+
+.snap {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.snap::-webkit-scrollbar {
+  display: none;
+}
+
+.stdropdown-container {
+  border: none !important;
+}
+
+.stsearch-box input {
+  border: none !important;
+  /* padding: 0 !important; */
+}
+.mim {
+  z-index: 9 !important;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
