@@ -14,19 +14,14 @@ export const navLinks = [
     icon: <MdDashboard className='text-lg' />,
   },
   {
-    path: "orders",
-    name: "Orders",
-    icon: <MdOutlinePointOfSale className='text-lg' />,
-  },
-  {
-    path: 'orders-service-items',
-    name: 'Orders Service Items',
-    icon: <MdOutlinePointOfSale className='text-lg' />,
-  },
-  {
     path: "customers",
     name: "Customers",
     icon: <FaUsers className='text-lg' />,
+  },
+  {
+    path: "orders",
+    name: "Orders",
+    icon: <MdOutlinePointOfSale className='text-lg' />,
   },
   {
     path: "laundry-items",

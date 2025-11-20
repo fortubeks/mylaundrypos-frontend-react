@@ -1,7 +1,7 @@
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import TableHead from "../../../utils/TableHead";
 import { BarLoader } from "../../../utils/Loader";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cleanUpErr, RequestService } from "../../../services";
 import toast from "../../../utils/Toast";
 
@@ -75,33 +75,8 @@ export default function TableList({
 }
 
 const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
-  const [country, setCountry] = useState();
-  const [state, setState] = useState();
   const [showDelete, setShowDelete] = useState(false);
   const [disabled, setDisabled] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await RequestService.get("/customers/countries");
-
-        const countries = response.data.data;
-        const countryItem = countries.find((c) => c.id === items?.country_id);
-        setCountry(countryItem);
-        const responseStates = await RequestService.get(
-          "/customers/states/" + countryItem.id
-        );
-
-        const states = responseStates.data.data;
-        const stateItem = states.find((s) => s.id === items?.state_id);
-        setState(stateItem);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetch();
-  }, []);
 
   const deleteCustomer = async () => {
     setDisabled(true);
@@ -132,8 +107,8 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
         {items?.phone} {items?.other_phone && `, ${items?.other_phone}`}
       </td>
       <td className="px-3 py-4 text-sm">{items?.address}</td>
-      <td className="px-3 py-4 text-sm">{state?.name || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{country?.name || "N/A"}</td>
+      <td className="px-3 py-4 text-sm">{items?.state?.name || "N/A"}</td>
+      <td className="px-3 py-4 text-sm">{items?.country?.name || "N/A"}</td>
       <td className="px-3 py-4 text-sm">
         <div className="flex items-center gap-3">
           <button

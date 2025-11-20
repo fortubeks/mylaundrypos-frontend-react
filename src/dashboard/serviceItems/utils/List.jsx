@@ -1,7 +1,7 @@
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import TableHead from "../../../utils/TableHead";
 import { BarLoader } from "../../../utils/Loader";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { cleanUpErr, RequestService } from "../../../services";
 import toast from "../../../utils/Toast";
 
@@ -75,34 +75,8 @@ export default function TableList({
 }
 
 const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
-  const [category, setCategory] = useState(null);
-  const [laundryItem, setLaundryItem] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [disabled, setDisabled] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await RequestService.get(
-          `/service-categories/${items?.service_category_id}`
-        );
-        const category = response.data.data;
-        setCategory(category);
-
-        if (items?.laundry_item_id) {
-          const res = await RequestService.get(
-            `/laundry-items/${items?.laundry_item_id}`
-          );
-          const laundryItem = res.data.data;
-          setLaundryItem(laundryItem);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetch();
-  }, []);
 
   const deleteCustomer = async () => {
     setDisabled(true);
@@ -124,11 +98,9 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
 
   return (
     <tr className="h-fit">
-      <td className="px-3 py-4 text-sm">
-        {items?.name}
-      </td>
-      <td className="px-3 py-4 text-sm">{category?.name || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{laundryItem?.name || "N/A"}</td>
+      <td className="px-3 py-4 text-sm">{items?.name}</td>
+      <td className="px-3 py-4 text-sm">{items?.category?.name || "N/A"}</td>
+      <td className="px-3 py-4 text-sm">{items?.laundry_item?.name || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.price}</td>
       <td className="px-3 py-4 text-sm">{items?.unit_type || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.turnaround_time || "N/A"}</td>

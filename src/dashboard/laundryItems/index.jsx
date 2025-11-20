@@ -4,7 +4,6 @@ import { BarLoader } from "../../utils/Loader";
 import { RequestService } from "../../services";
 import Search from "../../utils/Search";
 import { Button } from "../../utils/Button";
-import { searchItems } from "./utils/functions";
 import NavigatorPager from "../../utils/NavigatorPager";
 import TableList from "./utils/List";
 import SideModal from "../../utils/SideModal";
@@ -31,6 +30,7 @@ export default function Index() {
       const response = await RequestService.getParam("/laundry-items", {
         page: currentPage,
         per_page: perPage,
+        search: search,
       });
       console.log(response);
       setItems(response.data.data.data);
@@ -45,23 +45,15 @@ export default function Index() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [search, currentPage, perPage]);
 
   useEffect(() => {
     fetch();
-  }, []);
+  }, [search, currentPage, perPage]);
 
-  const filteredItems = items.length > 0 ? searchItems(items, search) : [];
+  const filteredItems = items.length > 0 ? items : [];
 
   const itemsToDisplay = filteredItems;
-
-  if (loading) {
-    return (
-      <main className="h-full grow flex flex-col justify-center items-center rounded-[20px] border border-[#E7E7E7] overflow-y-auto">
-        <BarLoader />
-      </main>
-    );
-  }
 
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
@@ -85,13 +77,19 @@ export default function Index() {
           </div>
         </div>
         <div className="mt-5">
-          <TableList
-            itemsToDisplay={itemsToDisplay}
-            loading={loading}
-            fetch={fetch}
-            setShowCreate={setShowCreate}
-            setSelectedItem={setSelectedItem}
-          />
+          {loading ? (
+            <main className="p-10 flex flex-col justify-center items-center">
+              <BarLoader />
+            </main>
+          ) : (
+            <TableList
+              itemsToDisplay={itemsToDisplay}
+              loading={loading}
+              fetch={fetch}
+              setShowCreate={setShowCreate}
+              setSelectedItem={setSelectedItem}
+            />
+          )}
         </div>
       </div>
       <div className="p-5 mt-auto">

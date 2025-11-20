@@ -5,6 +5,7 @@ import { Input } from "../../../utils/Input";
 import toast from "../../../utils/Toast";
 import { SelectDropDownImage } from "../../../utils/SelectDropdownImage";
 import { cleanUpErr, RequestService } from "../../../services";
+import { MultiSelectDropDown } from "../../../utils/MultiSelectDropDown";
 
 export default function AddUpdate({ setShowCreate, item, fetch }) {
   const [loading, setLoading] = useState(false);
@@ -13,7 +14,11 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
 
   const [form, setForm] = useState({
     name: item?.name || "",
-    customer: item?.customer || "",
+    customer: item?.customer ?
+      {
+        ...item?.customer,
+        name: item?.customer?.first_name + " " + item?.customer?.last_name,
+      } : null,
     total_amount: item?.total_amount || "",
     order_date: item?.order_date || new Date().toISOString().split("T")[0],
     due_date: item?.due_date || new Date().toISOString().split("T")[0],
@@ -23,7 +28,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     items:
       item?.items.map((i) => ({
         id: i.id || "",
-        service_item: i.serviceItem || "",
+        service_item: i.service_item || "",
         quantity: i.quantity || "",
         weight: i.weight || "",
         price: i.price || "",
@@ -40,34 +45,27 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     updated[index][field] = value;
 
     if (field === "quantity" || field === "price") {
-      const qty = updated[index].quantity || 0;
+      const qty = updated[index].quantity || 1;
       const price = updated[index].price || 0;
       updated[index].subtotal = qty * price;
+    } else if (field === "weight" || field === "price") {
+      const weight = updated[index].weight || 1;
+      const price = updated[index].price || 0;
+      updated[index].subtotal = weight * price;
     }
+    console.log(updated);
 
     setForm({ ...form, items: updated });
   };
 
-  const addItem = () => {
-    setForm({
-      ...form,
-      items: [
-        ...form.items,
-        {
-          service_item_id: "",
-          quantity: "",
-          weight: "",
-          price: "",
-          subtotal: "",
-        },
-      ],
-    });
-  };
-
-  const removeItem = (index) => {
-    const updated = form.items.filter((_, i) => i !== index);
-    setForm({ ...form, items: updated });
-  };
+  // calculate total amount whenever items change
+  useEffect(() => {
+    const total = form.items.reduce(
+      (acc, curr) => acc + (Number(curr.subtotal) || 0),
+      0
+    );
+    setForm((prev) => ({ ...prev, total_amount: total }));
+  }, [form.items]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -123,7 +121,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
   };
 
   return (
-    <main className="w-full h-full grow flex flex-col bg-white shadow">
+    <main className="w-full h-full grow flex flex-col bg-white shadow overflow-y-auto">
       <div className="flex flex-col gap-1 py-2 px-3">
         <h4 className="flex items-center relative font-extrabold text-xl gap-2 border-b pb-1">
           {item ? "Update Order" : "Add Order"}
@@ -141,7 +139,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
         </p>
       </div>
       <form className="flex flex-col w-full gap-5 grow px-3 mt-5">
-        <div className="flex flex-col gap-5">
+        <div className="grid grid-cols-2 gap-5">
           <Input
             placeholder="Order Name"
             type="text"
@@ -169,17 +167,95 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             selected={form.due_date}
             setSelected={(value) => handleChange("due_date", value)}
           />
-          <SelectDropDownImage
-            items={[
-              { name: "Pending" },
-              { name: "Processing" },
-              { name: "Ready" },
-              { name: "Delivered" },
-            ]}
-            selected={form.status}
-            setSelected={(value) => handleChange("status", value)}
-            placeholder="Status"
-          />
+          <div className="col-span-2">
+            <SelectDropDownImage
+              items={[
+                { name: "Pending" },
+                { name: "Processing" },
+                { name: "Ready" },
+                { name: "Delivered" },
+              ]}
+              selected={form.status}
+              setSelected={(value) => handleChange("status", value)}
+              placeholder="Status"
+            />
+          </div>
+          <div className="col-span-2">
+            <MultiSelectDropDown
+              items={serviceItems}
+              placeholder="Service Items"
+              selected={form.items.map((i) => i.service_item)}
+              onChange={(item) => {
+                const serviceItem = serviceItems.find(
+                  (si) => si.id === item.id
+                );
+                const exists = form.items.find(
+                  (i) => i.service_item?.id === item.id
+                );
+                if (!exists) {
+                  setForm({
+                    ...form,
+                    items: [
+                      ...form.items,
+                      {
+                        service_item: serviceItem,
+                        quantity: 1,
+                        weight: 1,
+                        price: serviceItem.price,
+                        subtotal: serviceItem.price,
+                      },
+                    ],
+                  });
+                } else {
+                  const updated = form.items.filter(
+                    (i) => i.service_item?.id !== item.id
+                  );
+                  setForm({ ...form, items: updated });
+                }
+              }}
+            />
+          </div>
+        </div>
+        <div className="px-3 py-2 border-t border-b flex flex-col gap-5 text-xs">
+          {form.items.map((itm, index) => (
+            <div key={index} className="flex flex-col gap-2">
+              <div className="flex justify-between items-center gap-5">
+                <h4 className="font-semibold">{itm.service_item?.name}</h4>
+                <p className="text-sm">₦{itm.service_item?.price}</p>
+              </div>
+              <div className="grid grid-cols-2 items-center gap-5">
+                <Input
+                  placeholder={
+                    itm.service_item?.unit_type === "per_item"
+                      ? "Quantity"
+                      : "Weight (kg)"
+                  }
+                  type="number"
+                  selected={
+                    itm.service_item?.unit_type === "per_item"
+                      ? itm.quantity
+                      : itm.weight
+                  }
+                  setSelected={(val) =>
+                    handleItemChange(
+                      index,
+                      itm.service_item?.unit_type === "per_item"
+                        ? "quantity"
+                        : "weight",
+                      val
+                    )
+                  }
+                />
+                <span className="font-medium justify-self-end text-lg">
+                  ₦{itm.subtotal}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex justify-between items-center">
+          <h4 className="font-bold text-lg">Total Amount</h4>
+          <span className="font-bold text-xl">₦{form.total_amount}</span>
         </div>
         <div className="w-full flex flex-col gap-2 items-center justify-center mt-auto mb-4">
           <Button

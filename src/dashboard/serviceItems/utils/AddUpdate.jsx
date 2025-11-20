@@ -8,8 +8,8 @@ import { cleanUpErr, RequestService } from "../../../services";
 
 export default function AddUpdate({ setShowCreate, item, fetch }) {
   const [loading, setLoading] = useState(false);
-  const [category, setCategory] = useState({} || null);
-  const [laundryItem, setLaundryItem] = useState({} || null);
+  const [category, setCategory] = useState(item?.category || null);
+  const [laundryItem, setLaundryItem] = useState(item?.laundry_item || null);
   const [name, setName] = useState(item?.name || "");
   const [price, setPrice] = useState(Number(item?.price) || "");
   const [unitType, setUnitType] = useState(
@@ -37,12 +37,6 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
       try {
         const response = await RequestService.get("/service-categories");
         setServiceCategories(response.data.data.data);
-        if (item) {
-          const categoryItem = response.data.data.data.find(
-            (c) => c.id === item.service_category_id
-          );
-          setCategory(categoryItem);
-        }
       } catch (error) {
         console.log(error);
       }
@@ -57,12 +51,6 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
         const res = await RequestService.get("/laundry-items");
         const laundryItems = res.data.data.data;
         setLaundryItems(laundryItems);
-        if (item && item.laundry_item_id) {
-          const laundryItemItem = laundryItems.find(
-            (l) => l.id === item.laundry_item_id
-          );
-          setLaundryItem(laundryItemItem);
-        }
       } catch (error) {
         console.log(error);
       }

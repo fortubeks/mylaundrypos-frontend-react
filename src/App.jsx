@@ -21,7 +21,6 @@ import Customers from "./dashboard/customers";
 import ServiceItems from "./dashboard/serviceItems";
 import LaundryItems from "./dashboard/laundryItems";
 import Orders from "./dashboard/orders";
-import OrdersServiceItems from "./dashboard/orders-service-items";
 import Settings from "./dashboard/settings";
 
 const router = createBrowserRouter([
@@ -97,10 +96,6 @@ const router = createBrowserRouter([
       {
         path: "orders",
         element: <Orders />,
-      },
-      {
-        path: "orders-service-items",
-        element: <OrdersServiceItems />,
       },
       {
         path: "customers",

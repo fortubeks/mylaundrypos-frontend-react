@@ -17,8 +17,8 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
   const [phone, setPhone] = useState(item?.phone || "");
   const [otherPhone, setOtherPhone] = useState(item?.other_phone || "");
   const [address, setAddress] = useState(item?.address || "");
-  const [state, setState] = useState(item?.state_id || "");
-  const [country, setCountry] = useState(item?.country_id || "");
+  const [state, setState] = useState(item?.state || "");
+  const [country, setCountry] = useState(item?.country || "");
   const [loading, setLoading] = useState(false);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -29,19 +29,6 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
         const response = await RequestService.get("/customers/countries");
         console.log(response);
         setCountries(response.data.data);
-        if (item) {
-          const countryItem = response.data.data.find(
-            (c) => c.id === item.country_id
-          );
-          setCountry(countryItem);
-          const responseStates = await RequestService.get(
-            "/customers/states/" + countryItem.id
-          );
-
-          const states = responseStates.data.data;
-          const stateItem = states.find((s) => s.id === item.state_id);
-          setState(stateItem);
-        }
       } catch (error) {
         console.log(error);
         toast("Error fetching countries", "error");

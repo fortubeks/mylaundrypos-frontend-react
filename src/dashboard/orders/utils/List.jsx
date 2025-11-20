@@ -1,7 +1,7 @@
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import TableHead from "../../../utils/TableHead";
 import { BarLoader } from "../../../utils/Loader";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { cleanUpErr, RequestService } from "../../../services";
 import toast from "../../../utils/Toast";
 
@@ -20,12 +20,13 @@ export default function TableList({
             <table className="min-w-full border-collapse">
               <TableHead
                 names={[
-                  'Name',
+                  "Name",
                   "Customer",
-                  "Total Amount",
+                  "Items",
                   "Order Date",
                   "Due Date",
                   "Status",
+                  "Total Amount",
                   "Action",
                 ]}
                 checkbox={false}
@@ -75,25 +76,8 @@ export default function TableList({
 }
 
 const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
-  const [customer, setCustomer] = useState(null);
   const [showDelete, setShowDelete] = useState(false);
   const [disabled, setDisabled] = useState(false);
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const response = await RequestService.get(
-          `/customers/${items?.customer_id}`
-        );
-        const customer = response.data.data;
-        setCustomer(customer);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    fetch();
-  }, []);
 
   const deleteItem = async () => {
     setDisabled(true);
@@ -115,16 +99,22 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
 
   return (
     <tr className="h-fit">
+      <td className="px-3 py-4 text-sm">{items?.name}</td>
       <td className="px-3 py-4 text-sm">
-        {items?.name}
+        {items?.customer?.first_name + " " + items?.customer?.last_name ||
+          "N/A"}
       </td>
-      <td className="px-3 py-4 text-sm">
-        {customer?.first_name + " " + customer?.last_name || "N/A"}
+      <td className="px-3 py-4 text-sm max-w-[250px] whitespace-normal word-break">
+        {items?.items
+          ?.map(
+            (item) => item?.service_item?.name + " (x" + item?.quantity + ")"
+          )
+          .join(", ") || 0}
       </td>
-      <td className="px-3 py-4 text-sm">{items?.total_amount}</td>
       <td className="px-3 py-4 text-sm">{items?.order_date || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.due_date || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.status || "N/A"}</td>
+      <td className="px-3 py-4 text-sm">{items?.total_amount}</td>
       <td className="px-3 py-4 text-sm">
         <div className="flex items-center gap-3">
           <button
