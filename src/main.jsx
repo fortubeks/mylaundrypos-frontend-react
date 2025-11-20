@@ -14,9 +14,6 @@ import { ToastProvider } from "./utils/Toast.jsx";
 TimeAgo.addDefaultLocale(en);
 
 export const persistor = persistStore(store);
-navigator.serviceWorker.register(
-  "/firebase-messaging-sw.js"
-);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

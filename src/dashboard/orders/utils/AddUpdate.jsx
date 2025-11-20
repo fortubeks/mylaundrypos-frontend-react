@@ -8,38 +8,74 @@ import { cleanUpErr, RequestService } from "../../../services";
 
 export default function AddUpdate({ setShowCreate, item, fetch }) {
   const [loading, setLoading] = useState(false);
-  const [name, setName] = useState(item?.name || "");
   const [customers, setCustomers] = useState([]);
-  const [customer, setCustomer] = useState({} || null);
-  const [totalAmount, setTotalAmount] = useState(
-    Number(item?.total_amount) || ""
-  );
-  const [orderDate, setOrderDate] = useState(
-    item?.order_date || new Date().toISOString().split("T")[0]
-  );
-  const [dueDate, setDueDate] = useState(
-    item?.due_date || new Date().toISOString().split("T")[0]
-  );
-  const [status, setStatus] = useState(
-    item?.status
+  const [serviceItems, setServiceItems] = useState([]);
+
+  const [form, setForm] = useState({
+    name: item?.name || "",
+    customer: item?.customer || "",
+    total_amount: item?.total_amount || "",
+    order_date: item?.order_date || new Date().toISOString().split("T")[0],
+    due_date: item?.due_date || new Date().toISOString().split("T")[0],
+    status: item?.status
       ? { name: item.status.charAt(0).toUpperCase() + item.status.slice(1) }
-      : null
-  );
+      : null,
+    items:
+      item?.items.map((i) => ({
+        id: i.id || "",
+        service_item: i.serviceItem || "",
+        quantity: i.quantity || "",
+        weight: i.weight || "",
+        price: i.price || "",
+        subtotal: i.subtotal || "",
+      })) || [],
+  });
+
+  const handleChange = (name, value) => {
+    setForm({ ...form, [name]: value });
+  };
+
+  const handleItemChange = (index, field, value) => {
+    const updated = [...form.items];
+    updated[index][field] = value;
+
+    if (field === "quantity" || field === "price") {
+      const qty = updated[index].quantity || 0;
+      const price = updated[index].price || 0;
+      updated[index].subtotal = qty * price;
+    }
+
+    setForm({ ...form, items: updated });
+  };
+
+  const addItem = () => {
+    setForm({
+      ...form,
+      items: [
+        ...form.items,
+        {
+          service_item_id: "",
+          quantity: "",
+          weight: "",
+          price: "",
+          subtotal: "",
+        },
+      ],
+    });
+  };
+
+  const removeItem = (index) => {
+    const updated = form.items.filter((_, i) => i !== index);
+    setForm({ ...form, items: updated });
+  };
 
   useEffect(() => {
     const fetch = async () => {
       try {
         const response = await RequestService.get("/customers");
+        const responseItems = await RequestService.get("/service-items");
         setCustomers(response.data.data.data);
-        if (item) {
-          const customerItem = response.data.data.data.find(
-            (c) => c.id === item.customer_id
-          );
-          setCustomer({
-            ...customerItem,
-            name: customerItem.first_name + " " + customerItem.last_name,
-          });
-        }
+        setServiceItems(responseItems.data.data.data);
       } catch (error) {
         console.log(error);
       }
@@ -52,12 +88,20 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     e.preventDefault();
     setLoading(true);
     const payload = {
-      name: name,
-      customer_id: customer?.id || null,
-      total_amount: totalAmount,
-      order_date: orderDate,
-      due_date: dueDate,
-      status: status?.name.toLowerCase() || "pending",
+      name: form.name,
+      customer_id: form.customer?.id,
+      total_amount: form.total_amount,
+      order_date: form.order_date,
+      due_date: form.due_date,
+      status: form.status?.name.toLowerCase(),
+      items: form.items.map((i) => ({
+        id: i.id,
+        service_item_id: i.service_item?.id,
+        quantity: i.quantity,
+        weight: i.weight,
+        price: i.price,
+        subtotal: i.subtotal,
+      })),
     };
     try {
       let response;
@@ -101,35 +145,29 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
           <Input
             placeholder="Order Name"
             type="text"
-            selected={name}
-            setSelected={setName}
+            selected={form.name}
+            setSelected={(value) => handleChange("name", value)}
           />
           <SelectDropDownImage
             items={customers.map((c) => ({
               ...c,
               name: c.first_name + " " + c.last_name,
             }))}
-            selected={customer}
-            setSelected={setCustomer}
+            selected={form.customer}
+            setSelected={(value) => handleChange("customer", value)}
             placeholder="Customer"
-          />
-          <Input
-            placeholder="Total Amount"
-            type="number"
-            selected={totalAmount}
-            setSelected={setTotalAmount}
           />
           <Input
             placeholder="Order Date"
             type="date"
-            selected={orderDate}
-            setSelected={setOrderDate}
+            selected={form.order_date}
+            setSelected={(value) => handleChange("order_date", value)}
           />
           <Input
             placeholder="Due Date"
             type="date"
-            selected={dueDate}
-            setSelected={setDueDate}
+            selected={form.due_date}
+            setSelected={(value) => handleChange("due_date", value)}
           />
           <SelectDropDownImage
             items={[
@@ -138,8 +176,8 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
               { name: "Ready" },
               { name: "Delivered" },
             ]}
-            selected={status}
-            setSelected={setStatus}
+            selected={form.status}
+            setSelected={(value) => handleChange("status", value)}
             placeholder="Status"
           />
         </div>

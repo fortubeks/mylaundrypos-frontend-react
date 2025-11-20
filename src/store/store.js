@@ -3,16 +3,12 @@ import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import thunk from "redux-thunk";
 import userSlice from "./slices/userSlice";
-import shippingSlice from "./slices/shippingSlice";
 import generalSlice from "./slices/generalSlice";
-// import subscriptionSlice from "./slices/subscriptionSlice";
 import { LOGOUT } from "./asyncActions/logout";
 
 const rootReducer = combineReducers({
   user: userSlice,
-  shipping: shippingSlice,
   general: generalSlice,
-  // subscription: subscriptionSlice,
 });
 
 const appReducer = (state, action) => {
@@ -30,7 +26,7 @@ const appReducer = (state, action) => {
 const rootPersistConfig = {
   key: "root",
   storage,
-  whitelist: ["user", "shipping", "general"],
+  whitelist: ["user", "general"],
 };
 
 const persistedReducer = persistReducer(rootPersistConfig, appReducer);

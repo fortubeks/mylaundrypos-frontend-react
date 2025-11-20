@@ -10,8 +10,6 @@ import {
 import Search from "./general/Search";
 // import Notification from "./general/Notification";
 import { useCallback, useEffect, useRef } from "react";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../firebase";
 import { useIdleTimer } from "react-idle-timer";
 import { Logout } from "../utils/Logout";
 
@@ -60,14 +58,6 @@ export default function Dashboard() {
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [handleLogout]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed. Current user:", user);
-    });
-
-    return unsubscribe;
-  }, []);
 
   return (
     <main className="flex h-screen overflow-hidden bg-[#F9F8F8]">
