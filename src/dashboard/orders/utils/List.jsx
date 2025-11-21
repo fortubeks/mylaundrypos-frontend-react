@@ -20,7 +20,7 @@ export default function TableList({
             <table className="min-w-full border-collapse">
               <TableHead
                 names={[
-                  "Name",
+                  // "Name",
                   "Customer",
                   "Items",
                   "Order Date",
@@ -99,7 +99,7 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
 
   return (
     <tr className="h-fit">
-      <td className="px-3 py-4 text-sm">{items?.name}</td>
+      {/* <td className="px-3 py-4 text-sm">{items?.name}</td> */}
       <td className="px-3 py-4 text-sm">
         {items?.customer?.first_name + " " + items?.customer?.last_name ||
           "N/A"}

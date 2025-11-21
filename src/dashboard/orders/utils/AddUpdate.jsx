@@ -13,12 +13,13 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
   const [serviceItems, setServiceItems] = useState([]);
 
   const [form, setForm] = useState({
-    name: item?.name || "",
-    customer: item?.customer ?
-      {
-        ...item?.customer,
-        name: item?.customer?.first_name + " " + item?.customer?.last_name,
-      } : null,
+    // name: item?.name || "",
+    customer: item?.customer
+      ? {
+          ...item?.customer,
+          name: item?.customer?.first_name + " " + item?.customer?.last_name,
+        }
+      : null,
     total_amount: item?.total_amount || "",
     order_date: item?.order_date || new Date().toISOString().split("T")[0],
     due_date: item?.due_date || new Date().toISOString().split("T")[0],
@@ -86,7 +87,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     e.preventDefault();
     setLoading(true);
     const payload = {
-      name: form.name,
+      // name: form.name,
       customer_id: form.customer?.id,
       total_amount: form.total_amount,
       order_date: form.order_date,
@@ -140,12 +141,12 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
       </div>
       <form className="flex flex-col w-full gap-5 grow px-3 mt-5">
         <div className="grid grid-cols-2 gap-5">
-          <Input
+          {/* <Input
             placeholder="Order Name"
             type="text"
             selected={form.name}
             setSelected={(value) => handleChange("name", value)}
-          />
+          /> */}
           <SelectDropDownImage
             items={customers.map((c) => ({
               ...c,
@@ -154,6 +155,17 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             selected={form.customer}
             setSelected={(value) => handleChange("customer", value)}
             placeholder="Customer"
+          />
+          <SelectDropDownImage
+            items={[
+              { name: "Pending" },
+              { name: "Processing" },
+              { name: "Ready" },
+              { name: "Delivered" },
+            ]}
+            selected={form.status}
+            setSelected={(value) => handleChange("status", value)}
+            placeholder="Status"
           />
           <Input
             placeholder="Order Date"
@@ -167,19 +179,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             selected={form.due_date}
             setSelected={(value) => handleChange("due_date", value)}
           />
-          <div className="col-span-2">
-            <SelectDropDownImage
-              items={[
-                { name: "Pending" },
-                { name: "Processing" },
-                { name: "Ready" },
-                { name: "Delivered" },
-              ]}
-              selected={form.status}
-              setSelected={(value) => handleChange("status", value)}
-              placeholder="Status"
-            />
-          </div>
+
           <div className="col-span-2">
             <MultiSelectDropDown
               items={serviceItems}
@@ -216,43 +216,45 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             />
           </div>
         </div>
-        <div className="px-3 py-2 border-t border-b flex flex-col gap-5 text-xs">
-          {form.items.map((itm, index) => (
-            <div key={index} className="flex flex-col gap-2">
-              <div className="flex justify-between items-center gap-5">
-                <h4 className="font-semibold">{itm.service_item?.name}</h4>
-                <p className="text-sm">₦{itm.service_item?.price}</p>
-              </div>
-              <div className="grid grid-cols-2 items-center gap-5">
-                <Input
-                  placeholder={
-                    itm.service_item?.unit_type === "per_item"
-                      ? "Quantity"
-                      : "Weight (kg)"
-                  }
-                  type="number"
-                  selected={
-                    itm.service_item?.unit_type === "per_item"
-                      ? itm.quantity
-                      : itm.weight
-                  }
-                  setSelected={(val) =>
-                    handleItemChange(
-                      index,
+        {form.items.length > 0 && (
+          <div className="px-3 py-2 border-t border-b flex flex-col gap-5 text-xs">
+            {form.items.map((itm, index) => (
+              <div key={index} className="flex flex-col gap-2">
+                <div className="flex justify-between items-center gap-5">
+                  <h4 className="font-semibold">{itm.service_item?.name}</h4>
+                  <p className="text-sm">₦{itm.service_item?.price}</p>
+                </div>
+                <div className="grid grid-cols-2 items-center gap-5">
+                  <Input
+                    placeholder={
                       itm.service_item?.unit_type === "per_item"
-                        ? "quantity"
-                        : "weight",
-                      val
-                    )
-                  }
-                />
-                <span className="font-medium justify-self-end text-lg">
-                  ₦{itm.subtotal}
-                </span>
+                        ? "Quantity"
+                        : "Weight (kg)"
+                    }
+                    type="number"
+                    selected={
+                      itm.service_item?.unit_type === "per_item"
+                        ? itm.quantity
+                        : itm.weight
+                    }
+                    setSelected={(val) =>
+                      handleItemChange(
+                        index,
+                        itm.service_item?.unit_type === "per_item"
+                          ? "quantity"
+                          : "weight",
+                        val
+                      )
+                    }
+                  />
+                  <span className="font-medium justify-self-end text-lg">
+                    ₦{itm.subtotal}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="flex justify-between items-center">
           <h4 className="font-bold text-lg">Total Amount</h4>
           <span className="font-bold text-xl">₦{form.total_amount}</span>
