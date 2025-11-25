@@ -13,7 +13,7 @@ export default function Info({
 }) {
   const user = useSelector((state) => state.user.user);
   return (
-    <div className="w-full p-8 flex flex-col gap-4 border rounded-[20px]">
+    <div className="w-full p-4 md:p-8 flex flex-col gap-4 border rounded-[20px]">
       <div className="flex flex-col gap-2">
         <b className="text-lg font-semibold">Personal Information</b>
         <p className="text-xs">

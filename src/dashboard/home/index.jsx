@@ -61,7 +61,7 @@ export default function Index() {
         <Filter selected={period} setSelected={setPeriod} />
       </TabHead>
       <div className="p-5 w-full flex flex-col gap-3">
-        <div className="grid grid-cols-4 grid-rows-1 gap-4">
+        <div className="flex flex-col md:grid grid-cols-4 grid-rows-1 gap-4">
           <AnalyticCard
             name="Total Orders"
             icon={<FaShoppingCart className="w-8 h-8 text-[#4A90E2]" />}
@@ -79,7 +79,7 @@ export default function Index() {
           <AnalyticCard
             name="Total Revenue"
             icon={<FaCreditCard className="w-8 h-8 text-[#50C878]" />}
-            figure={`$${
+            figure={`₦${
               items?.current?.total_revenue
                 ? items?.current?.total_revenue.toLocaleString(undefined, {
                     minimumFractionDigits: 2,
@@ -136,12 +136,12 @@ export default function Index() {
             Access frequently used features quickly
           </p>
         </div>
-        <div className="grid grid-cols-4 gap-4">
+        <div className="flex flex-col md:grid grid-cols-4 gap-4">
           <button
             className="bg-[#4A90E2] text-white py-4 rounded-lg font-semibold hover:bg-[#3a78c2] transition"
             onClick={() => navigate("/dashboard/orders")}
           >
-            Manage Orders
+            Add New Order
           </button>
           <button
             className="bg-[#50C878] text-white py-4 rounded-lg font-semibold hover:bg-[#3da966] transition"

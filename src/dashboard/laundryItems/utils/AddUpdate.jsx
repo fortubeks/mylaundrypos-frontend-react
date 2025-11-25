@@ -38,8 +38,8 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
   };
 
   return (
-    <main className="w-full h-full grow flex flex-col bg-white shadow">
-      <div className="flex flex-col gap-1 py-2 px-3">
+    <main className="w-full h-full grow flex flex-col bg-white shadow overflow-y-auto">
+      <div className="flex flex-col gap-1 py-2 px-3 sticky top-0 z-10 bg-white border-b">
         <h4 className="flex items-center relative font-extrabold text-xl gap-2 border-b pb-1">
           {item ? "Update Laundry Item" : "Add Laundry Item"}
           <img

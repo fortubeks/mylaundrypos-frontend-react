@@ -9,21 +9,22 @@ export default function Create() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const validatePassword = (password) => {
-    const errors = [];
-    if (!/[A-Z]/.test(password)) errors.push("uppercase letter");
-    if (!/[a-z]/.test(password)) errors.push("lowercase letter");
-    if (!/[0-9]/.test(password)) errors.push("number");
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
-      errors.push("special character");
+  // const validatePassword = (password) => {
+  //   const errors = [];
+  //   if (!/[A-Z]/.test(password)) errors.push("uppercase letter");
+  //   if (!/[a-z]/.test(password)) errors.push("lowercase letter");
+  //   if (!/[0-9]/.test(password)) errors.push("number");
+  //   if (!/[!@#$%^&*(),.?":{}|<>]/.test(password))
+  //     errors.push("special character");
 
-    if (errors.length === 0) return true;
-    toast.error(`Password must contain ${errors.join(", ")}`);
-  };
+  //   if (errors.length === 0) return true;
+  //   toast.error(`Password must contain ${errors.join(", ")}`);
+  // };
 
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -39,9 +40,9 @@ export default function Create() {
     if (!name) return toast.error("Name is required");
     if (!validateEmail(email)) return;
     // if (!phone) return toast.error("Phone number is required");
-    if (!validatePassword(password)) return;
-    if (password.length < 8)
-      return toast.error("Password must be at least 8 characters long");
+    // if (!validatePassword(password)) return;
+    if (password.length < 5)
+      return toast.error("Password must be at least 5 characters long");
     if (password !== rePassword) return toast.error("Passwords do not match");
 
     setLoading(true);
@@ -50,6 +51,7 @@ export default function Create() {
         email,
         password,
         name,
+        phone,
       });
       console.log(register);
 
@@ -66,19 +68,24 @@ export default function Create() {
     } catch (error) {
       console.log(error);
       setLoading(false);
+      if (error?.response?.data?.errors) {
+        const firstError = error.response.data.errors[0];
+        toast.error(firstError);
+        return;
+      }
       cleanUpErr(error);
     }
   };
 
   return (
     <main
-      className="h-screen overflow-hidden flex justify-center items-center relative bg-cover bg-center bg-no-repeat before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[rgba(52,71,103,0.6)] before:z-0"
+      className="h-screen p-5 overflow-hidden flex justify-center items-center relative bg-cover bg-center bg-no-repeat before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[rgba(52,71,103,0.6)] before:z-0"
       style={{
         backgroundImage: `url(${"https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"})`,
       }}
     >
-      <section className="z-10 md:w-1/2 flex justify-center items-center">
-        <div className="bg-white w-full rounded-xl flex flex-col gap-5 p-5 md:p-7">
+      <section className="z-10 w-full md:w-1/2 flex justify-center items-center">
+        <div className="bg-white w-full rounded-xl flex flex-col md:gap-5 p-5 md:p-7">
           <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
             <h3 className="text-3xl font-bold">Sign Up</h3>
           </div>
@@ -96,6 +103,13 @@ export default function Create() {
               placeholder="e.g johndoe@gmail.com"
               value={email}
               setValue={setEmail}
+            />
+            <Input
+              name="Phone Number"
+              type="tel"
+              placeholder="e.g +1234567890"
+              value={phone}
+              setValue={setPhone}
             />
             <div className="flex flex-col md:grid grid-cols-2 gap-5">
               <PasswordInput
@@ -116,7 +130,14 @@ export default function Create() {
                 name="Sign Up"
                 width="100%"
                 onClick={submit}
-                disabled={name && email && password && rePassword && password === rePassword}
+                disabled={
+                  name &&
+                  email &&
+                  phone &&
+                  password &&
+                  rePassword &&
+                  password === rePassword
+                }
                 loading={loading}
               />
             </div>

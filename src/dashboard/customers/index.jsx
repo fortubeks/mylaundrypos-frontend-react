@@ -8,6 +8,7 @@ import NavigatorPager from "../../utils/NavigatorPager";
 import TableList from "./utils/List";
 import SideModal from "../../utils/SideModal";
 import AddUpdate from "./utils/AddUpdate";
+import { useIsMobile } from "../../utils/use-mobile";
 
 export default function Index() {
   const [items, setItems] = useState([]);
@@ -55,20 +56,20 @@ export default function Index() {
   const filteredItems = items.length > 0 ? items : [];
 
   const itemsToDisplay = filteredItems;
+  const isMobile = useIsMobile();
 
   return (
-    <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
-      <TabHead name="Customers">
-      </TabHead>
+    <main className="h-full w-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
+      <TabHead name="Customers"></TabHead>
       <div className="p-5 w-full flex flex-col gap-3">
-        <div className="w-full flex gap-2 items-center text-sm">
+        <div className="w-full flex gap-1 items-center text-sm">
           <Search
             value={search}
             setValue={setSearch}
-            width="250px"
             placeholder="Search customers..."
+            width={isMobile ? "w-full" : "w-1/3"}
           />
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center ml-auto min-w-fit">
             <Button name="Add Customer" onClick={() => setShowCreate(true)} />
           </div>
         </div>

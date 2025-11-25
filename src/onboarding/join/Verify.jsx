@@ -39,6 +39,11 @@ export default function Verify() {
       navigate("/login", { state: { name, email } });
     } catch (error) {
       console.error("Error verifying email:", error);
+      if (error?.response?.data?.errors) {
+        const firstError = error.response.data.errors[0];
+        toast.error(firstError);
+        return;
+      }
       cleanUpErr(error);
     } finally {
       setLoading(false);
@@ -51,12 +56,12 @@ export default function Verify() {
 
   return (
     <main
-      className="h-screen overflow-hidden flex justify-center items-center relative bg-cover bg-center bg-no-repeat before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[rgba(52,71,103,0.6)] before:z-0"
+      className="h-screen p-5 overflow-hidden flex justify-center items-center relative bg-cover bg-center bg-no-repeat before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[rgba(52,71,103,0.6)] before:z-0"
       style={{
         backgroundImage: `url(${"https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"})`,
       }}
     >
-      <section className="z-10 md:w-1/2 flex justify-center items-center">
+      <section className="z-10 w-full md:w-1/2 flex justify-center items-center">
         <div className="bg-white w-full rounded-xl flex flex-col gap-5 p-5 md:p-7">
           <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
             <h3 className="text-3xl font-bold">Account Created</h3>

@@ -78,12 +78,17 @@ export default function Login() {
     } catch (error) {
       console.log(error);
       setLoading(false);
+      if (error?.response?.data?.errors) {
+        const firstError = error.response.data.errors[0];
+        toast.error(firstError);
+        return;
+      }
       cleanUpErr(error);
     }
   };
 
   return (
-    <div className="bg-white w-full rounded-xl flex flex-col gap-5 p-5 md:p-7">
+    <div className="bg-white w-full rounded-xl flex flex-col md:gap-5 p-5 md:p-7">
       <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
         <h3 className="text-3xl font-bold">Sign In</h3>
       </div>
@@ -129,7 +134,7 @@ export default function Login() {
           />
         </div>
       </form>
-      <div className="flex gap-5 w-full justify-between items-center text-sm">
+      <div className="flex flex-col md:flex-row gap-5 w-full justify-between items-center text-xs">
         <p
           className="flex gap-1 underline cursor-pointer justify-end"
           onClick={() =>

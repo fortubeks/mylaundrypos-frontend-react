@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaCaretDown } from "react-icons/fa";
+import { ErrorMessage } from "./Input";
 
 export const SelectDropDownImage = ({
   items,
@@ -7,14 +8,18 @@ export const SelectDropDownImage = ({
   selected,
   placeholder,
   slide = true,
+  direction = true,
   // icon,
   width = 1.3,
   empty = "No items found",
+  error = false,
+  showErrors = false,
 }) => {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const [dropdownWidth, setDropdownWidth] = useState(0);
   const [isFocused, setIsFocused] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   // const closeHoverMenu = () => {
   //   setOpen(false);
   // };
@@ -28,6 +33,10 @@ export const SelectDropDownImage = ({
 
   const hasValue = selected && Object.keys(selected).length > 0;
   const showLabel = hasValue;
+
+  const filteredItems = items.filter((item) =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col gap-2 w-full relative">
@@ -73,10 +82,17 @@ export const SelectDropDownImage = ({
           <div
             className={`bg-white shadow-[0px_4px_4px_0px_rgba(18,18,18,0.10)] px-2 py-4 flex flex-col rounded-xl overflow-y-auto absolute z-40 w-full md:w-[${
               dropdownWidth * width
-            }px] max-h-56`}
+            }px] ${!direction && "bottom-10"} max-h-56`}
           >
-            {items.length === 0 && <span className="p-2">{empty}</span>}
-            {items.map((item, index) => {
+            <input
+              type="text"
+              className="mb-2 p-1 border rounded"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {filteredItems.length === 0 && <span className="p-2">{empty}</span>}
+            {filteredItems.map((item, index) => {
               return (
                 <li
                   key={index}
@@ -103,6 +119,11 @@ export const SelectDropDownImage = ({
             })}
           </div>
         )}
+        <div className="min-h-1">
+          {((isFocused && error) || (showErrors && error)) && (
+            <ErrorMessage message={error} />
+          )}
+        </div>
       </div>
     </div>
   );

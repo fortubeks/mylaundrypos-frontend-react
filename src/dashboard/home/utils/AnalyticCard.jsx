@@ -12,14 +12,14 @@ export default function AnalyticCard({
 }) {
   return (
     <div className="rounded-[20px] border bg-[#EFEFEF] w-full h-full">
-      <div className="w-full py-4 px-4 flex items-center justify-between border-b border-[#EFEFEF]">
+      <div className="w-full py-2 md:py-4 px-4 flex items-center justify-between border-b border-[#EFEFEF]">
         <div className="flex items-center gap-3 text-sm font-medium">
           {/* <img src={icon} alt="" className="w-8 h-8 object-contain" /> */}
           {icon}
           {name}
         </div>
       </div>
-      <div className="px-4 py-6 flex flex-col gap-5">
+      <div className="px-2 md:px-4 py-3 md:py-6 flex flex-col gap-2 md:gap-5">
         <b className="font-bold text-[30px]">{figure}</b>
         <div className="flex gap-2 items-center text-sm">
           <span

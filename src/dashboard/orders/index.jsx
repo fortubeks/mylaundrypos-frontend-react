@@ -6,17 +6,20 @@ import Search from "../../utils/Search";
 import { Button } from "../../utils/Button";
 import NavigatorPager from "../../utils/NavigatorPager";
 import TableList from "./utils/List";
-import SideModal from "../../utils/SideModal";
-import AddUpdate from "./utils/AddUpdate";
+// import SideModal from "../../utils/SideModal";
+// import AddUpdate from "./utils/AddUpdate";
+import { useIsMobile } from "../../utils/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 export default function Index() {
   const [items, setItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState();
+  const navigate = useNavigate();
+  // const [selectedItem, setSelectedItem] = useState();
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [perPage, setPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
-  const [showCreate, setShowCreate] = useState(false);
+  // const [showCreate, setShowCreate] = useState(false);
   const [pagination, setPagination] = useState({
     total: 0,
     current_page: 1,
@@ -54,6 +57,7 @@ export default function Index() {
   const filteredItems = items.length > 0 ? items : [];
 
   const itemsToDisplay = filteredItems;
+  const isMobile = useIsMobile();
 
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
@@ -63,15 +67,16 @@ export default function Index() {
           <Search
             value={search}
             setValue={setSearch}
-            width="250px"
             placeholder="Search orders..."
+            width={isMobile ? "w-full" : "w-1/3"}
           />
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="flex items-center ml-auto min-w-fit">
             <Button
               name="Add Order"
               onClick={() => {
-                setShowCreate(true);
-                setSelectedItem(null);
+                // setShowCreate(true);
+                // setSelectedItem(null);
+                navigate("/dashboard/orders/create-order");
               }}
             />
           </div>
@@ -86,8 +91,8 @@ export default function Index() {
               itemsToDisplay={itemsToDisplay}
               loading={loading}
               fetch={fetch}
-              setShowCreate={setShowCreate}
-              setSelectedItem={setSelectedItem}
+              // setShowCreate={setShowCreate}
+              // setSelectedItem={setSelectedItem}
             />
           )}
         </div>
@@ -103,7 +108,7 @@ export default function Index() {
           />
         )}
       </div>
-      {showCreate && (
+      {/* {showCreate && (
         <SideModal
           child={
             <AddUpdate
@@ -113,7 +118,7 @@ export default function Index() {
             />
           }
         />
-      )}
+      )} */}
     </main>
   );
 }

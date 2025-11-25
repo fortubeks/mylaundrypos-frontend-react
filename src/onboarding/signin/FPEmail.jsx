@@ -36,6 +36,11 @@ export default function FPEmail() {
       });
     } catch (error) {
       console.log(error);
+      if (error?.response?.data?.errors) {
+        const firstError = error.response.data.errors[0];
+        toast.error(firstError);
+        return;
+      }
       cleanUpErr(error);
     } finally {
       setLoading(false);
@@ -43,7 +48,7 @@ export default function FPEmail() {
   };
 
   return (
-    <div className="bg-white w-full rounded-xl flex flex-col gap-5 p-5 md:p-7">
+    <div className="bg-white w-full rounded-xl flex flex-col md:gap-5 p-5 md:p-7">
       <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
         <h3 className="text-3xl font-bold">Forgot Password</h3>
       </div>

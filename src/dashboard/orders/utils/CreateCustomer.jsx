@@ -7,18 +7,18 @@ import { SelectDropDownImage } from "../../../utils/SelectDropdownImage";
 import DropDown from "../../../utils/SelectDropdown";
 import { cleanUpErr, RequestService } from "../../../services";
 
-export default function AddUpdate({ setShowCreate, item, fetch }) {
-  const [title, setTitle] = useState(item?.title || "");
-  const [firstName, setFirstName] = useState(item?.first_name || "");
-  const [lastName, setLastName] = useState(item?.last_name || "");
-  const [otherNames, setOtherNames] = useState(item?.other_names || "");
-  const [email, setEmail] = useState(item?.email || "");
+export default function CreateCustomer({ setShowModal, fetch }) {
+  const [title, setTitle] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [otherNames, setOtherNames] = useState("");
+  const [email, setEmail] = useState("");
   // const [phoneCode, setPhoneCode] = useState(item?.phone_code || "");
-  const [phone, setPhone] = useState(item?.phone || "");
-  const [otherPhone, setOtherPhone] = useState(item?.other_phone || "");
-  const [address, setAddress] = useState(item?.address || "");
-  const [state, setState] = useState(item?.state || "");
-  const [country, setCountry] = useState(item?.country || "");
+  const [phone, setPhone] = useState("");
+  const [otherPhone, setOtherPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
   const [countries, setCountries] = useState([]);
   const [states, setStates] = useState([]);
@@ -108,15 +108,12 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     };
     try {
       let response;
-      if (item) {
-        response = await RequestService.put(`/customers/${item.id}`, payload);
-      } else {
-        response = await RequestService.post("/customers", payload);
-      }
+
+      response = await RequestService.post("/customers", payload);
       console.log(response);
       fetch();
-      toast.success(`Customer ${item ? "updated" : "added"} successfully`);
-      setShowCreate(false);
+      toast.success(`Customer added successfully`);
+      setShowModal(false);
     } catch (error) {
       console.log(error);
       cleanUpErr(error);
@@ -126,21 +123,19 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
   };
 
   return (
-    <main className="w-full h-full grow flex flex-col bg-white shadow overflow-y-auto">
+    <main className="w-full h-full grow rounded-lg flex flex-col bg-white shadow overflow-y-auto">
       <div className="flex flex-col gap-1 py-2 px-3 sticky top-0 z-10 bg-white border-b">
         <h4 className="flex items-center relative font-extrabold text-xl gap-2 border-b pb-1">
-          {item ? "Update Customer" : "Add Customer"}
+          Add Customer
           <img
             src={cancel}
             alt=""
             className="absolute right-1 cursor-pointer"
-            onClick={() => setShowCreate(false)}
+            onClick={() => setShowModal(false)}
           />
         </h4>
         <p className="text-sm text-muted-foreground">
-          {item
-            ? "Update the details of this customer"
-            : "Fill the form to add a new customer"}
+          Fill the form to add a new customer
         </p>
       </div>
       <form className="flex flex-col w-full gap-5 grow px-3 mt-5">
@@ -212,6 +207,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             placeholder="Select Country"
             error={errors.country}
             showErrors={showErrors}
+            direction={false}
           />
           <SelectDropDownImage
             items={states}
@@ -220,11 +216,12 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             placeholder="Select State"
             error={errors.state}
             showErrors={showErrors}
+            direction={false}
           />
         </div>
         <div className="w-full flex flex-col gap-2 items-center justify-center mt-auto mb-4">
           <Button
-            name={item ? "Update Customer" : "Add Customer"}
+            name="Add Customer"
             width="100%"
             onClick={submit}
             loading={loading}

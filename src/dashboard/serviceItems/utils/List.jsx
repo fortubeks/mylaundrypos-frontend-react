@@ -100,8 +100,10 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
     <tr className="h-fit">
       <td className="px-3 py-4 text-sm">{items?.name}</td>
       <td className="px-3 py-4 text-sm">{items?.category?.name || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{items?.laundry_item?.name || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{items?.price}</td>
+      <td className="px-3 py-4 text-sm">
+        {items?.laundry_item?.name || "N/A"}
+      </td>
+      <td className="px-3 py-4 text-sm">₦{items?.price}</td>
       <td className="px-3 py-4 text-sm">{items?.unit_type || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.turnaround_time || "N/A"}</td>
       <td className="px-3 py-4 text-sm">

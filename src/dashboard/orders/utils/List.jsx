@@ -1,16 +1,17 @@
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 import TableHead from "../../../utils/TableHead";
 import { BarLoader } from "../../../utils/Loader";
-import {  useState } from "react";
+import { useState } from "react";
 import { cleanUpErr, RequestService } from "../../../services";
 import toast from "../../../utils/Toast";
+import { useNavigate } from "react-router-dom";
 
 export default function TableList({
   itemsToDisplay,
   loading,
   fetch,
-  setShowCreate,
-  setSelectedItem,
+  // setShowCreate,
+  // setSelectedItem,
 }) {
   return (
     <div className="grow h-full flex flex-col gap-5 rounded-3xl text-black relative">
@@ -60,8 +61,8 @@ export default function TableList({
                         key={i}
                         items={tm}
                         fetch={fetch}
-                        setShowCreate={setShowCreate}
-                        setSelectedItem={setSelectedItem}
+                        // setShowCreate={setShowCreate}
+                        // setSelectedItem={setSelectedItem}
                       />
                     );
                   })
@@ -75,9 +76,10 @@ export default function TableList({
   );
 }
 
-const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
+const List = ({ items, fetch }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [disabled, setDisabled] = useState(false);
+  const navigate = useNavigate();
 
   const deleteItem = async () => {
     setDisabled(true);
@@ -114,13 +116,16 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
       <td className="px-3 py-4 text-sm">{items?.order_date || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.due_date || "N/A"}</td>
       <td className="px-3 py-4 text-sm">{items?.status || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{items?.total_amount}</td>
+      <td className="px-3 py-4 text-sm">₦{items?.total_amount}</td>
       <td className="px-3 py-4 text-sm">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
-              setSelectedItem(items);
-              setShowCreate(true);
+              // setSelectedItem(items);
+              // setShowCreate(true);
+              navigate(`/dashboard/orders/create-order`, {
+                state: { item: items },
+              });
             }}
           >
             <FaPencilAlt className="text-gray-500 hover:text-gray-700" />

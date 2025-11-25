@@ -90,7 +90,7 @@ export default function Index() {
     <div className="w-full h-full flex flex-col bg-white rounded-[20px]">
       <TabHead name="Settings" size="14px"></TabHead>
       <div className="flex flex-col overflow-y-auto p-5 gap-5">
-        <div className="grid grid-cols-2 gap-5">
+        <div className="flex flex-col md:grid grid-cols-2 gap-5">
           <Info
             name={name}
             setName={setName}

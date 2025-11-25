@@ -72,6 +72,6 @@ export const Input = ({
 
 export const ErrorMessage = ({ message }) => {
   return (
-    <p className="text-[#F90B0B] text-xs flex gap-1 items-center">{message}</p>
+    <p className="text-[#F90B0B] text-xs flex gap-1 items-center capitalize">{message}</p>
   );
 };

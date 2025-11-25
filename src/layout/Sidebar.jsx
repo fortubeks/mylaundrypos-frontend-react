@@ -11,9 +11,10 @@ import {
   otherLinks,
 } from "../dashboard/Navlinks";
 import { useDispatch, useSelector } from "react-redux";
-import {  setSidebar } from "../store/slices/generalSlice";
+import { setSidebar } from "../store/slices/generalSlice";
 import { useEffect, useRef, useState } from "react";
 import { Logout } from "../utils/Logout";
+import { useIsMobile } from "../utils/use-mobile";
 
 export default function Sidebar() {
   // const [open, setOpen] = useState(true);
@@ -23,7 +24,7 @@ export default function Sidebar() {
   const user = useSelector((state) => state.user.user);
   const disableSidebar = useSelector((state) => state.general.disableSidebar);
   const profileMenuItems = getProfileMenuItems(dispatch);
-
+  const isMobile = useIsMobile();
   const setOpen = () => {
     dispatch(setSidebar(!open));
   };
@@ -35,7 +36,13 @@ export default function Sidebar() {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const profileButtonRef = useRef(null);
-  const baseSidebarWidth = open ? "60px" : "230px";
+  const baseSidebarWidth = !isMobile
+    ? open
+      ? "60px"
+      : "230px"
+    : open
+    ? "230px"
+    : "0px";
   const showText = !open || isHovered;
 
   useEffect(() => {
@@ -45,19 +52,36 @@ export default function Sidebar() {
   }, [open, isHovered]);
 
   return (
-    <motion.nav className="relative" style={{ width: baseSidebarWidth }}>
+    <motion.nav
+      className={`
+    ${!isMobile ? "relative" : "absolute z-[9999] h-screen"}
+    `}
+      style={{ width: baseSidebarWidth }}
+    >
       <motion.nav
         layout
         className={`top-0 min-h-full h-full shrink-0 bg-[#F9F8F8] py-4 pr-3 flex flex-col gap-4 items-center overflow-y-scroll snap z-[9991] text-sm ${
-          open && isHovered
+          !isMobile
+            ? open && isHovered
+              ? "absolute left-0 rounded-lg px-3 border"
+              : "sticky px-3"
+            : isMobile && open
             ? "absolute left-0 rounded-lg px-3 border"
-            : "sticky px-3"
+            : "hidden"
         }`}
         style={{
-          width: open && isHovered ? "230px" : baseSidebarWidth,
+          width: !isMobile
+            ? open && isHovered
+              ? "230px"
+              : baseSidebarWidth
+            : open
+            ? "230px"
+            : "0px",
         }}
-        onMouseEnter={() => open && setIsHovered(true)}
-        onMouseLeave={() => open && !showProfileDropdown && setIsHovered(false)}
+        onMouseEnter={() => (!isMobile ? open && setIsHovered(true) : null)}
+        onMouseLeave={() =>
+          !isMobile ? open && !showProfileDropdown && setIsHovered(false) : null
+        }
       >
         <TitleSection showText={showText} open={open} setOpen={setOpen} />
 
@@ -78,8 +102,8 @@ export default function Sidebar() {
                   title={opt?.name}
                   href={opt?.path}
                   icon={opt?.icon}
-                  iconA={opt?.iconA}
-                  open={showText}
+                  open={open}
+                  showText={showText}
                   disable={disableSidebar}
                 />
               ))}
@@ -127,7 +151,7 @@ export default function Sidebar() {
                       setShowProfileDropdown(!showProfileDropdown);
                     }}
                     className={`h-10 flex items-center gap-2 w-full hover:bg-white hover:text-black hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
-                      !showText ? "justify-center" : "justify-start"
+                      !showText && !isMobile ? "justify-center" : "justify-start"
                     } ${
                       showProfileDropdown
                         ? "bg-white text-black rounded-lg px-3"
@@ -136,7 +160,7 @@ export default function Sidebar() {
                   >
                     {/* <ColoredIcon src={opt?.icon} /> */}
                     {opt.icon}
-                    {showText && (
+                    {(showText || isMobile) && (
                       <motion.span
                         layout
                         initial={{ opacity: 0, y: 12 }}
@@ -263,18 +287,18 @@ export default function Sidebar() {
                         disableSidebar
                           ? "pointer-events-none cursor-not-allowed text-[#939393]"
                           : ""
-                      } ${!showText ? "justify-center" : "justify-start"}`
+                      } ${!showText && !isMobile ? "justify-center" : "justify-start"}`
                     : `h-10 flex items-center gap-2 w-full text-[#292D32] hover:bg-white hover:text-black hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
                         disableSidebar
                           ? "pointer-events-none cursor-not-allowed text-[#939393]"
                           : ""
-                      } ${!showText ? "justify-center" : "justify-start"}`
+                      } ${!showText && !isMobile ? "justify-center" : "justify-start"}`
                 }
                 // onClick={() => dispatch(setSidebar(true))}
               >
                 {opt.icon}
                 {/* <ColoredIcon src={opt?.icon} disabled={disableSidebar} /> */}
-                {showText && (
+                {(showText || isMobile) && (
                   <motion.span
                     layout
                     initial={{ opacity: 0, y: 12 }}
@@ -294,25 +318,40 @@ export default function Sidebar() {
   );
 }
 
-const Option = ({ title, href, icon, open, disable }) => {
-  // const dispatch = useDispatch();
+const Option = ({ title, href, icon, open, showText, disable }) => {
+  const dispatch = useDispatch();
+  const isMobile = useIsMobile();
   return (
     <NavLink
       to={`/dashboard/${href}`}
       className={({ isActive }) =>
         isActive
-          ? `bg-white text-black border border-[#E7E7E7] h-10 px-3 flex items-center gap-2 w-full rounded-[10px] transition-all duration-300 ease-in-out ${
+          ? `bg-white text-black border border-[#E7E7E7] h-10 flex items-center gap-2 w-full rounded-[10px] transition-all duration-300 ease-in-out ${
               disable
                 ? "pointer-events-none cursor-not-allowed text-[#939393]"
                 : ""
-            } ${!open ? "justify-center" : "justify-start"}`
+            } ${
+              !showText && !isMobile
+                ? "justify-center px-1"
+                : "justify-start px-3"
+            }`
           : `h-10 flex items-center gap-2 w-full text-[#292D32] hover:bg-white hover:text-black hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
               disable
                 ? "pointer-events-none cursor-not-allowed text-[#939393]"
                 : ""
-            } ${!open ? "justify-center" : "justify-start"}`
+            } ${
+              !showText && !isMobile
+                ? "justify-center px-1"
+                : "justify-start px-3"
+            }`
       }
-      // onClick={() => dispatch(setSidebar(true))}
+      onClick={() => {
+        if (isMobile) {
+          dispatch(setSidebar(!open));
+          console.log(open);
+        }
+        return null;
+      }}
     >
       {/* {href === window.location.pathname.split("/")[2] ? (
         <ColoredIcon src={iconA} disabled={disable} />
@@ -320,7 +359,7 @@ const Option = ({ title, href, icon, open, disable }) => {
         <ColoredIcon src={icon} disabled={disable} />
       )} */}
       {icon}
-      {open && (
+      {(showText || isMobile) && (
         <motion.span
           layout
           initial={{ opacity: 0, y: 12 }}
@@ -336,10 +375,11 @@ const Option = ({ title, href, icon, open, disable }) => {
 };
 
 const TitleSection = ({ showText, open, setOpen }) => {
+  const isMobile = useIsMobile();
   return (
     <div
       className={`w-full relative flex cursor-pointer items-center justify-between transition-colors ${
-        !showText && "flex-col gap-4 justify-center"
+        !showText && !isMobile && "flex-col gap-4 justify-center"
       }`}
     >
       <img
@@ -347,7 +387,7 @@ const TitleSection = ({ showText, open, setOpen }) => {
         alt=""
         className={`object-contain w-fit h-14 ${open && "h-14"}`}
       />
-      {showText && <ToggleClose open={open} setOpen={setOpen} />}
+      {(showText || isMobile) && <ToggleClose open={open} setOpen={setOpen} />}
     </div>
   );
 };
@@ -404,7 +444,7 @@ const ToggleClose = ({ open, setOpen }) => {
 //     <img
 //       src={src}
 //       alt=""
-//       className={`object-contain ${size} 
+//       className={`object-contain ${size}
 //       ${disabled ? "grayscale opacity-50" : ""}
 //       `}
 //     />

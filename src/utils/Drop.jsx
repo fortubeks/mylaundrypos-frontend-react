@@ -7,15 +7,7 @@ import {
 
 export default function Drop({ Main, Dropdown }) {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const triggerRef = useRef(null);
-  const Portal = usePortal();
-
-  // const closeHoverMenu = () => setOpen(false);
-  // useOnHoverOutside(dropdownRef, closeHoverMenu);
-
-  const style = useDropdownPosition({ open, triggerRef, dropdownRef });
-
+c
   return (
     <div
       ref={triggerRef}

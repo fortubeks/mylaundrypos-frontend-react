@@ -10,7 +10,7 @@ export function Button({
   return (
     <button
       onClick={onClick}
-      className={`min-w-fit h-10 bg-primary text-white rounded-xl flex items-center justify-center px-8 gap-2 disabled:bg-[#E4E4E4] relative`}
+      className={`min-w-fit h-10 bg-primary text-white rounded-xl flex items-center justify-center px-4 md:px-8 gap-2 disabled:bg-[#E4E4E4] relative`}
       style={{ width: `${width}` }}
       disabled={!disabled || loading}
     >
