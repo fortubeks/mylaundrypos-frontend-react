@@ -3,57 +3,57 @@ import cancel from "../../../assets/icons/close.svg";
 import { Button } from "../../../utils/Button";
 import { Input } from "../../../utils/Input";
 import toast from "../../../utils/Toast";
-import { SelectDropDownImage } from "../../../utils/SelectDropdownImage";
-import DropDown from "../../../utils/SelectDropdown";
+// import { SelectDropDownImage } from "../../../utils/SelectDropdownImage";
+// import DropDown from "../../../utils/SelectDropdown";
 import { cleanUpErr, RequestService } from "../../../services";
 
 export default function CreateCustomer({ setShowModal, fetch }) {
-  const [title, setTitle] = useState("");
+  // const [title, setTitle] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [otherNames, setOtherNames] = useState("");
+  // const [otherNames, setOtherNames] = useState("");
   const [email, setEmail] = useState("");
   // const [phoneCode, setPhoneCode] = useState(item?.phone_code || "");
   const [phone, setPhone] = useState("");
-  const [otherPhone, setOtherPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
+  // const [otherPhone, setOtherPhone] = useState("");
+  // const [address, setAddress] = useState("");
+  // const [state, setState] = useState("");
+  // const [country, setCountry] = useState("");
   const [loading, setLoading] = useState(false);
-  const [countries, setCountries] = useState([]);
-  const [states, setStates] = useState([]);
+  // const [countries, setCountries] = useState([]);
+  // const [states, setStates] = useState([]);
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await RequestService.get("/customers/countries");
-        console.log(response);
-        setCountries(response.data.data);
-      } catch (error) {
-        console.log(error);
-        toast("Error fetching countries", "error");
-      }
-    };
+  // useEffect(() => {
+  //   const fetchCountries = async () => {
+  //     try {
+  //       const response = await RequestService.get("/customers/countries");
+  //       console.log(response);
+  //       setCountries(response.data.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast("Error fetching countries", "error");
+  //     }
+  //   };
 
-    fetchCountries();
-  }, []);
+  //   fetchCountries();
+  // }, []);
 
-  useEffect(() => {
-    if (!country) return;
-    const fetchStates = async () => {
-      try {
-        const response = await RequestService.get(
-          "/customers/states/" + country.id
-        );
-        console.log(response);
-        setStates(response.data.data);
-      } catch (error) {
-        console.log(error);
-        toast("Error fetching states", "error");
-      }
-    };
-    fetchStates();
-  }, [country]);
+  // useEffect(() => {
+  //   if (!country) return;
+  //   const fetchStates = async () => {
+  //     try {
+  //       const response = await RequestService.get(
+  //         "/customers/states/" + country.id
+  //       );
+  //       console.log(response);
+  //       setStates(response.data.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //       toast("Error fetching states", "error");
+  //     }
+  //   };
+  //   fetchStates();
+  // }, [country]);
 
   const [errors, setErrors] = useState({});
   const [isFormComplete, setIsFormComplete] = useState(false);
@@ -61,14 +61,14 @@ export default function CreateCustomer({ setShowModal, fetch }) {
 
   useEffect(() => {
     const fields = {
-      title: "Title",
+      // title: "Title",
       firstName: "First Name",
-      lastName: "Last Name",
-      email: "Email",
+      // lastName: "Last Name",
+      // email: "Email",
       phone: "Phone",
-      address: "Address",
-      state: "State",
-      country: "Country",
+      // address: "Address",
+      // state: "State",
+      // country: "Country",
     };
     const errors = {};
     Object.entries(fields).forEach(([key, label]) => {
@@ -83,7 +83,7 @@ export default function CreateCustomer({ setShowModal, fetch }) {
     setShowErrors(false);
     setErrors(errors);
     setIsFormComplete(Object.keys(errors).length === 0);
-  }, [title, firstName, lastName, email, phone, address, state, country]);
+  }, [firstName, phone]);
 
   const submit = async (e) => {
     e.preventDefault();
@@ -94,17 +94,17 @@ export default function CreateCustomer({ setShowModal, fetch }) {
     }
     setLoading(true);
     const payload = {
-      title,
+      // title,
       first_name: firstName,
       last_name: lastName,
-      other_names: otherNames,
+      // other_names: otherNames,
       email,
       // phone_code: phoneCode,
       phone,
-      other_phone: otherPhone,
-      address,
-      state_id: state?.id || null,
-      country_id: country?.id || null,
+      // other_phone: otherPhone,
+      // address,
+      // state_id: state?.id || null,
+      // country_id: country?.id || null,
     };
     try {
       let response;
@@ -140,12 +140,12 @@ export default function CreateCustomer({ setShowModal, fetch }) {
       </div>
       <form className="flex flex-col w-full gap-5 grow px-3 mt-5">
         <div className="flex flex-col md:grid grid-cols-2 gap-5">
-          <DropDown
+          {/* <DropDown
             items={["Mr", "Mrs", "Miss", "Ms"]}
             selected={title}
             setSelected={setTitle}
             placeholder="Select Title"
-          />
+          /> */}
           <Input
             placeholder="First Name"
             type="text"
@@ -162,12 +162,12 @@ export default function CreateCustomer({ setShowModal, fetch }) {
             error={errors.lastName}
             showErrors={showErrors}
           />
-          <Input
+          {/* <Input
             placeholder="Other Names"
             type="text"
             selected={otherNames}
             setSelected={setOtherNames}
-          />
+          /> */}
           <Input
             placeholder="Email"
             type="email"
@@ -184,22 +184,22 @@ export default function CreateCustomer({ setShowModal, fetch }) {
             error={errors.phone}
             showErrors={showErrors}
           />
-          <Input
+          {/* <Input
             placeholder="Other Phone"
             type="text"
             selected={otherPhone}
             setSelected={setOtherPhone}
-          />
-          <Input
+          /> */}
+          {/* <Input
             placeholder="Address"
             type="text"
             selected={address}
             setSelected={setAddress}
             error={errors.address}
             showErrors={showErrors}
-          />
+          /> */}
         </div>
-        <div className="flex flex-col md:grid grid-cols-2 gap-5">
+        {/* <div className="flex flex-col md:grid grid-cols-2 gap-5">
           <SelectDropDownImage
             items={countries}
             selected={country}
@@ -218,7 +218,7 @@ export default function CreateCustomer({ setShowModal, fetch }) {
             showErrors={showErrors}
             direction={false}
           />
-        </div>
+        </div> */}
         <div className="w-full flex flex-col gap-2 items-center justify-center mt-auto mb-4">
           <Button
             name="Add Customer"

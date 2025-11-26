@@ -30,7 +30,8 @@ export default function Verify() {
     }
   };
 
-  const handleVerify = async () => {
+  const handleVerify = async (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
       const response = await AuthService.verifyEmail({ email, otp });
@@ -50,7 +51,7 @@ export default function Verify() {
     }
   };
 
-  if (!name || !email) {
+  if (!email) {
     return <Navigate to="/" />;
   }
 

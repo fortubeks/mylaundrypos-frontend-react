@@ -28,7 +28,9 @@ export default function CreateOrder() {
     customer: item?.customer
       ? {
           ...item?.customer,
-          name: item?.customer?.first_name + " " + item?.customer?.last_name,
+          name: `${item.customer.first_name} ${
+            item.customer.last_name ? item.customer.last_name : ""
+          }`,
         }
       : null,
     total_amount: item?.total_amount || "",
@@ -251,7 +253,9 @@ export default function CreateOrder() {
               <SelectDropDownImage
                 items={customers.map((c) => ({
                   ...c,
-                  name: c.first_name + " " + c.last_name,
+                  name: `${c.first_name} ${
+                    c.last_name ? c.last_name + " " : ""
+                  }`,
                 }))}
                 selected={form.customer}
                 setSelected={(value) => handleChange("customer", value)}

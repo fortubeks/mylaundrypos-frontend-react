@@ -76,11 +76,19 @@ export default function Login() {
       dispatch(isVerified(true));
       navigateAndClearHistory(route);
     } catch (error) {
-      console.log(error);
       setLoading(false);
       if (error?.response?.data?.errors) {
+        console.log(error);
         const firstError = error.response.data.errors[0];
         toast.error(firstError);
+        return;
+      }
+      if (
+        error?.response?.data?.message ===
+        "Please verify your email before logging in."
+      ) {
+        cleanUpErr(error);
+        navigate("/verify", { state: { email } });
         return;
       }
       cleanUpErr(error);
