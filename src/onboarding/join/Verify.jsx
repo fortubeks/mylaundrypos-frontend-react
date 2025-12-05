@@ -4,10 +4,12 @@ import OTPInput, { ResendOTP } from "otp-input-react";
 import React, { useState } from "react";
 import toast from "../../utils/Toast";
 import { AuthService, cleanUpErr } from "../../services";
+import { useIsMobile } from '../../utils/use-mobile';
 
 export default function Verify() {
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile()
   const [loading, setLoading] = useState(false);
   const [resendKey, setResendKey] = useState(0);
   const [otp, setOtp] = useState("");
@@ -68,7 +70,7 @@ export default function Verify() {
             <h3 className="text-3xl font-bold">Account Created</h3>
           </div>
           <form className="flex flex-col w-full gap-5 grow items-center">
-            <p className="text-lg mt-2">
+            <p className="text-lg mt-2 text-center">
               Please check your email for the verification code.
             </p>
             <div className="flex flex-col gap-2">
@@ -82,14 +84,14 @@ export default function Verify() {
                 inputStyles={{
                   border: "1px solid #D1D5DB",
                   background: "#8989890D",
-                  height: "65px",
-                  width: "65px",
-                  fontSize: "22px",
+                  height: isMobile ? "50px" : "65px",
+                  width: isMobile ? "50px" : "65px",
+                  fontSize: isMobile ? "18px" : "22px",
                   borderRadius: "50%",
                   outline: "#201B1D",
                   color: "#000",
                 }}
-                className="flex gap-2 justify-center"
+                className="flex gap-2 justify-center flex-wrap"
               />
             </div>
 
