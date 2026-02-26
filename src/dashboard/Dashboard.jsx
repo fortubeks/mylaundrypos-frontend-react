@@ -1,23 +1,28 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../layout/Sidebar";
 // import TopBar from "../layout/TopBar";
-import { useDispatch, useSelector } from "react-redux";
 import { PopOut } from "./general";
-import {
-  // setShowNotification,
-  setShowSearch,
-} from "../store/slices/generalSlice";
-import Search from "./general/Search";
 // import Notification from "./general/Notification";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useIdleTimer } from "react-idle-timer";
 import { Logout } from "../utils/Logout";
 
 export default function Dashboard() {
   const idleTimerRef = useRef(null);
-  const dispatch = useDispatch();
-  const search = useSelector((state) => state.general.showSearch);
-  // const notification = useSelector((state) => state.general.showNotification);
+  const [showTutorial, setShowTutorial] = useState(false);
+
+  useEffect(() => {
+    const seen = localStorage.getItem("hasSeenTutorial");
+
+    if (!seen) {
+      setShowTutorial(true);
+    }
+  }, []);
+
+  const handleCloseTutorial = () => {
+    localStorage.setItem("hasSeenTutorial", "true");
+    setShowTutorial(false);
+  };
 
   const handleLogout = useCallback(() => {
     Logout("You have been logged out due to inactivity", "/login");
@@ -68,10 +73,22 @@ export default function Dashboard() {
           <Outlet />
         </section>
       </section>
-      {search && (
+      {showTutorial && (
         <PopOut
-          child={<Search />}
-          onClick={() => dispatch(setShowSearch(false))}
+          child={
+            <div className="w-full h-full">
+              <iframe
+                className="w-full h-full"
+                // https://youtu.be/4hG5kiS9Ekg
+                src="https://www.youtube.com/embed/4hG5kiS9Ekg?autoplay=1"
+                title="Instruction Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          }
+          onClick={handleCloseTutorial}
         />
       )}
       {/* {notification && (

@@ -1,7 +1,7 @@
 export function PopOut({ child, onClick }) {
   return (
     <main
-      className="fixed top-0 px-4 md:px-0 left-0 h-full w-full flex pt-[6%] justify-center z-[99999]"
+      className="fixed top-0 px-4 md:px-0 left-0 h-full w-full flex pt-[6%] justify-center z-[99999] bg-[#00000080]"
       onClick={onClick} // Fires only if outside is clicked
     >
       <div

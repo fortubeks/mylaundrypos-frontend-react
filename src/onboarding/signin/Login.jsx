@@ -61,7 +61,7 @@ export default function Login() {
         JSON.stringify({
           token: login?.data?.data?.token,
           userId: login?.data?.data?.user.id,
-        })
+        }),
       );
 
       await UserService.getUser();
@@ -78,8 +78,12 @@ export default function Login() {
     } catch (error) {
       setLoading(false);
       if (error?.response?.data?.errors) {
-        console.log(error);
-        const firstError = error.response.data.errors[0];
+        const firstError = error.response.data.errors[0]
+          ? error.response.data.errors[
+              Object.keys(error.response.data.errors)[0]
+            ][0]
+          : error?.response?.data?.message || "An error occurred";
+        console.log(error, firstError);
         toast.error(firstError);
         return;
       }
