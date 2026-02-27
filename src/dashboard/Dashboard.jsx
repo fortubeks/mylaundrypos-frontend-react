@@ -3,25 +3,31 @@ import Sidebar from "../layout/Sidebar";
 // import TopBar from "../layout/TopBar";
 import { PopOut } from "./general";
 // import Notification from "./general/Notification";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useIdleTimer } from "react-idle-timer";
 import { Logout } from "../utils/Logout";
+import { setShowSearch } from "../store/slices/generalSlice";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Dashboard() {
   const idleTimerRef = useRef(null);
-  const [showTutorial, setShowTutorial] = useState(false);
+  const dispatch = useDispatch();
+  // const [showTutorial, setShowTutorial] = useState(false);
+  const search = useSelector((state) => state.general.showSearch);
 
   useEffect(() => {
     const seen = localStorage.getItem("hasSeenTutorial");
 
     if (!seen) {
-      setShowTutorial(true);
+      // setShowTutorial(true);
+      dispatch(setShowSearch(true));
     }
   }, []);
 
   const handleCloseTutorial = () => {
     localStorage.setItem("hasSeenTutorial", "true");
-    setShowTutorial(false);
+    // setShowTutorial(false);
+    dispatch(setShowSearch(false));
   };
 
   const handleLogout = useCallback(() => {
@@ -73,7 +79,7 @@ export default function Dashboard() {
           <Outlet />
         </section>
       </section>
-      {showTutorial && (
+      {search && (
         <PopOut
           child={
             <div className="w-full h-full">

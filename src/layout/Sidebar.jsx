@@ -11,10 +11,11 @@ import {
   otherLinks,
 } from "../dashboard/Navlinks";
 import { useDispatch, useSelector } from "react-redux";
-import { setSidebar } from "../store/slices/generalSlice";
+import { setShowSearch, setSidebar } from "../store/slices/generalSlice";
 import { useEffect, useRef, useState } from "react";
 import { Logout } from "../utils/Logout";
 import { useIsMobile } from "../utils/use-mobile";
+import { FaVideo } from "react-icons/fa";
 
 export default function Sidebar() {
   // const [open, setOpen] = useState(true);
@@ -41,8 +42,8 @@ export default function Sidebar() {
       ? "60px"
       : "230px"
     : open
-    ? "230px"
-    : "0px";
+      ? "230px"
+      : "0px";
   const showText = !open || isHovered;
 
   useEffect(() => {
@@ -66,8 +67,8 @@ export default function Sidebar() {
               ? "absolute left-0 rounded-lg px-3 border"
               : "sticky px-3"
             : isMobile && open
-            ? "absolute left-0 rounded-lg px-3 border"
-            : "hidden"
+              ? "absolute left-0 rounded-lg px-3 border"
+              : "hidden"
         }`}
         style={{
           width: !isMobile
@@ -75,8 +76,8 @@ export default function Sidebar() {
               ? "230px"
               : baseSidebarWidth
             : open
-            ? "230px"
-            : "0px",
+              ? "230px"
+              : "0px",
         }}
         onMouseEnter={() => (!isMobile ? open && setIsHovered(true) : null)}
         onMouseLeave={() =>
@@ -112,7 +113,7 @@ export default function Sidebar() {
         </motion.div>
 
         <motion.div className={`space-y-2 mt-auto w-full py-3 relative`}>
-          {/* <button
+          <button
             className={`h-10 flex items-center gap-2 w-full hover:text-black cursor-pointer
             hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
               !showText ? "justify-center" : "justify-start"
@@ -124,7 +125,7 @@ export default function Sidebar() {
             onClick={() => dispatch(setShowSearch(true))}
             disabled={disableSidebar}
           >
-            <ColoredIcon src={search} disabled={disableSidebar} />
+            <FaVideo className="text-primary" />
             {showText && (
               <motion.span
                 layout
@@ -133,10 +134,10 @@ export default function Sidebar() {
                 transition={{ delay: 0.25 }}
                 className="flex flex-col"
               >
-                Search
+                Watch Tutorial
               </motion.span>
             )}
-          </button> */}
+          </button>
           {otherLinks.map((opt, i) => {
             const isProfileLink =
               opt.name.toLowerCase().includes("profile") ||
@@ -151,7 +152,9 @@ export default function Sidebar() {
                       setShowProfileDropdown(!showProfileDropdown);
                     }}
                     className={`h-10 flex items-center gap-2 w-full hover:bg-white hover:text-black hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
-                      !showText && !isMobile ? "justify-center" : "justify-start"
+                      !showText && !isMobile
+                        ? "justify-center"
+                        : "justify-start"
                     } ${
                       showProfileDropdown
                         ? "bg-white text-black rounded-lg px-3"
