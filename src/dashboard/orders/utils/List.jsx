@@ -109,7 +109,7 @@ const List = ({ items, fetch }) => {
       <td className="px-3 py-4 text-sm max-w-[250px] whitespace-normal word-break">
         {items?.items
           ?.map(
-            (item) => item?.service_item?.name + " (x" + item?.quantity + ")"
+            (item) => item?.service_item?.name + " (x" + item?.quantity + ")",
           )
           .join(", ") || 0}
       </td>
@@ -121,11 +121,7 @@ const List = ({ items, fetch }) => {
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
-              // setSelectedItem(items);
-              // setShowCreate(true);
-              navigate(`/dashboard/orders/create-order`, {
-                state: { item: items },
-              });
+              navigate(`/dashboard/orders/update-order/${items?.id}`);
             }}
           >
             <FaPencilAlt className="text-gray-500 hover:text-gray-700" />

@@ -54,7 +54,7 @@ export const filterByStatus = (items, statusFilter) => {
   }
   return items.filter(
     (item) =>
-      item?.tracking_status?.toLowerCase() === statusFilter.toLowerCase()
+      item?.tracking_status?.toLowerCase() === statusFilter.toLowerCase(),
   );
 };
 
@@ -90,3 +90,46 @@ export const searchItems = (items, search) => {
     return matchesSearch;
   });
 };
+
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  return new Date(dateString).toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
+const calculateSubtotal = ({ quantity, weight, price }) => {
+  const base = quantity || weight || 1;
+  return (Number(base) || 0) * (Number(price) || 0);
+};
+
+const calculateTotal = (items) =>
+  items.reduce((acc, curr) => acc + (Number(curr.subtotal) || 0), 0);
+
+const getInitialForm = (item = null) => ({
+  customer: item?.customer
+    ? {
+        ...item.customer,
+        name: `${item.customer.first_name} ${item.customer.last_name ?? ""}`,
+      }
+    : null,
+  total_amount: item?.total_amount || 0,
+  order_date: item?.order_date || new Date().toISOString().split("T")[0],
+  due_date: item?.due_date || new Date().toISOString().split("T")[0],
+  status: item?.status
+    ? { name: item.status.charAt(0).toUpperCase() + item.status.slice(1) }
+    : { name: "Pending" },
+  items:
+    item?.items?.map((i) => ({
+      id: i.id || "",
+      service_item: i.service_item || "",
+      quantity: i.quantity || "",
+      weight: i.weight || "",
+      price: i.price || "",
+      subtotal: i.subtotal || 0,
+    })) || [],
+});
+
+export { formatDate, calculateSubtotal, calculateTotal, getInitialForm };

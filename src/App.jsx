@@ -23,6 +23,7 @@ import LaundryItems from "./dashboard/laundryItems";
 import Orders from "./dashboard/orders";
 import CreateOrder from "./dashboard/orders/CreateOrder";
 import Settings from "./dashboard/settings";
+import ViewOrder from "./dashboard/orders/ViewOrder";
 
 const router = createBrowserRouter([
   {
@@ -101,6 +102,10 @@ const router = createBrowserRouter([
       {
         path: "orders/create-order",
         element: <CreateOrder />,
+      },
+      {
+        path: "orders/update-order/:id",
+        element: <ViewOrder />,
       },
       {
         path: "customers",
