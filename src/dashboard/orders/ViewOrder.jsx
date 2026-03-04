@@ -410,7 +410,7 @@ export default function ViewOrder() {
           </div>
         </form>
       </div>
-      <div className="px-5" onClick={() => console.log(data, item)}>
+      <div className="px-5 md:px-10" onClick={() => console.log(data, item)}>
         <ComponentCard
           title="Payments"
           desc="View and manage payments made for this order, including payment dates, amounts, and modes of payment."
