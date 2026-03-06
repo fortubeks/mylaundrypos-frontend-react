@@ -4,6 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { Button } from "../../utils/Button";
 import toast from "../../utils/Toast";
 import { cleanUpErr, AuthService } from "../../services";
+import GoogleButton from "../GoogleButton";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -125,7 +126,7 @@ export default function Create() {
                 setValue={setRePassword}
               />
             </div>
-            <div className="w-full flex flex-col gap-2 items-center justify-center mt-auto mb-4">
+            <div className="w-full flex flex-col gap-3 items-center justify-center mt-auto mb-4">
               <Button
                 name="Sign Up"
                 width="100%"
@@ -140,6 +141,7 @@ export default function Create() {
                 }
                 loading={loading}
               />
+              <GoogleButton />
             </div>
           </form>
           <div className="flex gap-5 w-full justify-center items-center text-sm">

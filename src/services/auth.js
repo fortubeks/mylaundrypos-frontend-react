@@ -15,6 +15,13 @@ export const AuthService = {
     return api.post(`/register`, data, { headers });
   },
 
+  socialAuth(data) {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    return api.post(`/social-login`, data, { headers });
+  },
+
   resendVerificationEmail(data) {
     const headers = {
       "Content-Type": "application/json",

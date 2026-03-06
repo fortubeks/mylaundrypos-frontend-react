@@ -76,7 +76,7 @@ export default function CreateOrder() {
   useEffect(() => {
     const total = form.items.reduce(
       (acc, curr) => acc + (Number(curr.subtotal) || 0),
-      0
+      0,
     );
     setForm((prev) => ({ ...prev, total_amount: total }));
   }, [form.items]);
@@ -84,7 +84,10 @@ export default function CreateOrder() {
   const fetch = async () => {
     try {
       const response = await RequestService.get("/customers");
-      const responseItems = await RequestService.get("/service-items");
+      const responseItems = await RequestService.getParam("/service-items", {
+        per_page: 30,
+        search: search,
+      });
       setCustomers(response.data.data.data);
       setServiceItems(responseItems.data.data.data);
     } catch (error) {
@@ -93,7 +96,7 @@ export default function CreateOrder() {
   };
   useEffect(() => {
     fetch();
-  }, []);
+  }, [search]);
 
   const validateForm = (form) => {
     const errors = {};
@@ -114,7 +117,6 @@ export default function CreateOrder() {
     if (missingServiceItem) {
       errors.items = "Service item is required";
     }
-
     return errors;
   };
 
@@ -175,18 +177,18 @@ export default function CreateOrder() {
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
       <TabHead name="Create Orders"></TabHead>
-      <div className="p-5 w-full flex flex-col md:grid grid-cols-2 gap-5 md:gap-10">
-        <div className="flex flex-col gap-5 p-5 border rounded-xl overflow-y-auto h-fit shadow md:sticky top-0">
+      <div className="p-5 w-full flex flex-col md:grid grid-cols-2 grid-row-1 gap-5 md:gap-10">
+        <div className="flex flex-col gap-5 p-5 border rounded-xl overflow-y-auto h-fit max-h-full shadow md:sticky top-0">
           <Search
             value={search}
             setValue={setSearch}
             placeholder="Search service item..."
             width={isMobile ? "w-full" : "w-1/3"}
           />
-          <div className="grid grid-cols-3 gap-5 max-h-[50vh] md:max-h-[80vh] overflow-y-auto">
+          <div className="grid grid-cols-3 gap-5 h-full max-h-[50vh] md:max-h-[70vh] overflow-y-auto">
             {serviceItems
               .filter((si) =>
-                si.name.toLowerCase().includes(search.toLowerCase())
+                si.name.toLowerCase().includes(search.toLowerCase()),
               )
               .map((tm) => {
                 return (
@@ -195,7 +197,7 @@ export default function CreateOrder() {
                     className="p-3 border rounded cursor-pointer hover:shadow"
                     onClick={() => {
                       const exists = form.items.find(
-                        (i) => i.service_item?.id === tm.id
+                        (i) => i.service_item?.id === tm.id,
                       );
                       if (!exists) {
                         setForm({
@@ -322,7 +324,7 @@ export default function CreateOrder() {
                             itm.service_item?.unit_type === "per_item"
                               ? "quantity"
                               : "weight",
-                            val
+                            val,
                           )
                         }
                       />
@@ -332,9 +334,10 @@ export default function CreateOrder() {
                     </span>
                     <button
                       className="text-red-500 hover:text-red-700 ml-2"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const updatedItems = form.items.filter(
-                          (i, idx) => idx !== index
+                          (i, idx) => idx !== index,
                         );
                         setForm({ ...form, items: updatedItems });
                       }}

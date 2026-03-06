@@ -1,11 +1,12 @@
 import TabHead from "../../utils/TabHead";
 import { useSelector } from "react-redux";
 import Info from "./utils/Info";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DeleteAcct from "./utils/DeleteAcct";
 import toast from "../../utils/Toast";
 import { cleanUpErr, UserService } from "../../services";
 import ChangePassword from "./utils/ChangePassword";
+import StoreInfoCard from "./utils/StoreInfoCard";
 
 export default function Index() {
   const user = useSelector((state) => state.user.user);
@@ -32,6 +33,10 @@ export default function Index() {
       return true;
     }
   };
+
+  useEffect(() => {
+    UserService.getUser();
+  }, []);
 
   const updatePassword = async (e) => {
     e.preventDefault();
@@ -112,6 +117,7 @@ export default function Index() {
             loading={loading}
           />
         </div>
+        <StoreInfoCard />
         <DeleteAcct loading={loading} setLoading={setLoading} />
       </div>
     </div>

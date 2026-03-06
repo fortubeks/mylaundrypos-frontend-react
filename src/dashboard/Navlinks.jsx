@@ -6,6 +6,7 @@ import { IoPricetag } from "react-icons/io5";
 import { IoIosCard } from "react-icons/io";
 import { GrLineChart } from "react-icons/gr";
 import { MdOutlinePointOfSale } from "react-icons/md";
+import { FcSalesPerformance } from "react-icons/fc";
 
 export const navLinks = [
   {
@@ -38,6 +39,11 @@ export const navLinks = [
     name: "Reports",
     icon: <GrLineChart className='text-lg' />,
   },
+  // {
+  //   path: 'marketing',
+  //   name: 'Marketing',
+  //   icon: <FcSalesPerformance className='text-lg' />
+  // }
 ];
 
 export const otherLinks = [

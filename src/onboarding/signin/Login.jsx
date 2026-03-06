@@ -7,6 +7,7 @@ import { cleanUpErr, AuthService, UserService } from "../../services";
 import { useDispatch } from "react-redux";
 import toast from "../../utils/Toast";
 import Switch from "react-switch";
+import GoogleButton from "../GoogleButton";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -136,7 +137,7 @@ export default function Login() {
             Remember me
           </label>
         </div>
-        <div className="w-full flex flex-col gap-2 items-center justify-center mt-auto mb-4">
+        <div className="w-full flex flex-col gap-3 items-center justify-center mt-auto mb-4">
           <Button
             name="Login"
             width="100%"
@@ -144,6 +145,7 @@ export default function Login() {
             disabled={email && password}
             loading={loading}
           />
+          <GoogleButton />
         </div>
       </form>
       <div className="flex flex-col md:flex-row gap-5 w-full justify-between items-center text-xs">

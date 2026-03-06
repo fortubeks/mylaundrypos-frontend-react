@@ -17,22 +17,22 @@ export default function TableList({
       <div className="flex flex-col h-full">
         <div className="overflow-x-auto h-full">
           <div className="shadow h-full overflow-x-scroll md:overflow-hidden">
-            <table className="min-w-full border-collapse">
-              <TableHead
-                names={[
-                  "Name",
-                  "Service Category",
-                  "Laundry Item",
-                  "Price",
-                  "Unit Type",
-                  "Turnaround Time",
-                  "Action",
-                ]}
-                checkbox={false}
-              />
-              <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
-                {itemsToDisplay?.length === 0 ? (
-                  loading ? (
+            {itemsToDisplay?.length === 0 ? (
+              loading ? (
+                <table className="min-w-full border-collapse">
+                  <TableHead
+                    names={[
+                      "Name",
+                      "Service Category",
+                      "Laundry Item",
+                      "Price",
+                      "Unit Type",
+                      "Turnaround Time",
+                      "Action",
+                    ]}
+                    checkbox={false}
+                  />
+                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
                     <tr>
                       <td className="py-2" colSpan={9}>
                         <span className="mx-auto py-10 w-full flex justify-center text-center">
@@ -42,7 +42,23 @@ export default function TableList({
                         </span>
                       </td>
                     </tr>
-                  ) : (
+                  </tbody>
+                </table>
+              ) : (
+                <table className="min-w-full border-collapse">
+                  <TableHead
+                    names={[
+                      "Name",
+                      "Service Category",
+                      "Laundry Item",
+                      "Price",
+                      "Unit Type",
+                      "Turnaround Time",
+                      "Action",
+                    ]}
+                    checkbox={false}
+                  />
+                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
                     <tr>
                       <td className="py-2" colSpan={9}>
                         <span className="mx-auto text-[#B0B0B0] py-5 w-full flex justify-center text-center">
@@ -50,9 +66,12 @@ export default function TableList({
                         </span>
                       </td>
                     </tr>
-                  )
-                ) : (
-                  itemsToDisplay &&
+                  </tbody>
+                </table>
+              )
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+                {itemsToDisplay &&
                   itemsToDisplay.map((tm, i) => {
                     return (
                       <List
@@ -63,10 +82,9 @@ export default function TableList({
                         setSelectedItem={setSelectedItem}
                       />
                     );
-                  })
-                )}
-              </tbody>
-            </table>
+                  })}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -82,7 +100,9 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
     setDisabled(true);
 
     try {
-      const response = await RequestService.delete(`/service-items/${items?.id}`);
+      const response = await RequestService.delete(
+        `/service-items/${items?.id}`,
+      );
 
       console.log(response);
       setShowDelete(false);
@@ -97,30 +117,47 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
   };
 
   return (
-    <tr className="h-fit">
-      <td className="px-3 py-4 text-sm">{items?.name}</td>
-      <td className="px-3 py-4 text-sm">{items?.category?.name || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">
-        {items?.laundry_item?.name || "N/A"}
-      </td>
-      <td className="px-3 py-4 text-sm">₦{items?.price}</td>
-      <td className="px-3 py-4 text-sm">{items?.unit_type || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{items?.turnaround_time || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">
-        <div className="flex items-center gap-3">
+    <div className="h-fit p-3 pb-8 text-sm border rounded-lg hover:bg-gray-100 bg-white flex flex-col gap-3 group relative">
+      <div className="flex items-center justify-between gap-3">
+        <span className="font-bold text-lg ">{items?.name}</span>
+        <span className="font-medium text-lg">₦{items?.price}</span>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="">
+          <b>Category: </b>
+
+          {items?.category?.name || "N/A"}
+        </span>
+        <span className="">
+          <b>Laundry item: </b>
+          {items?.laundry_item?.name || "N/A"}
+        </span>
+      </div>
+      <div className="flex items-center justify-between gap-3">
+        <span className="">
+          <b>Unit Type: </b>
+          {items?.unit_type || "N/A"}
+        </span>
+        <span className="">
+          <b>Turnaround Time: </b>
+          {items?.turnaround_time || "N/A"}
+        </span>
+      </div>
+      <span className=" group-hover:flex hidden absolute right-1/2 bottom-2 translate-x-1/2">
+        <div className="flex items-center gap-3 text-lg">
           <button
             onClick={() => {
               setSelectedItem(items);
               setShowCreate(true);
             }}
           >
-            <FaPencilAlt className="text-gray-500 hover:text-gray-700" />
+            <FaPencilAlt className="text-primary hover:text-primary/80" />
           </button>
           <button className="" onClick={() => setShowDelete(true)}>
-            <FaTrashAlt className="text-gray-500 hover:text-gray-700" />
+            <FaTrashAlt className="text-red-700 hover:text-red-900" />
           </button>
         </div>
-      </td>
+      </span>
       {showDelete && (
         <Delete
           setShowModal={setShowDelete}
@@ -128,7 +165,7 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
           disabled={disabled}
         />
       )}
-    </tr>
+    </div>
   );
 };
 

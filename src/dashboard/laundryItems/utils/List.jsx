@@ -17,17 +17,11 @@ export default function TableList({
       <div className="flex flex-col h-full">
         <div className="overflow-x-auto h-full">
           <div className="shadow h-full overflow-x-scroll md:overflow-hidden">
-            <table className="min-w-full border-collapse">
-              <TableHead
-                names={[
-                  "Name",
-                  "Action",
-                ]}
-                checkbox={false}
-              />
-              <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
-                {itemsToDisplay?.length === 0 ? (
-                  loading ? (
+            {itemsToDisplay?.length === 0 ? (
+              loading ? (
+                <table className="min-w-full border-collapse">
+                  <TableHead names={["Name", "Action"]} checkbox={false} />
+                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
                     <tr>
                       <td className="py-2" colSpan={9}>
                         <span className="mx-auto py-10 w-full flex justify-center text-center">
@@ -37,7 +31,12 @@ export default function TableList({
                         </span>
                       </td>
                     </tr>
-                  ) : (
+                  </tbody>
+                </table>
+              ) : (
+                <table className="min-w-full border-collapse">
+                  <TableHead names={["Name", "Action"]} checkbox={false} />
+                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
                     <tr>
                       <td className="py-2" colSpan={9}>
                         <span className="mx-auto text-[#B0B0B0] py-5 w-full flex justify-center text-center">
@@ -45,9 +44,12 @@ export default function TableList({
                         </span>
                       </td>
                     </tr>
-                  )
-                ) : (
-                  itemsToDisplay &&
+                  </tbody>
+                </table>
+              )
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center">
+                {itemsToDisplay &&
                   itemsToDisplay.map((tm, i) => {
                     return (
                       <List
@@ -58,10 +60,9 @@ export default function TableList({
                         setSelectedItem={setSelectedItem}
                       />
                     );
-                  })
-                )}
-              </tbody>
-            </table>
+                  })}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -77,7 +78,9 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
     setDisabled(true);
 
     try {
-      const response = await RequestService.delete(`/laundry-items/${items?.id}`);
+      const response = await RequestService.delete(
+        `/laundry-items/${items?.id}`,
+      );
 
       console.log(response);
       setShowDelete(false);
@@ -92,11 +95,10 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
   };
 
   return (
-    <tr className="h-fit">
-      <td className="px-3 py-4 text-sm">
-        {items?.name}
-      </td>
-      <td className="px-3 py-4 text-sm">
+    // only show buttons on hover of the list item
+    <div className="h-fit border rounded-lg hover:bg-gray-100 bg-white flex items-center justify-between group">
+      <span className="px-3 py-4 text-sm">{items?.name}</span>
+      <div className="px-3 py-4 text-sm group-hover:flex hidden">
         <div className="flex items-center gap-3">
           <button
             onClick={() => {
@@ -110,7 +112,7 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
             <FaTrashAlt className="text-gray-500 hover:text-gray-700" />
           </button>
         </div>
-      </td>
+      </div>
       {showDelete && (
         <Delete
           setShowModal={setShowDelete}
@@ -118,7 +120,7 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
           disabled={disabled}
         />
       )}
-    </tr>
+    </div>
   );
 };
 

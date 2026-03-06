@@ -15,14 +15,14 @@ export default function Index() {
   const [selectedItem, setSelectedItem] = useState();
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const [perPage, setPerPage] = useState(10);
+  const [perPage, setPerPage] = useState(30);
   const [currentPage, setCurrentPage] = useState(1);
   const [showCreate, setShowCreate] = useState(false);
   const [pagination, setPagination] = useState({
     total: 0,
     current_page: 1,
     last_page: 1,
-    per_page: 20,
+    per_page: 30,
   });
 
   const fetch = useCallback(async () => {
