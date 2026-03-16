@@ -106,6 +106,7 @@ export default function Sidebar() {
                   open={open}
                   showText={showText}
                   disable={disableSidebar}
+                  newTab={opt?.new}
                 />
               ))}
             </motion.div>
@@ -321,7 +322,7 @@ export default function Sidebar() {
   );
 }
 
-const Option = ({ title, href, icon, open, showText, disable }) => {
+const Option = ({ title, href, icon, open, showText, disable, newTab }) => {
   const dispatch = useDispatch();
   const isMobile = useIsMobile();
   return (
@@ -372,6 +373,11 @@ const Option = ({ title, href, icon, open, showText, disable }) => {
         >
           {title}
         </motion.span>
+      )}
+      {newTab && (showText || isMobile) && (
+        <span className="text-xs bg-primary text-white px-1.5 py-0.5 rounded-full">
+          New
+        </span>
       )}
     </NavLink>
   );

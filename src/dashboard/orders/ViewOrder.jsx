@@ -233,7 +233,7 @@ export default function ViewOrder() {
             placeholder="Search service item..."
             width={isMobile ? "w-full" : "w-1/3"}
           />
-          <div className="grid grid-cols-3 gap-5 max-h-[50vh] md:max-h-[80vh] overflow-y-auto">
+          <div className="grid grid-cols-3 gap-5 max-h-[50vh] md:max-h-[60vh] overflow-y-auto">
             {serviceItems
               .filter((si) =>
                 si.name.toLowerCase().includes(search.toLowerCase()),

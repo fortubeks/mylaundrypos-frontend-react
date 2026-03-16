@@ -39,11 +39,12 @@ export const navLinks = [
     name: "Reports",
     icon: <GrLineChart className='text-lg' />,
   },
-  // {
-  //   path: 'marketing',
-  //   name: 'Marketing',
-  //   icon: <FcSalesPerformance className='text-lg' />
-  // }
+  {
+    path: 'marketing',
+    name: 'Marketing',
+    icon: <FcSalesPerformance className='text-lg' />,
+    new: true,
+  }
 ];
 
 export const otherLinks = [

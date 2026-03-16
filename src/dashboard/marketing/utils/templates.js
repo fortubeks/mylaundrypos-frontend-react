@@ -1,0 +1,138 @@
+export const EMAIL_TEMPLATES = [
+  {
+    id: "welcome_back",
+    name: "We Miss You",
+    description: "Re-engage customers who haven't visited in a while",
+    accentColor: "#008aff",
+    headerBg: "linear-gradient(135deg, #008aff 0%, #0066cc 100%)",
+    icon: "👋",
+    defaults: {
+      subject: "We Miss You – Come Back for a Fresh Clean!",
+      title: "We Miss You!",
+      message:
+        "It's been a while since we last saw you. Come back and let us take care of your laundry. We promise to keep your clothes fresh, clean, and perfectly pressed.",
+      buttonText: "Book Now",
+    },
+    fields: [
+      { key: "subject", label: "Email Subject", type: "input" },
+      { key: "title", label: "Headline", type: "input" },
+      { key: "message", label: "Message", type: "textarea" },
+      { key: "buttonText", label: "Button Text", type: "input" },
+    ],
+  },
+  {
+    id: "special_offer",
+    name: "Special Offer",
+    description: "Share discounts and promotions with your customers",
+    accentColor: "#f59e0b",
+    headerBg: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)",
+    icon: "🏷️",
+    defaults: {
+      subject: "Exclusive Offer Just for You!",
+      offerBadge: "20% OFF",
+      title: "A Special Deal, Just for You!",
+      message:
+        "Enjoy this exclusive discount on your next laundry order. Valid for a limited time only — don't miss out on this amazing deal.",
+      buttonText: "Claim Offer",
+    },
+    fields: [
+      { key: "subject", label: "Email Subject", type: "input" },
+      { key: "offerBadge", label: "Offer Badge (e.g. 20% OFF)", type: "input" },
+      { key: "title", label: "Headline", type: "input" },
+      { key: "message", label: "Message", type: "textarea" },
+      { key: "buttonText", label: "Button Text", type: "input" },
+    ],
+  },
+  {
+    id: "seasonal",
+    name: "Seasonal Campaign",
+    description: "Run campaigns around seasons or special events",
+    accentColor: "#10b981",
+    headerBg: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+    icon: "🌿",
+    defaults: {
+      subject: "Fresh Start This Season!",
+      season: "This Season",
+      title: "Fresh Start This Season!",
+      message:
+        "Let us handle your seasonal cleaning needs. From duvets to curtains – we've got everything covered with care and attention to detail.",
+      buttonText: "Book Now",
+    },
+    fields: [
+      { key: "subject", label: "Email Subject", type: "input" },
+      { key: "season", label: "Season / Event", type: "input" },
+      { key: "title", label: "Headline", type: "input" },
+      { key: "message", label: "Message", type: "textarea" },
+      { key: "buttonText", label: "Button Text", type: "input" },
+    ],
+  },
+  {
+    id: "order_ready",
+    name: "Order Ready",
+    description: "Notify customers that their laundry is ready for pickup",
+    accentColor: "#8b5cf6",
+    headerBg: "linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)",
+    icon: "✅",
+    defaults: {
+      subject: "Your Laundry is Ready for Pickup!",
+      title: "Your Order is Ready!",
+      message:
+        "Great news! Your laundry is clean, pressed, and ready for pickup. Visit us at your convenience — we look forward to seeing you.",
+      pickupNote:
+        "Please bring your receipt or order ID when coming for pickup.",
+      buttonText: "View Order",
+    },
+    fields: [
+      { key: "subject", label: "Email Subject", type: "input" },
+      { key: "title", label: "Headline", type: "input" },
+      { key: "message", label: "Message", type: "textarea" },
+      { key: "pickupNote", label: "Pickup Note", type: "input" },
+      { key: "buttonText", label: "Button Text", type: "input" },
+    ],
+  },
+  {
+    id: "loyalty",
+    name: "Loyalty Reward",
+    description: "Appreciate and reward your most loyal customers",
+    accentColor: "#f43f5e",
+    headerBg: "linear-gradient(135deg, #f43f5e 0%, #e11d48 100%)",
+    icon: "⭐",
+    defaults: {
+      subject: "Thank You for Your Loyalty!",
+      title: "You're Amazing!",
+      message:
+        "You're one of our most valued customers. As a token of our appreciation, we have a special reward waiting just for you.",
+      reward: "One Free Express Wash",
+      buttonText: "Redeem Reward",
+    },
+    fields: [
+      { key: "subject", label: "Email Subject", type: "input" },
+      { key: "title", label: "Headline", type: "input" },
+      { key: "message", label: "Message", type: "textarea" },
+      { key: "reward", label: "Reward Text", type: "input" },
+      { key: "buttonText", label: "Button Text", type: "input" },
+    ],
+  },
+  {
+    id: "custom",
+    name: "Custom Template",
+    description: "Start from a blank canvas and write your own message",
+    accentColor: "#667eea",
+    headerBg: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    icon: "✏️",
+    defaults: {
+      subject: "",
+      accentColor: "#008aff",
+      title: "",
+      message: "",
+      buttonText: "Contact Us",
+    },
+    fields: [
+      { key: "subject", label: "Email Subject", type: "input" },
+      { key: "accentColor", label: "Brand Colour", type: "color" },
+      { key: "title", label: "Headline", type: "input" },
+      { key: "message", label: "Message", type: "textarea" },
+      { key: "buttonText", label: "Button Text", type: "input" },
+    ],
+  },
+];
