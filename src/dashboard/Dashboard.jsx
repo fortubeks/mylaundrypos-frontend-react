@@ -9,6 +9,17 @@ import { Logout } from "../utils/Logout";
 import { setShowSearch } from "../store/slices/generalSlice";
 import { useDispatch, useSelector } from "react-redux";
 
+function getTutorialStorageKey() {
+  try {
+    const auth = JSON.parse(localStorage.getItem("laundry::auth") || "{}");
+    return auth?.userId
+      ? `hasSeenTutorial:${auth.userId}`
+      : "hasSeenTutorial";
+  } catch {
+    return "hasSeenTutorial";
+  }
+}
+
 export default function Dashboard() {
   const idleTimerRef = useRef(null);
   const dispatch = useDispatch();
@@ -16,16 +27,16 @@ export default function Dashboard() {
   const search = useSelector((state) => state.general.showSearch);
 
   useEffect(() => {
-    const seen = localStorage.getItem("hasSeenTutorial");
+    const seen = localStorage.getItem(getTutorialStorageKey());
 
     if (!seen) {
       // setShowTutorial(true);
       dispatch(setShowSearch(true));
     }
-  }, []);
+  }, [dispatch]);
 
   const handleCloseTutorial = () => {
-    localStorage.setItem("hasSeenTutorial", "true");
+    localStorage.setItem(getTutorialStorageKey(), "true");
     // setShowTutorial(false);
     dispatch(setShowSearch(false));
   };

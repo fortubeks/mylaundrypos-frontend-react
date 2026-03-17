@@ -14,7 +14,9 @@ export async function Logout(msg) {
   keysToRemove.forEach((key) => storage.removeItem(key));
   toast.success(msg);
 
-  localStorage.clear();
+  ["laundry::auth", "::auth", "hiddenTime"].forEach((key) =>
+    localStorage.removeItem(key),
+  );
 
   window.history.replaceState(null, "", "/");
 

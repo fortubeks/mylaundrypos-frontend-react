@@ -5,6 +5,7 @@ import { Button } from "../../utils/Button";
 import toast from "../../utils/Toast";
 import { cleanUpErr, AuthService } from "../../services";
 import GoogleButton from "../GoogleButton";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function Create() {
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   // const validatePassword = (password) => {
   //   const errors = [];
@@ -46,6 +48,9 @@ export default function Create() {
       return toast.error("Password must be at least 5 characters long");
     if (password !== rePassword) return toast.error("Passwords do not match");
 
+    if (!captchaToken) {
+      return toast.error("Please verify you're not a robot.");
+    }
     setLoading(true);
     try {
       const register = await AuthService.register({
@@ -56,7 +61,9 @@ export default function Create() {
       });
       console.log(register);
 
-      localStorage.clear();
+      ["laundry::auth", "::auth", "hiddenTime"].forEach((key) =>
+        localStorage.removeItem(key),
+      );
 
       setLoading(false);
       toast.success("Registration Successful");
@@ -112,6 +119,11 @@ export default function Create() {
               value={phone}
               setValue={setPhone}
             />
+            <input
+              type="text"
+              name="company_name"
+              style={{ display: "none" }}
+            ></input>
             <div className="flex flex-col md:grid grid-cols-2 gap-5">
               <PasswordInput
                 name="Password"
@@ -126,6 +138,11 @@ export default function Create() {
                 setValue={setRePassword}
               />
             </div>
+            <Turnstile
+              siteKey={import.meta.env.VITE_API_TURNSTILE_SITE_KEY}
+              onSuccess={(token) => setCaptchaToken(token)}
+              onExpire={() => setCaptchaToken(null)}
+            />
             <div className="w-full flex flex-col gap-3 items-center justify-center mt-auto mb-4">
               <Button
                 name="Sign Up"

@@ -29,6 +29,12 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
         const response = await RequestService.get("/customers/countries");
         console.log(response);
         setCountries(response.data.data);
+        const nigeria = response.data.data.find(
+          (c) => c.name.toLowerCase() === "nigeria"
+        );
+        if (nigeria) {
+          setCountry(nigeria);
+        }
       } catch (error) {
         console.log(error);
         toast("Error fetching countries", "error");
@@ -63,10 +69,10 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     const fields = {
       title: "Title",
       firstName: "First Name",
-      lastName: "Last Name",
-      email: "Email",
+      // lastName: "Last Name",
+      // email: "Email",
       phone: "Phone",
-      address: "Address",
+      // address: "Address",
       state: "State",
       country: "Country",
     };
