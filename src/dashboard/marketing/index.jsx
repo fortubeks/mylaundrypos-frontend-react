@@ -271,7 +271,7 @@ function ChannelSelector({ channel, setChannel, onChannelChange }) {
           <button
             key={ch.id}
             onClick={() => onChannelChange(ch.id)}
-            disabled={ch.id !== "email"}
+            // disabled={ch.id !== "email"}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition-all
               disabled:cursor-not-allowed disabled:bg-[#F6F6F6] disabled:border-[#E0E0E0] disabled:text-[#999]
               ${
