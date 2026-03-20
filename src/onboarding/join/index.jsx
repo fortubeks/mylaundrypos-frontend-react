@@ -58,6 +58,7 @@ export default function Create() {
         password,
         name,
         phone,
+        captcha: captchaToken,
       });
       console.log(register);
 

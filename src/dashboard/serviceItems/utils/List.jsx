@@ -124,22 +124,22 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
       </div>
       <div className="flex items-center justify-between gap-3">
         <span className="">
-          <b>Category: </b>
+          <p className="font-semibold">Category: </p>
 
           {items?.category?.name || "N/A"}
         </span>
         <span className="">
-          <b>Laundry item: </b>
+          <p className="font-semibold">Laundry item: </p>
           {items?.laundry_item?.name || "N/A"}
         </span>
       </div>
       <div className="flex items-center justify-between gap-3">
         <span className="">
-          <b>Unit Type: </b>
+          <p className="font-semibold">Unit Type: </p>
           {items?.unit_type || "N/A"}
         </span>
         <span className="">
-          <b>Turnaround Time: </b>
+          <p className="font-semibold">Turnaround Time: </p>
           {items?.turnaround_time || "N/A"}
         </span>
       </div>
