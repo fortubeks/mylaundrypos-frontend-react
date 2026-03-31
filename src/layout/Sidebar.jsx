@@ -92,7 +92,7 @@ export default function Sidebar() {
           `}
         >
           <motion.div
-            className="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 mb-32"
+            className="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 md:mb-32"
             role="region"
             aria-labelledby="account-accordion"
           >
@@ -113,21 +113,19 @@ export default function Sidebar() {
           </motion.div>
         </motion.div>
 
-        <motion.div className={`space-y-2 mt-auto w-full py-3 relative`}>
+        <motion.div className={`space-y-2 md:mt-auto w-full py-3 relative`}>
           <button
-            className={`h-10 flex items-center gap-2 w-full hover:text-black cursor-pointer
-            hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
-              !showText ? "justify-center" : "justify-start"
-            } ${
-              disableSidebar
-                ? "pointer-events-none cursor-not-allowed text-[#939393]"
-                : ""
-            }`}
+            className={`bg-white text-black border border-[#E7E7E7] h-10 px-3 flex items-center gap-2 w-full rounded-[10px] transition-all duration-300 ease-in-out ${!showText && !isMobile ? "justify-center" : "justify-start"}
+                h-10 flex items-center gap-1 w-full text-[#292D32] hover:bg-white hover:text-black hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
+                  disableSidebar
+                    ? "pointer-events-none cursor-not-allowed text-[#939393]"
+                    : ""
+                } ${!showText && !isMobile ? "justify-center" : "justify-start"}`}
             onClick={() => dispatch(setShowSearch(true))}
             disabled={disableSidebar}
           >
             <FaVideo className="text-primary" />
-            {showText && (
+            {(showText || isMobile) && (
               <motion.span
                 layout
                 initial={{ opacity: 0, y: 12 }}

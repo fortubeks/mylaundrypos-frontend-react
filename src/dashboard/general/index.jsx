@@ -5,7 +5,7 @@ export function PopOut({ child, onClick }) {
       onClick={onClick} // Fires only if outside is clicked
     >
       <div
-        className="h-[60vh] overflow-y-scroll snap w-1/2 z-50 shadow-[4px_4px_20px_6px_#0000000D] rounded-[10px]"
+        className="h-[60vh] overflow-y-scroll snap w-full md:w-1/2 z-50 shadow-[4px_4px_20px_6px_#0000000D] rounded-[10px]"
         onClick={(e) => e.stopPropagation()} // Stops inner clicks
       >
         <div className="w-full h-full grow bg-white z-50 flex flex-col rounded-[10px]">

@@ -70,7 +70,7 @@ export default function TableList({
                 </table>
               )
             ) : (
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4 items-center">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
                 {itemsToDisplay &&
                   itemsToDisplay.map((tm, i) => {
                     return (
