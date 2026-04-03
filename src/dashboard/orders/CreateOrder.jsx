@@ -11,16 +11,19 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Search from "../../utils/Search";
 import { useIsMobile } from "../../utils/use-mobile";
 import { FaTrash } from "react-icons/fa";
+import { isBusinessInfoComplete } from "../../utils/businessInfoValidator";
 
 export default function CreateOrder() {
   const location = useLocation();
   const navigate = useNavigate();
   const { item } = location.state || {};
   const [showModal, setShowModal] = useState(false);
+  const [businessInfoModal, setBusinessInfoModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [customers, setCustomers] = useState([]);
   const [serviceItems, setServiceItems] = useState([]);
   const [search, setSearch] = useState("");
+  const [businessInfoComplete, setBusinessInfoComplete] = useState(true);
   const isMobile = useIsMobile();
 
   const [form, setForm] = useState({
@@ -81,6 +84,23 @@ export default function CreateOrder() {
     setForm((prev) => ({ ...prev, total_amount: total }));
   }, [form.items]);
 
+  // Check if business info is complete
+  useEffect(() => {
+    const checkBusinessInfo = async () => {
+      try {
+        const response = await RequestService.get("/user/settings");
+        const isComplete = isBusinessInfoComplete(response.data.data);
+        setBusinessInfoComplete(isComplete);
+        if (!isComplete) {
+          setBusinessInfoModal(true);
+        }
+      } catch (error) {
+        console.log("Error checking business info:", error);
+      }
+    };
+    checkBusinessInfo();
+  }, []);
+
   const fetch = async () => {
     try {
       const response = await RequestService.get("/customers");
@@ -138,6 +158,16 @@ export default function CreateOrder() {
       toast.error(errors[Object.keys(errors)[0]]);
       return;
     }
+
+    // Check business info before submitting
+    if (!businessInfoComplete) {
+      setBusinessInfoModal(true);
+      toast.error(
+        "Please complete your business information before creating orders",
+      );
+      return;
+    }
+
     setLoading(true);
     const payload = {
       // name: form.name,
@@ -168,6 +198,21 @@ export default function CreateOrder() {
       navigate("/dashboard/orders");
     } catch (error) {
       console.log(error);
+      // Check if error is due to incomplete business information
+      if (error?.response?.status === 422 || error?.response?.status === 403) {
+        const errorMessage = error?.response?.data?.message || "";
+        if (
+          errorMessage.toLowerCase().includes("business") ||
+          errorMessage.toLowerCase().includes("business information") ||
+          errorMessage.toLowerCase().includes("business details")
+        ) {
+          toast.error(
+            "Your business information is incomplete. Please complete it in settings before creating orders.",
+          );
+          setBusinessInfoModal(true);
+          return;
+        }
+      }
       cleanUpErr(error);
     } finally {
       setLoading(false);
@@ -367,6 +412,37 @@ export default function CreateOrder() {
         <Modal
           child={<CreateCustomer setShowModal={setShowModal} fetch={fetch} />}
         />
+      )}
+      {businessInfoModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[99999]">
+          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Complete Your Business Information
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Before you can create orders, please complete your business
+              information in the settings. This helps us provide you with better
+              service and ensure accurate order processing.
+            </p>
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setBusinessInfoModal(false);
+                  navigate("/dashboard/settings", { replace: true });
+                }}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg transition"
+              >
+                Go to Settings
+              </button>
+              <button
+                onClick={() => setBusinessInfoModal(false)}
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-lg transition"
+              >
+                Dismiss
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );

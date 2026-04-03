@@ -27,6 +27,8 @@ import {
   getInitialForm,
 } from "./utils/functions";
 import AddPayment from "./utils/AddPayment";
+import ReceiptModal from "./utils/ReceiptModal";
+import { FaPrint } from "react-icons/fa";
 
 export default function ViewOrder() {
   const navigate = useNavigate();
@@ -39,6 +41,8 @@ export default function ViewOrder() {
   const [serviceItems, setServiceItems] = useState([]);
   const [search, setSearch] = useState("");
   const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
+  const [showReceiptModal, setShowReceiptModal] = useState(false);
+  const [businessName, setBusinessName] = useState("LAUNDRY POS");
   const isMobile = useIsMobile();
 
   const isEditing = Boolean(params.id);
@@ -56,13 +60,18 @@ export default function ViewOrder() {
   useEffect(() => {
     const fetchDependencies = async () => {
       try {
-        const [customersRes, itemsRes] = await Promise.all([
+        const [customersRes, itemsRes, settingsRes] = await Promise.all([
           RequestService.get("/customers"),
           RequestService.get("/service-items"),
+          RequestService.get("/user/settings"),
         ]);
 
         setCustomers(customersRes.data.data.data);
         setServiceItems(itemsRes.data.data.data);
+        console.log(settingsRes.data.data);
+        if (settingsRes.data.data?.setting?.business_name) {
+          setBusinessName(settingsRes.data.data?.setting?.business_name);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -492,6 +501,15 @@ export default function ViewOrder() {
               onClick={() => setShowAddPaymentModal(true)}
               loading={loading}
             />
+            {isEditing && (
+              <button
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm font-medium"
+                onClick={() => setShowReceiptModal(true)}
+              >
+                <FaPrint size={16} />
+                Print Receipt
+              </button>
+            )}
           </div>
         </ComponentCard>
       </div>
@@ -509,6 +527,14 @@ export default function ViewOrder() {
               setShowModal={setShowAddPaymentModal}
             />
           }
+        />
+      )}
+      {showReceiptModal && (
+        <ReceiptModal
+          order={item}
+          customer={form.customer}
+          businessName={businessName}
+          onClose={() => setShowReceiptModal(false)}
         />
       )}
     </main>

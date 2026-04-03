@@ -14,6 +14,7 @@ export default function Create() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
+  const [referralSource, setReferralSource] = useState("");
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
 
@@ -58,6 +59,7 @@ export default function Create() {
         password,
         name,
         phone,
+        referral_source: referralSource || null,
         captcha: captchaToken,
       });
       console.log(register);
@@ -120,6 +122,23 @@ export default function Create() {
               value={phone}
               setValue={setPhone}
             />
+            <div className="flex flex-col gap-2 w-full">
+              <label htmlFor="referral_source" className="text-sm font-normal">
+                How did you find us? (Optional)
+              </label>
+              <select
+                value={referralSource}
+                onChange={(e) => setReferralSource(e.target.value)}
+                className="bg-inherit border border-[#E0E0E0] rounded-xl px-4 h-10 placeholder:text-[#9D9D9D] text-sm"
+              >
+                <option value="">Select an option...</option>
+                <option value="google_ads">Google Ads</option>
+                <option value="instagram">Instagram</option>
+                <option value="facebook">Facebook</option>
+                <option value="friend">From a Friend</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
             <input
               type="text"
               name="company_name"

@@ -5,11 +5,13 @@ import { FaPencilAlt } from "react-icons/fa";
 import { PopOut } from "../../general";
 import { Input } from "../../../utils/Input";
 import { Button, ButtonBorder } from "../../../utils/Button";
+import { isBusinessInfoComplete } from "../../../utils/businessInfoValidator";
 
-export default function StoreInfoCard() {
+export default function StoreInfoCard({ isFirstTime = false }) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [item, setItem] = useState({});
+  const [businessComplete, setBusinessComplete] = useState(true);
   const [data, setSettings] = useState({
     business_name: "",
     business_phone: "",
@@ -22,6 +24,8 @@ export default function StoreInfoCard() {
       const response = await RequestService.get("/user/settings");
       console.log(response);
       setSettings(response.data.data);
+      const isComplete = isBusinessInfoComplete(response.data.data);
+      setBusinessComplete(isComplete);
     } catch (error) {
       console.log(error);
     }
@@ -71,6 +75,23 @@ export default function StoreInfoCard() {
 
   return (
     <>
+      {(isFirstTime || !businessComplete) && (
+        <div className="w-full p-4 md:p-6 flex items-start gap-4 bg-red-50 border border-red-200 rounded-[20px]">
+          <div className="flex-1">
+            <h4 className="text-lg font-semibold text-red-900 mb-2">
+              ⚠️ Business Information Required
+            </h4>
+            <p className="text-red-800 mb-4">
+              {isFirstTime
+                ? "Welcome! To start creating orders, please complete your business information below."
+                : "Your business information is incomplete. Please fill in all required fields to continue using the system."}
+            </p>
+            <p className="text-sm text-red-700 font-medium">
+              Required fields: Business Name, Phone, Address, and Currency
+            </p>
+          </div>
+        </div>
+      )}
       <div className="w-full p-4 md:p-8 flex flex-col gap-4 border rounded-[20px]">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
           <div>
@@ -83,7 +104,9 @@ export default function StoreInfoCard() {
                 <p className="mb-2 text-xs leading-normal text-gray-500">
                   Business Name
                 </p>
-                <p className=" font-medium">
+                <p
+                  className={`font-medium ${!data?.setting?.business_name ? "text-red-600" : ""}`}
+                >
                   {data?.setting?.business_name || "N/A"}
                 </p>
               </div>
@@ -92,7 +115,9 @@ export default function StoreInfoCard() {
                 <p className="mb-2 text-xs leading-normal text-gray-500">
                   Business Phone
                 </p>
-                <p className=" font-medium">
+                <p
+                  className={`font-medium ${!data?.setting?.business_phone ? "text-red-600" : ""}`}
+                >
                   {data?.setting?.business_phone || "N/A"}
                 </p>
               </div>
@@ -101,7 +126,9 @@ export default function StoreInfoCard() {
                 <p className="mb-2 text-xs leading-normal text-gray-500">
                   Business Address
                 </p>
-                <p className=" font-medium">
+                <p
+                  className={`font-medium ${!data?.setting?.business_address ? "text-red-600" : ""}`}
+                >
                   {data?.setting?.business_address || "N/A"}
                 </p>
               </div>
@@ -110,7 +137,9 @@ export default function StoreInfoCard() {
                 <p className="mb-2 text-xs leading-normal text-gray-500">
                   Business Currency
                 </p>
-                <p className=" font-medium">
+                <p
+                  className={`font-medium ${!data?.setting?.business_currency ? "text-red-600" : ""}`}
+                >
                   {data?.setting?.business_currency || "N/A"}
                 </p>
               </div>

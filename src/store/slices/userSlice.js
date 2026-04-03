@@ -6,6 +6,7 @@ const initialState = {
   user: [],
   userInfo: [],
   setup: {},
+  businessInfoComplete: false,
   verified: false,
   message: "",
   error: "",
@@ -39,6 +40,9 @@ export const userSlice = createSlice({
     isVerified: (state, action) => {
       state.verified = action.payload;
     },
+    updateBusinessInfoComplete: (state, action) => {
+      state.businessInfoComplete = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(LOGOUT, () => initialState);
@@ -54,6 +58,7 @@ export const {
   isError,
   isLoading,
   isVerified,
+  updateBusinessInfoComplete,
 } = userSlice.actions;
 
 export default userSlice.reducer;

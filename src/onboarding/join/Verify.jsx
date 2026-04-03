@@ -4,12 +4,12 @@ import OTPInput, { ResendOTP } from "otp-input-react";
 import React, { useState } from "react";
 import toast from "../../utils/Toast";
 import { AuthService, cleanUpErr } from "../../services";
-import { useIsMobile } from '../../utils/use-mobile';
+import { useIsMobile } from "../../utils/use-mobile";
 
 export default function Verify() {
   const navigate = useNavigate();
   const location = useLocation();
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(false);
   const [resendKey, setResendKey] = useState(0);
   const [otp, setOtp] = useState("");
@@ -39,7 +39,22 @@ export default function Verify() {
       const response = await AuthService.verifyEmail({ email, otp });
       console.log("Verification response:", response);
       toast.success("Email verified successfully!");
-      navigate("/login", { state: { name, email } });
+      // Store that user just verified and redirect to settings
+      localStorage.setItem(
+        "laundry::auth",
+        JSON.stringify({
+          token: response?.data?.data?.token,
+          userId: response?.data?.data?.user?.id,
+        }),
+      );
+      navigate("/dashboard/settings", {
+        state: {
+          from: "verification",
+          name,
+          email,
+        },
+        replace: true,
+      });
     } catch (error) {
       console.error("Error verifying email:", error);
       if (error?.response?.data?.errors) {
