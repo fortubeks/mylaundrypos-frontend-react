@@ -15,6 +15,7 @@ import FPEmail from "./onboarding/signin/FPEmail";
 import FPNewPassword from "./onboarding/signin/FPNewPassword";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
+import SubscribedRoute from "./SubscribedRoute";
 import Dashboard from "./dashboard/Dashboard";
 import DashboardHome from "./dashboard/home";
 import Customers from "./dashboard/customers";
@@ -25,6 +26,8 @@ import CreateOrder from "./dashboard/orders/CreateOrder";
 import Settings from "./dashboard/settings";
 import Marketing from "./dashboard/marketing";
 import ViewOrder from "./dashboard/orders/ViewOrder";
+import Pricing from "./dashboard/pricing";
+import Reports from "./dashboard/reports";
 
 const router = createBrowserRouter([
   {
@@ -125,8 +128,24 @@ const router = createBrowserRouter([
         element: <Settings />,
       },
       {
+        path: "pricing",
+        element: <Pricing />,
+      },
+      {
+        path: "reports",
+        element: (
+          <SubscribedRoute>
+            <Reports />
+          </SubscribedRoute>
+        ),
+      },
+      {
         path: "marketing",
-        element: <Marketing />,
+        element: (
+          <SubscribedRoute>
+            <Marketing />
+          </SubscribedRoute>
+        ),
       },
     ],
   },

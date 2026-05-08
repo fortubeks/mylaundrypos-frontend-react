@@ -11,6 +11,8 @@ const initialState = {
   message: "",
   error: "",
   loading: false,
+  subscription: null, // { plan, status, has_premium, is_active, ends_at }
+  subscriptionLoading: false,
 };
 export const userSlice = createSlice({
   name: "user",
@@ -43,6 +45,12 @@ export const userSlice = createSlice({
     updateBusinessInfoComplete: (state, action) => {
       state.businessInfoComplete = action.payload;
     },
+    updateSubscription: (state, action) => {
+      state.subscription = action.payload;
+    },
+    setSubscriptionLoading: (state, action) => {
+      state.subscriptionLoading = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(LOGOUT, () => initialState);
@@ -59,6 +67,8 @@ export const {
   isLoading,
   isVerified,
   updateBusinessInfoComplete,
+  updateSubscription,
+  setSubscriptionLoading,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -15,7 +15,7 @@ import { setShowSearch, setSidebar } from "../store/slices/generalSlice";
 import { useEffect, useRef, useState } from "react";
 import { Logout } from "../utils/Logout";
 import { useIsMobile } from "../utils/use-mobile";
-import { FaVideo } from "react-icons/fa";
+import { FaVideo, FaLock } from "react-icons/fa";
 
 export default function Sidebar() {
   // const [open, setOpen] = useState(true);
@@ -23,6 +23,8 @@ export default function Sidebar() {
   const navigate = useNavigate();
   const open = useSelector((state) => state.general.sidebar);
   const user = useSelector((state) => state.user.user);
+  const subscription = useSelector((state) => state.user.subscription);
+  const hasPremium = subscription?.has_premium ?? false;
   const disableSidebar = useSelector((state) => state.general.disableSidebar);
   const profileMenuItems = getProfileMenuItems(dispatch);
   const isMobile = useIsMobile();
@@ -107,6 +109,8 @@ export default function Sidebar() {
                   showText={showText}
                   disable={disableSidebar}
                   newTab={opt?.new}
+                  requiresSubscription={opt?.requiresSubscription}
+                  hasPremium={hasPremium}
                 />
               ))}
             </motion.div>
@@ -141,6 +145,37 @@ export default function Sidebar() {
             const isProfileLink =
               opt.name.toLowerCase().includes("profile") ||
               opt.path.includes("profile");
+
+            // Hide "Upgrade to Pro" link when user already has premium
+            if (opt.proLink && hasPremium) return null;
+
+            // Render the "Upgrade to Pro" link as a styled NavLink
+            if (opt.proLink) {
+              return (
+                <NavLink
+                  key={i}
+                  to={`/dashboard/${opt.path}`}
+                  className={({ isActive }) =>
+                    `h-10 flex items-center gap-2 w-full rounded-lg px-3 transition-all duration-300 ease-in-out text-yellow-600 hover:bg-yellow-50 ${
+                      isActive ? "bg-yellow-50 font-semibold" : ""
+                    } ${!showText && !isMobile ? "justify-center" : "justify-start"}`
+                  }
+                >
+                  {opt.icon}
+                  {(showText || isMobile) && (
+                    <motion.span
+                      layout
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25 }}
+                      className="text-sm font-semibold truncate"
+                    >
+                      {opt?.name}
+                    </motion.span>
+                  )}
+                </NavLink>
+              );
+            }
 
             if (isProfileLink) {
               return (
@@ -320,9 +355,56 @@ export default function Sidebar() {
   );
 }
 
-const Option = ({ title, href, icon, open, showText, disable, newTab }) => {
+const Option = ({
+  title,
+  href,
+  icon,
+  open,
+  showText,
+  disable,
+  newTab,
+  requiresSubscription,
+  hasPremium,
+}) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const locked = requiresSubscription && !hasPremium;
+
+  if (locked) {
+    return (
+      <button
+        onClick={() => {
+          if (isMobile) dispatch(setSidebar(!open));
+          navigate("/dashboard/pricing");
+        }}
+        className={`h-10 flex items-center gap-2 w-full text-[#999] hover:bg-white hover:text-black hover:rounded-lg hover:px-3 transition-all duration-300 ease-in-out ${
+          !showText && !isMobile ? "justify-center px-1" : "justify-start px-3"
+        }`}
+        title="Upgrade to Pro to unlock"
+      >
+        {icon}
+        {(showText || isMobile) && (
+          <motion.span
+            layout
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="truncate flex items-center gap-1"
+          >
+            {title}
+            <FaLock className="text-xs ml-1 text-[#bbb]" />
+          </motion.span>
+        )}
+        {newTab && (showText || isMobile) && (
+          <span className="text-xs bg-[#E5E5E5] text-[#999] px-1.5 py-0.5 rounded-full">
+            Pro
+          </span>
+        )}
+      </button>
+    );
+  }
+
   return (
     <NavLink
       to={`/dashboard/${href}`}

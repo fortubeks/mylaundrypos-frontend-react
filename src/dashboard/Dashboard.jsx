@@ -8,13 +8,16 @@ import { useIdleTimer } from "react-idle-timer";
 import { Logout } from "../utils/Logout";
 import { setShowSearch } from "../store/slices/generalSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { SubscriptionService } from "../services";
+import {
+  updateSubscription,
+  setSubscriptionLoading,
+} from "../store/slices/userSlice";
 
 function getTutorialStorageKey() {
   try {
     const auth = JSON.parse(localStorage.getItem("laundry::auth") || "{}");
-    return auth?.userId
-      ? `hasSeenTutorial:${auth.userId}`
-      : "hasSeenTutorial";
+    return auth?.userId ? `hasSeenTutorial:${auth.userId}` : "hasSeenTutorial";
   } catch {
     return "hasSeenTutorial";
   }
@@ -25,6 +28,18 @@ export default function Dashboard() {
   const dispatch = useDispatch();
   // const [showTutorial, setShowTutorial] = useState(false);
   const search = useSelector((state) => state.general.showSearch);
+  const subscription = useSelector((state) => state.user.subscription);
+
+  // Fetch subscription status once on mount (if not already loaded)
+  useEffect(() => {
+    if (subscription === null) {
+      dispatch(setSubscriptionLoading(true));
+      SubscriptionService.getStatus()
+        .then((data) => dispatch(updateSubscription(data)))
+        .catch(() => {})
+        .finally(() => dispatch(setSubscriptionLoading(false)));
+    }
+  }, [dispatch, subscription]);
 
   useEffect(() => {
     const seen = localStorage.getItem(getTutorialStorageKey());

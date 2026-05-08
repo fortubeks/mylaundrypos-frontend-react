@@ -7,44 +7,47 @@ import { IoIosCard } from "react-icons/io";
 import { GrLineChart } from "react-icons/gr";
 import { MdOutlinePointOfSale } from "react-icons/md";
 import { FcSalesPerformance } from "react-icons/fc";
+import { RiVipCrownLine } from "react-icons/ri";
 
 export const navLinks = [
   {
     path: "dashboard",
     name: "Dashboard",
-    icon: <MdDashboard className='text-lg' />,
+    icon: <MdDashboard className="text-lg" />,
   },
   {
     path: "customers",
     name: "Customers",
-    icon: <FaUsers className='text-lg' />,
+    icon: <FaUsers className="text-lg" />,
   },
   {
     path: "orders",
     name: "Orders",
-    icon: <MdOutlinePointOfSale className='text-lg' />,
+    icon: <MdOutlinePointOfSale className="text-lg" />,
   },
   {
     path: "laundry-items",
     name: "Laundry Items",
-    icon: <IoPricetag className='text-lg' />,
+    icon: <IoPricetag className="text-lg" />,
   },
   {
     path: "service-items",
     name: "Service Items",
-    icon: <IoIosCard className='text-lg' />,
+    icon: <IoIosCard className="text-lg" />,
   },
   {
     path: "reports",
     name: "Reports",
-    icon: <GrLineChart className='text-lg' />,
+    icon: <GrLineChart className="text-lg" />,
+    requiresSubscription: true,
   },
   {
-    path: 'marketing',
-    name: 'Marketing',
-    icon: <FcSalesPerformance className='text-lg' />,
+    path: "marketing",
+    name: "Marketing",
+    icon: <FcSalesPerformance className="text-lg" />,
     new: true,
-  }
+    requiresSubscription: true,
+  },
 ];
 
 export const otherLinks = [
@@ -52,6 +55,12 @@ export const otherLinks = [
     path: "settings",
     name: "Settings",
     icon: <img src={settings} alt="settings" className="object-contain" />,
+  },
+  {
+    path: "pricing",
+    name: "Upgrade to Pro",
+    icon: <RiVipCrownLine className="text-lg text-yellow-500" />,
+    proLink: true,
   },
   // {
   //   path: "help-center",
