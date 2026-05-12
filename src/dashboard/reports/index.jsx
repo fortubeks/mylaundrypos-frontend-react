@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import TabHead from "../../utils/TabHead";
 import Filter from "../../utils/Filter";
 import { BarLoader } from "../../utils/Loader";
 import { cleanUpErr, RequestService } from "../../services";
@@ -607,9 +606,9 @@ export default function Reports() {
 
   return (
     <div className="flex flex-col h-full overflow-y-auto">
-      <TabHead name="Reports & Insights">
+      <div className="px-4 py-2 flex items-center justify-end border-b border-[#EFEFEF]">
         <Filter items={PERIODS} selected={period} setSelected={setPeriod} />
-      </TabHead>
+      </div>
 
       {summaryLoading && !summary ? (
         <BarLoader />

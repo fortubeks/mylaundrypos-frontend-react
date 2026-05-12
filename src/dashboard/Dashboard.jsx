@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import Sidebar from "../layout/Sidebar";
-// import TopBar from "../layout/TopBar";
+import TopBar from "../layout/TopBar";
 import { PopOut } from "./general";
 // import Notification from "./general/Notification";
 import { useCallback, useEffect, useRef } from "react";
@@ -100,7 +100,7 @@ export default function Dashboard() {
     <main className="flex h-screen overflow-hidden bg-[#F9F8F8]">
       <Sidebar />
       <section className="overflow-y-hidden overflow-x-hidden min-h-full h-full grow w-full flex flex-col gap-1.5 transition-all ease-in-out duration-500">
-        {/* <TopBar /> */}
+        <TopBar />
         <section className={`grow h-full bg-white overflow-hidden `}>
           <Outlet />
         </section>

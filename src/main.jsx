@@ -8,7 +8,7 @@ import { persistStore } from "redux-persist";
 import { store } from "./store/store.js";
 import TimeAgo from "javascript-time-ago";
 
-import en from "javascript-time-ago/locale/en.json";
+import en from "javascript-time-ago/locale/en";
 import { ToastProvider } from "./utils/Toast.jsx";
 
 TimeAgo.addDefaultLocale(en);
@@ -24,5 +24,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </ToastProvider>
       </PersistGate>
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );

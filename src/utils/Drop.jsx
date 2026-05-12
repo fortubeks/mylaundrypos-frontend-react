@@ -7,7 +7,11 @@ import {
 
 export default function Drop({ Main, Dropdown }) {
   const [open, setOpen] = useState(false);
-c
+  const triggerRef = useRef(null);
+  const dropdownRef = useRef(null);
+  const Portal = usePortal();
+  const { style } = useDropdownPosition({ open, triggerRef, dropdownRef });
+
   return (
     <div
       ref={triggerRef}

@@ -1,15 +1,20 @@
-import TabHead from "../../utils/TabHead";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import toast from "../../utils/Toast";
-import { Input } from "../../utils/Input";
 import { ButtonPrimary } from "../../utils/Button";
 import { RequestService } from "../../services";
 import { useSelector } from "react-redux";
 import { EMAIL_TEMPLATES } from "./utils/templates";
 import TemplatePreview from "./utils/TemplatePreview";
 import CustomerSelect from "./utils/CustomerSelect";
+import PastCampaigns from "./utils/PastCampaigns";
+import {
+  RiAddLine,
+  RiArrowLeftLine,
+  RiLayoutGridLine,
+  RiListUnordered,
+} from "react-icons/ri";
 
-/* ── Step indicator ── */
+/* ── Step indicator ───────────────────────────────────────────────────── */
 function StepBadge({ step, label, active, done }) {
   return (
     <div className="flex items-center gap-2">
@@ -36,9 +41,7 @@ function StepDivider({ done }) {
   );
 }
 
-/* ────────────────────────────────────────────────
-   STEP 1 — Choose a template
-   ──────────────────────────────────────────────── */
+/* ── STEP 1 — Choose template ─────────────────────────────────────────── */
 function StepChooseTemplate({
   selectedTemplate,
   setSelectedTemplate,
@@ -65,7 +68,6 @@ function StepChooseTemplate({
               className={`text-left rounded-2xl border-2 transition-all overflow-hidden
                 ${isSelected ? "border-primary shadow-md" : "border-[#EFEFEF] hover:border-[#c8d8ff]"}`}
             >
-              {/* Thumbnail */}
               <div
                 className="bg-[#F6F6F6] flex items-center justify-center overflow-hidden"
                 style={{ height: 160 }}
@@ -77,8 +79,6 @@ function StepChooseTemplate({
                   thumbnail
                 />
               </div>
-
-              {/* Info */}
               <div className="p-3 flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <span className="text-base">{tpl.icon}</span>
@@ -111,20 +111,19 @@ function StepChooseTemplate({
   );
 }
 
-/* ────────────────────────────────────────────────
-   STEP 2 — Edit content + live preview
-   ──────────────────────────────────────────────── */
+/* ── STEP 2 — Edit content + live preview ─────────────────────────────── */
 function StepEditContent({
   template,
   content,
   setContent,
+  campaignName,
+  setCampaignName,
   businessName,
   onBack,
   onNext,
 }) {
-  const handleChange = (key, value) => {
+  const handleChange = (key, value) =>
     setContent((prev) => ({ ...prev, [key]: value }));
-  };
 
   const activeColor = content.accentColor ?? template.accentColor;
 
@@ -133,14 +132,29 @@ function StepEditContent({
       <div>
         <h4 className="font-semibold text-base mb-1">Edit Your Message</h4>
         <p className="text-sm text-[#959595]">
-          Customise the content below. The preview on the right updates as you
-          type.
+          Customise the content below. The preview updates as you type.
         </p>
       </div>
 
       <div className="flex flex-col xl:grid grid-cols-2 gap-6">
         {/* Left — fields */}
         <div className="flex flex-col gap-4">
+          {/* Campaign name field */}
+          <label className="flex flex-col gap-1">
+            <span className="text-sm font-medium">
+              Campaign Name{" "}
+              <span className="text-[#999] font-normal">(optional)</span>
+            </span>
+            <input
+              type="text"
+              value={campaignName}
+              onChange={(e) => setCampaignName(e.target.value)}
+              placeholder={`e.g. May ${template.name} Campaign`}
+              className="w-full bg-[#F6F6F6] rounded-xl outline-none p-3 text-sm"
+            />
+          </label>
+
+          {/* Template-specific fields */}
           {template.fields.map((field) => (
             <label key={field.key} className="flex flex-col gap-1">
               <span className="text-sm font-medium">{field.label}</span>
@@ -164,9 +178,11 @@ function StepEditContent({
                   </span>
                 </div>
               ) : (
-                <Input
-                  selected={content[field.key] ?? ""}
-                  setSelected={(v) => handleChange(field.key, v)}
+                <input
+                  type="text"
+                  value={content[field.key] ?? ""}
+                  onChange={(e) => handleChange(field.key, e.target.value)}
+                  className="w-full bg-[#F6F6F6] rounded-xl outline-none p-3 text-sm"
                 />
               )}
             </label>
@@ -216,9 +232,7 @@ function StepEditContent({
   );
 }
 
-/* ────────────────────────────────────────────────
-   WhatsApp bubble preview
-   ──────────────────────────────────────────────── */
+/* ── WhatsApp bubble preview ──────────────────────────────────────────── */
 function WhatsAppBubble({ content, businessName }) {
   const parts = [
     content.title && `*${content.title}*`,
@@ -253,16 +267,14 @@ function WhatsAppBubble({ content, businessName }) {
   );
 }
 
-/* ────────────────────────────────────────────────
-   Channel selector pill tabs
-   ──────────────────────────────────────────────── */
+/* ── Channel selector ─────────────────────────────────────────────────── */
 const CHANNELS = [
   { id: "email", label: "Email", icon: "📧" },
   { id: "whatsapp", label: "WhatsApp", icon: "💬" },
   { id: "both", label: "Both", icon: "📧💬" },
 ];
 
-function ChannelSelector({ channel, setChannel, onChannelChange }) {
+function ChannelSelector({ channel, onChannelChange }) {
   return (
     <div className="flex flex-col gap-2">
       <span className="text-sm font-medium">Send via</span>
@@ -271,9 +283,7 @@ function ChannelSelector({ channel, setChannel, onChannelChange }) {
           <button
             key={ch.id}
             onClick={() => onChannelChange(ch.id)}
-            // disabled={ch.id !== "email"}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium border transition-all
-              disabled:cursor-not-allowed disabled:bg-[#F6F6F6] disabled:border-[#E0E0E0] disabled:text-[#999]
               ${
                 channel === ch.id
                   ? "bg-primary text-white border-primary"
@@ -289,9 +299,7 @@ function ChannelSelector({ channel, setChannel, onChannelChange }) {
   );
 }
 
-/* ────────────────────────────────────────────────
-   STEP 3 — Select recipients & send
-   ──────────────────────────────────────────────── */
+/* ── STEP 3 — Select recipients & send ───────────────────────────────── */
 function StepSendEmail({
   template,
   content,
@@ -313,10 +321,10 @@ function StepSendEmail({
 
   const readyMsg =
     channel === "email"
-      ? `📬\u00a0Sending email to`
+      ? "📬\u00a0Sending email to"
       : channel === "whatsapp"
-        ? `💬\u00a0Sending WhatsApp to`
-        : `📧💬\u00a0Sending to`;
+        ? "💬\u00a0Sending WhatsApp to"
+        : "📧💬\u00a0Sending to";
 
   return (
     <div className="flex flex-col gap-5">
@@ -330,7 +338,6 @@ function StepSendEmail({
         </p>
       </div>
 
-      {/* Channel selector */}
       <ChannelSelector channel={channel} onChannelChange={onChannelChange} />
 
       <div className="flex flex-col xl:grid grid-cols-2 gap-6">
@@ -341,7 +348,6 @@ function StepSendEmail({
             setSelectedIds={setSelectedIds}
             channel={channel}
           />
-
           {selectedIds.length > 0 && (
             <div className="rounded-xl bg-[#F0F7FF] border border-[#d0e8ff] p-3 text-sm text-primary">
               {readyMsg} <strong>{selectedIds.length}</strong> customer
@@ -373,7 +379,6 @@ function StepSendEmail({
             </div>
           </div>
 
-          {/* Email thumbnail — hidden for whatsapp-only */}
           {channel !== "whatsapp" && (
             <div className="border border-[#EFEFEF] rounded-2xl overflow-hidden bg-[#F6F6F6] hidden xl:block">
               <div className="overflow-hidden" style={{ height: 220 }}>
@@ -395,7 +400,6 @@ function StepSendEmail({
             </div>
           )}
 
-          {/* WhatsApp bubble — shown for whatsapp or both */}
           {channel !== "email" && (
             <WhatsAppBubble content={content} businessName={businessName} />
           )}
@@ -420,35 +424,27 @@ function StepSendEmail({
   );
 }
 
-/* ────────────────────────────────────────────────
-   Main page
-   ──────────────────────────────────────────────── */
-export default function Index() {
-  const user = useSelector((state) => state.user.user);
-  const businessName =
-    user?.app_settings?.business_name || user?.name || "Your Laundry";
+/* ── Campaign wizard ──────────────────────────────────────────────────── */
+const STEPS = [
+  { label: "Choose Template" },
+  { label: "Edit Content" },
+  { label: "Send" },
+];
 
-  const [step, setStep] = useState(1); // 1 | 2 | 3
-
-  /* Template selection */
+function CampaignWizard({ businessName, onCancel, onSent }) {
+  const [step, setStep] = useState(1);
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-
-  /* Editable content (populated from template defaults on selection) */
   const [content, setContent] = useState({});
-
-  /* Customer selection */
+  const [campaignName, setCampaignName] = useState("");
   const [selectedIds, setSelectedIds] = useState([]);
-
   const [sending, setSending] = useState(false);
-  const [channel, setChannel] = useState("email"); // 'email' | 'whatsapp' | 'both'
+  const [channel, setChannel] = useState("email");
 
-  /* Clear selection when channel changes (different customers might be eligible) */
   const handleChannelChange = (ch) => {
     setChannel(ch);
     setSelectedIds([]);
   };
 
-  /* When a template is selected, prefill content with its defaults */
   const handleSelectTemplate = (tpl) => {
     setSelectedTemplate(tpl);
     setContent({ ...tpl.defaults });
@@ -461,52 +457,52 @@ export default function Index() {
     }
     setSending(true);
     try {
+      const name =
+        campaignName.trim() ||
+        `${selectedTemplate.name} — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+
       await RequestService.post("/marketing/send", {
+        name,
         template_id: selectedTemplate.id,
+        template_name: selectedTemplate.name,
+        template_icon: selectedTemplate.icon,
         content,
-        customer_ids: selectedIds,
         channel,
+        customer_ids: selectedIds,
+        recipient_count: selectedIds.length,
       });
+
       const channelLabel =
         channel === "email"
-          ? "email"
+          ? "Email"
           : channel === "whatsapp"
             ? "WhatsApp"
-            : "email & WhatsApp";
+            : "Email & WhatsApp";
       toast.success(
-        `${channelLabel.charAt(0).toUpperCase() + channelLabel.slice(1)} sent to ${selectedIds.length} customer${
-          selectedIds.length > 1 ? "s" : ""
-        }!`,
+        `${channelLabel} sent to ${selectedIds.length} customer${selectedIds.length > 1 ? "s" : ""}!`,
       );
-      /* Reset */
-      setStep(1);
-      setSelectedTemplate(null);
-      setContent({});
-      setSelectedIds([]);
-      setChannel("email");
+      onSent();
     } catch (err) {
       toast.error(
-        err?.response?.data?.message ||
-          "Failed to send email. Please try again.",
+        err?.response?.data?.message || "Failed to send. Please try again.",
       );
     } finally {
       setSending(false);
     }
   };
 
-  const STEPS = [
-    { label: "Choose Template" },
-    { label: "Edit Content" },
-    { label: "Send" },
-  ];
-
   return (
-    <div className="w-full h-full flex flex-col bg-white rounded-[20px] overflow-hidden">
-      <TabHead name="Email Marketing" size="14px" />
-
-      {/* Step indicator */}
-      <div className="px-5 py-4 border-b border-[#EFEFEF] bg-[#FAFAFA]">
-        <div className="flex items-center max-w-md">
+    <div className="flex flex-col h-full">
+      {/* Wizard header */}
+      <div className="px-5 py-4 border-b border-[#EFEFEF] bg-[#FAFAFA] flex items-center gap-4">
+        <button
+          onClick={onCancel}
+          className="flex items-center gap-1.5 text-sm text-[#959595] hover:text-[#201B1D] transition-colors"
+        >
+          <RiArrowLeftLine />
+          Back to campaigns
+        </button>
+        <div className="flex items-center flex-1 max-w-md ml-auto">
           {STEPS.map((s, i) => (
             <div key={i} className="flex items-center flex-1 last:flex-none">
               <StepBadge
@@ -521,7 +517,7 @@ export default function Index() {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Wizard content */}
       <div className="flex-1 overflow-y-auto p-5">
         {step === 1 && (
           <StepChooseTemplate
@@ -543,6 +539,291 @@ export default function Index() {
             template={selectedTemplate}
             content={content}
             setContent={setContent}
+            campaignName={campaignName}
+            setCampaignName={setCampaignName}
+            businessName={businessName}
+            onBack={() => setStep(1)}
+            onNext={() => setStep(3)}
+          />
+        )}
+
+        {step === 3 && selectedTemplate && (
+          <StepSendEmail
+            template={selectedTemplate}
+            content={content}
+            businessName={businessName}
+            channel={channel}
+            onChannelChange={handleChannelChange}
+            selectedIds={selectedIds}
+            setSelectedIds={setSelectedIds}
+            onBack={() => setStep(2)}
+            onSend={handleSend}
+            sending={sending}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Main page ────────────────────────────────────────────────────────── */
+export default function Index() {
+  const user = useSelector((state) => state.user.user);
+  const businessName =
+    user?.app_settings?.business_name || user?.name || "Your Laundry";
+
+  const [showWizard, setShowWizard] = useState(false);
+  const [viewMode, setViewMode] = useState("list");
+  const [campaigns, setCampaigns] = useState([]);
+  const [campaignsLoading, setCampaignsLoading] = useState(false);
+
+  /* Reuse state — passed into wizard when reusing */
+  const [reuseData, setReuseData] = useState(null);
+
+  const fetchCampaigns = useCallback(async () => {
+    setCampaignsLoading(true);
+    try {
+      const res = await RequestService.get("/marketing/campaigns");
+      setCampaigns(res.data.data || []);
+    } catch {
+      /* silent */
+    } finally {
+      setCampaignsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, [fetchCampaigns]);
+
+  const handleReuse = (campaign) => {
+    const tpl = EMAIL_TEMPLATES.find((t) => t.id === campaign.template_id);
+    if (!tpl) {
+      toast.error("Template no longer available.");
+      return;
+    }
+    setReuseData({ tpl, campaign });
+    setShowWizard(true);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await RequestService.delete(`/marketing/campaigns/${id}`);
+      setCampaigns((prev) => prev.filter((c) => c.id !== id));
+    } catch {
+      toast.error("Could not delete campaign.");
+    }
+  };
+
+  const handleSent = () => {
+    setShowWizard(false);
+    setReuseData(null);
+    fetchCampaigns();
+  };
+
+  /* ── Wizard view ── */
+  if (showWizard) {
+    return (
+      <div className="w-full h-full flex flex-col bg-white rounded-[20px] overflow-hidden">
+        <ReuseAwareCampaignWizard
+          businessName={businessName}
+          reuseData={reuseData}
+          onCancel={() => {
+            setShowWizard(false);
+            setReuseData(null);
+          }}
+          onSent={handleSent}
+        />
+      </div>
+    );
+  }
+
+  /* ── Campaigns list view ── */
+  return (
+    <div className="w-full h-full flex flex-col bg-white rounded-[20px] overflow-hidden">
+      {/* Page header */}
+      <div className="px-5 py-4 border-b border-[#EFEFEF] flex items-center justify-between">
+        <div>
+          <h3 className="font-semibold text-[#201B1D]">Campaigns</h3>
+          <p className="text-xs text-[#959595] mt-0.5">
+            Send emails & WhatsApp messages to your customers
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          {/* View toggle */}
+          <div className="flex items-center border border-[#EFEFEF] rounded-xl overflow-hidden">
+            <button
+              onClick={() => setViewMode("list")}
+              title="List view"
+              className={`w-9 h-9 flex items-center justify-center transition-colors ${
+                viewMode === "list"
+                  ? "bg-primary text-white"
+                  : "text-[#999] hover:text-[#555] hover:bg-[#F5F5F5]"
+              }`}
+            >
+              <RiListUnordered className="text-base" />
+            </button>
+            <button
+              onClick={() => setViewMode("grid")}
+              title="Grid view"
+              className={`w-9 h-9 flex items-center justify-center transition-colors ${
+                viewMode === "grid"
+                  ? "bg-primary text-white"
+                  : "text-[#999] hover:text-[#555] hover:bg-[#F5F5F5]"
+              }`}
+            >
+              <RiLayoutGridLine className="text-base" />
+            </button>
+          </div>
+
+          <button
+            onClick={() => setShowWizard(true)}
+            className="flex items-center gap-2 px-4 py-2.5 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition-colors"
+          >
+            <RiAddLine className="text-base" />
+            Create Campaign
+          </button>
+        </div>
+      </div>
+
+      {/* Campaign list */}
+      <div className="flex-1 overflow-y-auto p-5">
+        <PastCampaigns
+          campaigns={campaigns}
+          loading={campaignsLoading}
+          viewMode={viewMode}
+          onReuse={handleReuse}
+          onDelete={handleDelete}
+        />
+      </div>
+    </div>
+  );
+}
+
+/* ── Wrapper that injects reuse data into the wizard ─────────────────── */
+function ReuseAwareCampaignWizard({
+  businessName,
+  reuseData,
+  onCancel,
+  onSent,
+}) {
+  const [step, setStep] = useState(reuseData ? 2 : 1);
+  const [selectedTemplate, setSelectedTemplate] = useState(
+    reuseData?.tpl ?? null,
+  );
+  const [content, setContent] = useState(
+    reuseData ? { ...reuseData.campaign.content } : {},
+  );
+  const [campaignName, setCampaignName] = useState(
+    reuseData?.campaign?.name ? `Copy of ${reuseData.campaign.name}` : "",
+  );
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [sending, setSending] = useState(false);
+  const [channel, setChannel] = useState(
+    reuseData?.campaign?.channel ?? "email",
+  );
+
+  const handleChannelChange = (ch) => {
+    setChannel(ch);
+    setSelectedIds([]);
+  };
+
+  const handleSelectTemplate = (tpl) => {
+    setSelectedTemplate(tpl);
+    setContent({ ...tpl.defaults });
+  };
+
+  const handleSend = async () => {
+    if (selectedIds.length === 0) {
+      toast.error("Please select at least one customer.");
+      return;
+    }
+    setSending(true);
+    try {
+      const name =
+        campaignName.trim() ||
+        `${selectedTemplate.name} — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
+
+      await RequestService.post("/marketing/send", {
+        name,
+        template_id: selectedTemplate.id,
+        template_name: selectedTemplate.name,
+        template_icon: selectedTemplate.icon,
+        content,
+        channel,
+        customer_ids: selectedIds,
+        recipient_count: selectedIds.length,
+      });
+
+      const channelLabel =
+        channel === "email"
+          ? "Email"
+          : channel === "whatsapp"
+            ? "WhatsApp"
+            : "Email & WhatsApp";
+      toast.success(
+        `${channelLabel} sent to ${selectedIds.length} customer${selectedIds.length > 1 ? "s" : ""}!`,
+      );
+      onSent();
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || "Failed to send. Please try again.",
+      );
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Wizard header */}
+      <div className="px-5 py-4 border-b border-[#EFEFEF] bg-[#FAFAFA] flex items-center gap-4">
+        <button
+          onClick={onCancel}
+          className="flex items-center gap-1.5 text-sm text-[#959595] hover:text-[#201B1D] transition-colors shrink-0"
+        >
+          <RiArrowLeftLine />
+          <span className="hidden sm:inline">Back to campaigns</span>
+        </button>
+        <div className="flex items-center flex-1 max-w-md">
+          {STEPS.map((s, i) => (
+            <div key={i} className="flex items-center flex-1 last:flex-none">
+              <StepBadge
+                step={i + 1}
+                label={s.label}
+                active={step === i + 1}
+                done={step > i + 1}
+              />
+              {i < STEPS.length - 1 && <StepDivider done={step > i + 1} />}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Wizard content */}
+      <div className="flex-1 overflow-y-auto p-5">
+        {step === 1 && (
+          <StepChooseTemplate
+            selectedTemplate={selectedTemplate}
+            setSelectedTemplate={handleSelectTemplate}
+            businessName={businessName}
+            onNext={() => {
+              if (!selectedTemplate) {
+                toast.error("Please choose a template first.");
+                return;
+              }
+              setStep(2);
+            }}
+          />
+        )}
+
+        {step === 2 && selectedTemplate && (
+          <StepEditContent
+            template={selectedTemplate}
+            content={content}
+            setContent={setContent}
+            campaignName={campaignName}
+            setCampaignName={setCampaignName}
             businessName={businessName}
             onBack={() => setStep(1)}
             onNext={() => setStep(3)}

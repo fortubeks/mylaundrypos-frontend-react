@@ -1,4 +1,3 @@
-import TabHead from "../../utils/TabHead";
 import { useSelector } from "react-redux";
 import Info from "./utils/Info";
 import { useEffect, useState } from "react";
@@ -102,7 +101,6 @@ export default function Index() {
 
   return (
     <div className="w-full h-full flex flex-col bg-white rounded-[20px]">
-      <TabHead name="Settings" size="14px"></TabHead>
       <div className="flex flex-col overflow-y-auto p-5 gap-5">
         {isFirstTime && (
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">

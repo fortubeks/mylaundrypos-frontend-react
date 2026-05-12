@@ -1,4 +1,3 @@
-import TabHead from "../../utils/TabHead";
 import Modal from "../../utils/Modal";
 import { useEffect, useState } from "react";
 import { cleanUpErr, RequestService } from "../../services";
@@ -233,7 +232,6 @@ export default function ViewOrder() {
 
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
-      <TabHead name="Update Orders"></TabHead>
       <div className="p-5 w-full flex flex-col md:grid grid-cols-2 gap-5 md:gap-10">
         <div className="flex flex-col gap-5 p-5 border rounded-xl overflow-y-auto h-fit shadow md:sticky top-0">
           <Search

@@ -1,4 +1,3 @@
-import TabHead from "../../utils/TabHead";
 import { useCallback, useEffect, useState } from "react";
 import { BarLoader } from "../../utils/Loader";
 import { RequestService } from "../../services";
@@ -61,7 +60,6 @@ export default function Index() {
 
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
-      <TabHead name="Orders"></TabHead>
       <div className="p-5 w-full flex flex-col gap-3">
         <div className="w-full flex gap-2 items-center text-sm">
           <Search

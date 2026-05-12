@@ -1,4 +1,3 @@
-import TabHead from "../../utils/TabHead";
 // import { FilterTime } from "../../utils/FilterTime";
 import { useCallback, useEffect, useState } from "react";
 // import Shipments from "./utils/Shipments";
@@ -22,14 +21,14 @@ export default function Index() {
         period === "All Time"
           ? "all"
           : period === "Today"
-          ? "today"
-          : period === "This Week"
-          ? "week"
-          : period === "This Month"
-          ? "month"
-          : period === "This Year"
-          ? "year"
-          : "all";
+            ? "today"
+            : period === "This Week"
+              ? "week"
+              : period === "This Month"
+                ? "month"
+                : period === "This Year"
+                  ? "year"
+                  : "all";
       const response = await RequestService.getParam("/dashboard", {
         period: getPeriod,
       });
@@ -57,9 +56,9 @@ export default function Index() {
 
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
-      <TabHead name="Dashboard">
+      <div className="px-4 py-2 flex items-center justify-end border-b border-[#EFEFEF]">
         <Filter selected={period} setSelected={setPeriod} />
-      </TabHead>
+      </div>
       <div className="p-5 w-full flex flex-col gap-3">
         <div className="flex flex-col md:grid grid-cols-4 grid-rows-1 gap-4">
           <AnalyticCard
@@ -71,8 +70,8 @@ export default function Index() {
               items?.current?.total_orders > items?.previous?.total_orders
                 ? "increase"
                 : items?.current?.total_orders < items?.previous?.total_orders
-                ? "decrease"
-                : "none"
+                  ? "decrease"
+                  : "none"
             }
             percentChange={items?.percentage?.total_orders || 0}
           />
@@ -92,8 +91,8 @@ export default function Index() {
               items?.current?.total_revenue > items?.previous?.total_revenue
                 ? "increase"
                 : items?.current?.total_revenue < items?.previous?.total_revenue
-                ? "decrease"
-                : "none"
+                  ? "decrease"
+                  : "none"
             }
             percentChange={items?.percentage?.total_revenue || 0}
           />
@@ -106,9 +105,9 @@ export default function Index() {
               items?.current?.total_customers > items?.previous?.total_customers
                 ? "increase"
                 : items?.current?.total_customers <
-                  items?.previous?.total_customers
-                ? "decrease"
-                : "none"
+                    items?.previous?.total_customers
+                  ? "decrease"
+                  : "none"
             }
             percentChange={items?.percentage?.total_customers || 0}
           />
@@ -121,9 +120,9 @@ export default function Index() {
               items?.current?.pending_orders > items?.previous?.pending_orders
                 ? "increase"
                 : items?.current?.pending_orders <
-                  items?.previous?.pending_orders
-                ? "decrease"
-                : "none"
+                    items?.previous?.pending_orders
+                  ? "decrease"
+                  : "none"
             }
             percentChange={items?.percentage?.pending_orders || 0}
           />

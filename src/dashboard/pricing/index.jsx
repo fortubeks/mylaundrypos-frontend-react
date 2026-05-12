@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import TabHead from "../../utils/TabHead";
 import { SubscriptionService } from "../../services";
 import {
   updateSubscription,
@@ -269,8 +268,6 @@ export default function Pricing() {
 
   return (
     <div className="flex flex-col h-full overflow-y-auto">
-      <TabHead name="Pricing & Plans" />
-
       <div className="flex flex-col items-center gap-10 px-4 py-10 max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="text-center space-y-2">
