@@ -8,6 +8,7 @@ import { GrLineChart } from "react-icons/gr";
 import { MdOutlinePointOfSale } from "react-icons/md";
 import { FcSalesPerformance } from "react-icons/fc";
 import { RiVipCrownLine } from "react-icons/ri";
+import { FiCalendar, FiGlobe } from "react-icons/fi";
 
 export const navLinks = [
   {
@@ -46,6 +47,18 @@ export const navLinks = [
     name: "Marketing",
     icon: <FcSalesPerformance className="text-lg" />,
     new: true,
+    requiresSubscription: true,
+  },
+  {
+    path: "bookings",
+    name: "Bookings",
+    icon: <FiCalendar className="text-lg" />,
+    requiresSubscription: true,
+  },
+  {
+    path: "landing-page",
+    name: "Landing Page",
+    icon: <FiGlobe className="text-lg" />,
     requiresSubscription: true,
   },
 ];

@@ -28,11 +28,23 @@ import Marketing from "./dashboard/marketing";
 import ViewOrder from "./dashboard/orders/ViewOrder";
 import Pricing from "./dashboard/pricing";
 import Reports from "./dashboard/reports";
+import Bookings from "./dashboard/bookings";
+import LandingPageEditor from "./dashboard/landingPage";
+import LaundryLandingPage from "./public/LaundryLandingPage";
+import BookingPage from "./public/BookingPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Navigate to="/login" />,
+  },
+  {
+    path: "/:slug",
+    element: <LaundryLandingPage />,
+  },
+  {
+    path: "/:slug/booking",
+    element: <BookingPage />,
   },
   {
     path: "/under-construction",
@@ -144,6 +156,22 @@ const router = createBrowserRouter([
         element: (
           <SubscribedRoute>
             <Marketing />
+          </SubscribedRoute>
+        ),
+      },
+      {
+        path: "bookings",
+        element: (
+          <SubscribedRoute>
+            <Bookings />
+          </SubscribedRoute>
+        ),
+      },
+      {
+        path: "landing-page",
+        element: (
+          <SubscribedRoute>
+            <LandingPageEditor />
           </SubscribedRoute>
         ),
       },

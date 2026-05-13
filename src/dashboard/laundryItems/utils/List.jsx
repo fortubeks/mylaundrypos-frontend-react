@@ -1,9 +1,18 @@
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
-import TableHead from "../../../utils/TableHead";
+import { FiShoppingBag } from "react-icons/fi";
 import { BarLoader } from "../../../utils/Loader";
 import { useState } from "react";
 import { cleanUpErr, RequestService } from "../../../services";
 import toast from "../../../utils/Toast";
+
+const COLORS = [
+  { bg: "bg-blue-50", text: "text-blue-600", border: "border-blue-100" },
+  { bg: "bg-emerald-50", text: "text-emerald-600", border: "border-emerald-100" },
+  { bg: "bg-violet-50", text: "text-violet-600", border: "border-violet-100" },
+  { bg: "bg-amber-50", text: "text-amber-600", border: "border-amber-100" },
+  { bg: "bg-rose-50", text: "text-rose-600", border: "border-rose-100" },
+  { bg: "bg-cyan-50", text: "text-cyan-600", border: "border-cyan-100" },
+];
 
 export default function TableList({
   itemsToDisplay,
@@ -12,60 +21,39 @@ export default function TableList({
   setShowCreate,
   setSelectedItem,
 }) {
-  return (
-    <div className="grow h-full flex flex-col gap-5 rounded-3xl text-black relative">
-      <div className="flex flex-col h-full">
-        <div className="overflow-x-auto h-full">
-          <div className="shadow h-full overflow-x-scroll md:overflow-hidden">
-            {itemsToDisplay?.length === 0 ? (
-              loading ? (
-                <table className="min-w-full border-collapse">
-                  <TableHead names={["Name", "Action"]} checkbox={false} />
-                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
-                    <tr>
-                      <td className="py-2" colSpan={9}>
-                        <span className="mx-auto py-10 w-full flex justify-center text-center">
-                          <div className="h-full grow flex justify-center items-center">
-                            <BarLoader />
-                          </div>
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              ) : (
-                <table className="min-w-full border-collapse">
-                  <TableHead names={["Name", "Action"]} checkbox={false} />
-                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
-                    <tr>
-                      <td className="py-2" colSpan={9}>
-                        <span className="mx-auto text-[#B0B0B0] py-5 w-full flex justify-center text-center">
-                          No item available
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              )
-            ) : (
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4 items-center">
-                {itemsToDisplay &&
-                  itemsToDisplay.map((tm, i) => {
-                    return (
-                      <List
-                        key={i}
-                        items={tm}
-                        fetch={fetch}
-                        setShowCreate={setShowCreate}
-                        setSelectedItem={setSelectedItem}
-                      />
-                    );
-                  })}
-              </div>
-            )}
-          </div>
-        </div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <BarLoader />
       </div>
+    );
+  }
+
+  if (!itemsToDisplay || itemsToDisplay.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center">
+          <FiShoppingBag className="text-primary" size={28} />
+        </div>
+        <p className="font-semibold text-gray-800 text-base">No laundry items yet</p>
+        <p className="text-gray-400 text-sm max-w-[260px]">
+          Add items like shirts, trousers and duvets to your catalogue.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-3">
+      {itemsToDisplay.map((tm, i) => (
+        <List
+          key={i}
+          items={tm}
+          fetch={fetch}
+          setShowCreate={setShowCreate}
+          setSelectedItem={setSelectedItem}
+        />
+      ))}
     </div>
   );
 }
@@ -74,45 +62,57 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
+  const color = COLORS[(items?.id || 0) % COLORS.length];
+
   const deleteItem = async () => {
     setDisabled(true);
-
     try {
-      const response = await RequestService.delete(
-        `/laundry-items/${items?.id}`,
-      );
-
-      console.log(response);
+      await RequestService.delete(`/laundry-items/${items?.id}`);
       setShowDelete(false);
       setDisabled(false);
       fetch();
       toast.success("Laundry item deleted successfully");
     } catch (error) {
-      console.log(error);
       setDisabled(false);
       cleanUpErr(error);
     }
   };
 
   return (
-    // only show buttons on hover of the list item
-    <div className="h-fit border rounded-lg hover:bg-gray-100 bg-white flex items-center justify-between group">
-      <span className="px-3 py-4 text-sm">{items?.name}</span>
-      <div className="px-3 py-4 text-sm group-hover:flex hidden">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              setSelectedItem(items);
-              setShowCreate(true);
-            }}
-          >
-            <FaPencilAlt className="text-gray-500 hover:text-gray-700" />
-          </button>
-          <button className="" onClick={() => setShowDelete(true)}>
-            <FaTrashAlt className="text-gray-500 hover:text-gray-700" />
-          </button>
-        </div>
+    <div
+      className={`bg-white border ${color.border} rounded-2xl p-3.5 flex flex-col gap-2.5 hover:shadow-md transition-all`}
+    >
+      {/* Avatar */}
+      <div
+        className={`w-10 h-10 rounded-xl ${color.bg} ${color.text} flex items-center justify-center font-extrabold text-sm flex-shrink-0`}
+      >
+        {items?.name?.charAt(0)?.toUpperCase() || "?"}
       </div>
+
+      {/* Name */}
+      <p className="font-semibold text-gray-900 text-sm leading-tight">
+        {items?.name}
+      </p>
+
+      {/* Actions */}
+      <div className="flex items-center gap-1 pt-1.5 border-t border-gray-50">
+        <button
+          onClick={() => {
+            setSelectedItem(items);
+            setShowCreate(true);
+          }}
+          className="flex-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-gray-500 hover:text-primary hover:bg-primary/8 py-1.5 rounded-lg transition-all"
+        >
+          <FaPencilAlt size={9} /> Edit
+        </button>
+        <button
+          onClick={() => setShowDelete(true)}
+          className="flex-1 flex items-center justify-center gap-1 text-[11px] font-semibold text-gray-500 hover:text-red-600 hover:bg-red-50 py-1.5 rounded-lg transition-all"
+        >
+          <FaTrashAlt size={9} /> Delete
+        </button>
+      </div>
+
       {showDelete && (
         <Delete
           setShowModal={setShowDelete}
@@ -126,30 +126,32 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
 
 const Delete = ({ setShowModal, onClick, disabled }) => {
   return (
-    <main className="fixed top-5 right-8 h-fit w-fit flex justify-end z-[999999999] shadow-[10px_10px_30px_10px_#0000001F]">
-      <main className="overflow-y-scroll snap w-fit h-fit z-50 shadow-[10px_10px_30px_10px_#0000001F]">
-        <div className="w-fit h-fit p-3 pr-20 bg-white flex flex-col gap-2 rounded-xl shadow-[10px_10px_30px_10px_#0000001F] text-sm">
-          <b className="bold text-lg">Delete this laundry item?</b>
-          <nav className="flex gap-2">
-            <button
-              className="h-8 font-bold px-2 rounded-md bg-primary text-white"
-              onClick={onClick}
-            >
-              {disabled ? (
-                <div className="animate-spin h-6 w-6 border-white border rounded-full"></div>
-              ) : (
-                "Yes"
-              )}
-            </button>
-            <button
-              className="h-8 font-bold px-3 rounded-md bg-[#F9FAFB]"
-              onClick={() => setShowModal(false)}
-            >
-              No
-            </button>
-          </nav>
+    <main className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[99999]">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 w-[300px] flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <p className="font-bold text-gray-900 text-base">Delete laundry item?</p>
+          <p className="text-gray-500 text-sm">This action cannot be undone.</p>
         </div>
-      </main>
+        <div className="flex gap-2">
+          <button
+            className="flex-1 h-9 font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm transition-colors disabled:opacity-60"
+            onClick={onClick}
+            disabled={disabled}
+          >
+            {disabled ? (
+              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mx-auto" />
+            ) : (
+              "Delete"
+            )}
+          </button>
+          <button
+            className="flex-1 h-9 font-bold rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm transition-colors"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </main>
   );
 };

@@ -58,25 +58,33 @@ export default function Index() {
 
   return (
     <main className="h-full grow flex flex-col border border-[#E7E7E7] overflow-y-auto">
-      <div className="p-5 w-full flex flex-col gap-3">
-        <div className="w-full flex gap-2 items-center text-sm">
-          <Search
-            value={search}
-            setValue={setSearch}
-            placeholder="Search laundry items..."
-            width={isMobile ? "w-full" : "w-1/3"}
-          />
-          <div className="flex items-center ml-auto min-w-fit">
-            <Button
-              name="Add Laundry Item"
-              onClick={() => {
-                setShowCreate(true);
-                setSelectedItem(null);
-              }}
-            />
+      <div className="p-5 w-full flex flex-col gap-4">
+        {/* Page header */}
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <h1 className="font-bold text-gray-900 text-lg">Laundry Items</h1>
+            <p className="text-gray-400 text-sm mt-0.5">
+              {pagination.total > 0
+                ? `${pagination.total} item${pagination.total !== 1 ? "s" : ""}`
+                : "Manage your laundry catalogue"}
+            </p>
           </div>
+          <Button
+            name="Add Laundry Item"
+            onClick={() => {
+              setShowCreate(true);
+              setSelectedItem(null);
+            }}
+          />
         </div>
-        <div className="mt-5">
+        {/* Search */}
+        <Search
+          value={search}
+          setValue={setSearch}
+          placeholder="Search laundry items..."
+          width={isMobile ? "w-full" : "w-64"}
+        />
+        <div>
           {loading ? (
             <main className="p-10 flex flex-col justify-center items-center">
               <BarLoader />

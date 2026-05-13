@@ -19,6 +19,8 @@ const PAGE_TITLES = {
   "orders-service-items": "Orders Service Items",
   reports: "Reports & Insights",
   marketing: "Email Marketing",
+  bookings: "Bookings",
+  "landing-page": "Landing Page",
   pricing: "Pricing & Plans",
   settings: "Settings",
   profile: "Profile",

@@ -1,5 +1,5 @@
 import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
-import TableHead from "../../../utils/TableHead";
+import { FiPackage, FiClock, FiTag } from "react-icons/fi";
 import { BarLoader } from "../../../utils/Loader";
 import { useState } from "react";
 import { cleanUpErr, RequestService } from "../../../services";
@@ -12,82 +12,39 @@ export default function TableList({
   setShowCreate,
   setSelectedItem,
 }) {
-  return (
-    <div className="grow h-full flex flex-col gap-5 rounded-3xl text-black relative">
-      <div className="flex flex-col h-full">
-        <div className="overflow-x-auto h-full">
-          <div className="shadow h-full overflow-x-scroll md:overflow-hidden">
-            {itemsToDisplay?.length === 0 ? (
-              loading ? (
-                <table className="min-w-full border-collapse">
-                  <TableHead
-                    names={[
-                      "Name",
-                      "Service Category",
-                      "Laundry Item",
-                      "Price",
-                      "Unit Type",
-                      "Turnaround Time",
-                      "Action",
-                    ]}
-                    checkbox={false}
-                  />
-                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
-                    <tr>
-                      <td className="py-2" colSpan={9}>
-                        <span className="mx-auto py-10 w-full flex justify-center text-center">
-                          <div className="h-full grow flex justify-center items-center">
-                            <BarLoader />
-                          </div>
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              ) : (
-                <table className="min-w-full border-collapse">
-                  <TableHead
-                    names={[
-                      "Name",
-                      "Service Category",
-                      "Laundry Item",
-                      "Price",
-                      "Unit Type",
-                      "Turnaround Time",
-                      "Action",
-                    ]}
-                    checkbox={false}
-                  />
-                  <tbody className="divide-y divide-[#EFEFEF] border-collapse overflow-y-scroll">
-                    <tr>
-                      <td className="py-2" colSpan={9}>
-                        <span className="mx-auto text-[#B0B0B0] py-5 w-full flex justify-center text-center">
-                          No item available
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              )
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-                {itemsToDisplay &&
-                  itemsToDisplay.map((tm, i) => {
-                    return (
-                      <List
-                        key={i}
-                        items={tm}
-                        fetch={fetch}
-                        setShowCreate={setShowCreate}
-                        setSelectedItem={setSelectedItem}
-                      />
-                    );
-                  })}
-              </div>
-            )}
-          </div>
-        </div>
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-24">
+        <BarLoader />
       </div>
+    );
+  }
+
+  if (!itemsToDisplay || itemsToDisplay.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-3 text-center">
+        <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center">
+          <FiPackage className="text-primary" size={28} />
+        </div>
+        <p className="font-semibold text-gray-800 text-base">No service items yet</p>
+        <p className="text-gray-400 text-sm max-w-[260px]">
+          Add your first service item to start building your catalogue.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      {itemsToDisplay.map((tm, i) => (
+        <List
+          key={i}
+          items={tm}
+          fetch={fetch}
+          setShowCreate={setShowCreate}
+          setSelectedItem={setSelectedItem}
+        />
+      ))}
     </div>
   );
 }
@@ -96,72 +53,87 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
   const [showDelete, setShowDelete] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
-  const deleteCustomer = async () => {
+  const deleteItem = async () => {
     setDisabled(true);
-
     try {
-      const response = await RequestService.delete(
-        `/service-items/${items?.id}`,
-      );
-
-      console.log(response);
+      await RequestService.delete(`/service-items/${items?.id}`);
       setShowDelete(false);
       setDisabled(false);
       fetch();
       toast.success("Service item deleted successfully");
     } catch (error) {
-      console.log(error);
       setDisabled(false);
       cleanUpErr(error);
     }
   };
 
   return (
-    <div className="h-fit p-3 pb-8 text-sm border rounded-lg hover:bg-gray-100 bg-white flex flex-col gap-3 group relative">
-      <div className="flex items-center justify-between gap-3">
-        <span className="font-bold text-lg ">{items?.name}</span>
-        <span className="font-medium text-lg">₦{items?.price}</span>
+    <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all flex flex-col gap-3">
+      {/* Header row */}
+      <div className="flex items-start justify-between gap-2">
+        <span className="font-bold text-gray-900 text-[15px] leading-tight">
+          {items?.name}
+        </span>
+        <span className="shrink-0 bg-primary/10 text-primary font-extrabold text-xs px-2.5 py-1 rounded-xl whitespace-nowrap">
+          ₦{Number(items?.price || 0).toLocaleString()}
+        </span>
       </div>
-      <div className="flex items-center justify-between gap-3">
-        <span className="">
-          <p className="font-semibold">Category: </p>
 
-          {items?.category?.name || "N/A"}
-        </span>
-        <span className="">
-          <p className="font-semibold">Laundry item: </p>
-          {items?.laundry_item?.name || "N/A"}
-        </span>
+      {/* Tags */}
+      <div className="flex flex-wrap gap-1.5">
+        {items?.category?.name && (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-blue-50 text-blue-600 px-2.5 py-1 rounded-lg border border-blue-100">
+            <FiTag size={10} />
+            {items.category.name}
+          </span>
+        )}
+        {items?.laundry_item?.name && (
+          <span className="inline-flex items-center gap-1 text-[11px] font-medium bg-emerald-50 text-emerald-600 px-2.5 py-1 rounded-lg border border-emerald-100">
+            <FiPackage size={10} />
+            {items.laundry_item.name}
+          </span>
+        )}
       </div>
-      <div className="flex items-center justify-between gap-3">
-        <span className="">
-          <p className="font-semibold">Unit Type: </p>
-          {items?.unit_type || "N/A"}
-        </span>
-        <span className="">
-          <p className="font-semibold">Turnaround Time: </p>
-          {items?.turnaround_time || "N/A"}
-        </span>
+
+      {/* Meta */}
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+        {items?.unit_type && (
+          <span className="flex items-center gap-1">
+            <span className="text-gray-400">Unit:</span>
+            <span className="font-medium text-gray-700">{items.unit_type}</span>
+          </span>
+        )}
+        {items?.turnaround_time && (
+          <span className="flex items-center gap-1.5">
+            <FiClock size={11} className="text-gray-400" />
+            <span className="font-medium text-gray-700">{items.turnaround_time}</span>
+          </span>
+        )}
       </div>
-      <span className=" group-hover:flex hidden absolute right-1/2 bottom-2 translate-x-1/2">
-        <div className="flex items-center gap-3 text-lg">
-          <button
-            onClick={() => {
-              setSelectedItem(items);
-              setShowCreate(true);
-            }}
-          >
-            <FaPencilAlt className="text-primary hover:text-primary/80" />
-          </button>
-          <button className="" onClick={() => setShowDelete(true)}>
-            <FaTrashAlt className="text-red-700 hover:text-red-900" />
-          </button>
-        </div>
-      </span>
+
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-1.5 pt-2 border-t border-gray-50">
+        <button
+          onClick={() => {
+            setSelectedItem(items);
+            setShowCreate(true);
+          }}
+          className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-primary hover:bg-primary/8 px-3 py-1.5 rounded-lg transition-all"
+        >
+          <FaPencilAlt size={10} /> Edit
+        </button>
+        <button
+          onClick={() => setShowDelete(true)}
+          className="flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-red-600 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-all"
+        >
+          <FaTrashAlt size={10} /> Delete
+        </button>
+      </div>
+
       {showDelete && (
         <Delete
           setShowModal={setShowDelete}
-          onClick={deleteCustomer}
+          onClick={deleteItem}
           disabled={disabled}
         />
       )}
@@ -171,30 +143,32 @@ const List = ({ items, setShowCreate, setSelectedItem, fetch }) => {
 
 const Delete = ({ setShowModal, onClick, disabled }) => {
   return (
-    <main className="fixed top-5 right-8 h-fit w-fit flex justify-end z-[999999999] shadow-[10px_10px_30px_10px_#0000001F]">
-      <main className="overflow-y-scroll snap w-fit h-fit z-50 shadow-[10px_10px_30px_10px_#0000001F]">
-        <div className="w-fit h-fit p-3 pr-20 bg-white flex flex-col gap-2 rounded-xl shadow-[10px_10px_30px_10px_#0000001F] text-sm">
-          <b className="bold text-lg">Delete this service item?</b>
-          <nav className="flex gap-2">
-            <button
-              className="h-8 font-bold px-2 rounded-md bg-primary text-white"
-              onClick={onClick}
-            >
-              {disabled ? (
-                <div className="animate-spin h-6 w-6 border-white border rounded-full"></div>
-              ) : (
-                "Yes"
-              )}
-            </button>
-            <button
-              className="h-8 font-bold px-3 rounded-md bg-[#F9FAFB]"
-              onClick={() => setShowModal(false)}
-            >
-              No
-            </button>
-          </nav>
+    <main className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-[99999]">
+      <div className="bg-white rounded-2xl shadow-2xl p-6 w-[300px] flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <p className="font-bold text-gray-900 text-base">Delete service item?</p>
+          <p className="text-gray-500 text-sm">This action cannot be undone.</p>
         </div>
-      </main>
+        <div className="flex gap-2">
+          <button
+            className="flex-1 h-9 font-bold rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm transition-colors disabled:opacity-60"
+            onClick={onClick}
+            disabled={disabled}
+          >
+            {disabled ? (
+              <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mx-auto" />
+            ) : (
+              "Delete"
+            )}
+          </button>
+          <button
+            className="flex-1 h-9 font-bold rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm transition-colors"
+            onClick={() => setShowModal(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
     </main>
   );
 };

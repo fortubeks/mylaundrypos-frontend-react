@@ -4,6 +4,7 @@ import { RequestService } from "./request";
 import { UserService } from "./user";
 import { mapAuthCodeToMessage } from "./authCodeUtils";
 import { SubscriptionService } from "./subscription";
+import { BookingService, PublicService } from "./booking";
 
 export {
   cleanUpErr,
@@ -13,4 +14,6 @@ export {
   UserService,
   mapAuthCodeToMessage,
   SubscriptionService,
+  BookingService,
+  PublicService,
 };
