@@ -16,6 +16,7 @@ import FPNewPassword from "./onboarding/signin/FPNewPassword";
 import PublicRoute from "./PublicRoute";
 import PrivateRoute from "./PrivateRoute";
 import SubscribedRoute from "./SubscribedRoute";
+import GrowthRoute from "./GrowthRoute";
 import Dashboard from "./dashboard/Dashboard";
 import DashboardHome from "./dashboard/home";
 import Customers from "./dashboard/customers";
@@ -162,17 +163,17 @@ const router = createBrowserRouter([
       {
         path: "bookings",
         element: (
-          <SubscribedRoute>
+          <GrowthRoute>
             <Bookings />
-          </SubscribedRoute>
+          </GrowthRoute>
         ),
       },
       {
         path: "landing-page",
         element: (
-          <SubscribedRoute>
+          <GrowthRoute>
             <LandingPageEditor />
-          </SubscribedRoute>
+          </GrowthRoute>
         ),
       },
     ],

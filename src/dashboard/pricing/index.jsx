@@ -37,7 +37,7 @@ const PLANS = [
       "Reports & Analytics",
       "Email Marketing Campaigns",
     ],
-    locked: [],
+    locked: ["Bookings & Landing Page"],
     cta: "Get Starter",
   },
   {
@@ -47,6 +47,7 @@ const PLANS = [
     description: "Built for laundries ready to scale.",
     features: [
       "Everything in Starter",
+      "Bookings & Landing Page",
       "Priority Support",
       "Advanced Features (Coming Soon)",
     ],
@@ -275,8 +276,8 @@ export default function Pricing() {
             Simple, transparent pricing
           </h1>
           <p className="text-[#959595] text-sm">
-            Starter and Growth plans unlock Reports &amp; Marketing. Billed
-            monthly — cancel anytime.
+            Starter unlocks Reports &amp; Marketing. Growth also adds Bookings
+            &amp; Landing Page. Billed monthly — cancel anytime.
           </p>
         </div>
 

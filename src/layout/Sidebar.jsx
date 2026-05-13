@@ -18,6 +18,7 @@ export default function Sidebar() {
   const open = useSelector((state) => state.general.sidebar);
   const subscription = useSelector((state) => state.user.subscription);
   const hasPremium = subscription?.has_premium ?? false;
+  const isGrowth = hasPremium && subscription?.subscription?.plan === "growth";
   const disableSidebar = useSelector((state) => state.general.disableSidebar);
   const isMobile = useIsMobile();
   const setOpen = () => {
@@ -95,7 +96,9 @@ export default function Sidebar() {
                   disable={disableSidebar}
                   newTab={opt?.new}
                   requiresSubscription={opt?.requiresSubscription}
+                  requiresGrowth={opt?.requiresGrowth}
                   hasPremium={hasPremium}
+                  isGrowth={isGrowth}
                 />
               ))}
             </motion.div>
@@ -219,12 +222,15 @@ const Option = ({
   disable,
   newTab,
   requiresSubscription,
+  requiresGrowth,
   hasPremium,
+  isGrowth,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const locked = requiresSubscription && !hasPremium;
+  const locked =
+    (requiresSubscription && !hasPremium) || (requiresGrowth && !isGrowth);
 
   if (locked) {
     return (

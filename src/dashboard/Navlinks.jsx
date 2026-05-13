@@ -53,13 +53,13 @@ export const navLinks = [
     path: "bookings",
     name: "Bookings",
     icon: <FiCalendar className="text-lg" />,
-    requiresSubscription: true,
+    requiresGrowth: true,
   },
   {
     path: "landing-page",
     name: "Landing Page",
     icon: <FiGlobe className="text-lg" />,
-    requiresSubscription: true,
+    requiresGrowth: true,
   },
 ];
 
