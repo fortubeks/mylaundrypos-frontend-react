@@ -461,7 +461,7 @@ function CampaignWizard({ businessName, onCancel, onSent }) {
         campaignName.trim() ||
         `${selectedTemplate.name} — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
 
-      await RequestService.post("/marketing/send", {
+      const response = await RequestService.post("/marketing/send", {
         name,
         template_id: selectedTemplate.id,
         template_name: selectedTemplate.name,
@@ -479,7 +479,8 @@ function CampaignWizard({ businessName, onCancel, onSent }) {
             ? "WhatsApp"
             : "Email & WhatsApp";
       toast.success(
-        `${channelLabel} sent to ${selectedIds.length} customer${selectedIds.length > 1 ? "s" : ""}!`,
+        response?.data?.message ||
+          `${channelLabel} sent to ${selectedIds.length} customer${selectedIds.length > 1 ? "s" : ""}!`,
       );
       onSent();
     } catch (err) {
@@ -744,7 +745,7 @@ function ReuseAwareCampaignWizard({
         campaignName.trim() ||
         `${selectedTemplate.name} — ${new Date().toLocaleDateString(undefined, { month: "short", day: "numeric" })}`;
 
-      await RequestService.post("/marketing/send", {
+      const response = await RequestService.post("/marketing/send", {
         name,
         template_id: selectedTemplate.id,
         template_name: selectedTemplate.name,
@@ -762,7 +763,8 @@ function ReuseAwareCampaignWizard({
             ? "WhatsApp"
             : "Email & WhatsApp";
       toast.success(
-        `${channelLabel} sent to ${selectedIds.length} customer${selectedIds.length > 1 ? "s" : ""}!`,
+        response?.data?.message ||
+          `${channelLabel} sent to ${selectedIds.length} customer${selectedIds.length > 1 ? "s" : ""}!`,
       );
       onSent();
     } catch (err) {
