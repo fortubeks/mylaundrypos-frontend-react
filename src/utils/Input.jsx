@@ -5,11 +5,13 @@ export const Input = ({
   selected,
   icon,
   placeholder,
+  label,
   slide = true,
   type = "text",
   min,
   max,
   required = false,
+  showRequiredAsterisk = false,
   disabled = false,
   error = false,
   showErrors = false,
@@ -19,6 +21,7 @@ export const Input = ({
 
   const hasValue = selected && selected !== "";
   const showLabel = isFocused || hasValue;
+  const labelText = label || placeholder;
 
   return (
     <div className="flex flex-col gap-1 w-full">
@@ -40,7 +43,8 @@ export const Input = ({
                 : "top-1/2 -translate-y-1/2 text-muted-foreground text-[#959595]"
             }`}
           >
-            {placeholder}
+            <span>{labelText}</span>
+            {showRequiredAsterisk && <span className="text-[#F90B0B]"> *</span>}
           </label>
 
           <input
@@ -72,6 +76,8 @@ export const Input = ({
 
 export const ErrorMessage = ({ message }) => {
   return (
-    <p className="text-[#F90B0B] text-xs flex gap-1 items-center capitalize">{message}</p>
+    <p className="text-[#F90B0B] text-xs flex gap-1 items-center capitalize">
+      {message}
+    </p>
   );
 };

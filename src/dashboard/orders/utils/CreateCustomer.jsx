@@ -151,6 +151,8 @@ export default function CreateCustomer({ setShowModal, fetch }) {
             type="text"
             selected={firstName}
             setSelected={setFirstName}
+            required
+            showRequiredAsterisk
             error={errors.firstName}
             showErrors={showErrors}
           />
@@ -181,6 +183,8 @@ export default function CreateCustomer({ setShowModal, fetch }) {
             type="text"
             selected={phone}
             setSelected={setPhone}
+            required
+            showRequiredAsterisk
             error={errors.phone}
             showErrors={showErrors}
           />
