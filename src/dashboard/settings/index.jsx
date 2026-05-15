@@ -6,6 +6,7 @@ import toast from "../../utils/Toast";
 import { cleanUpErr, UserService } from "../../services";
 import ChangePassword from "./utils/ChangePassword";
 import StoreInfoCard from "./utils/StoreInfoCard";
+import NotificationPreferences from "./utils/NotificationPreferences";
 import { useLocation } from "react-router-dom";
 import { isBusinessInfoComplete } from "../../utils/businessInfoValidator";
 
@@ -136,6 +137,7 @@ export default function Index() {
           />
         </div>
         <StoreInfoCard isFirstTime={isFirstTime} />
+        <NotificationPreferences />
         <DeleteAcct loading={loading} setLoading={setLoading} />
       </div>
     </div>

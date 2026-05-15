@@ -8,6 +8,8 @@ import TableList from "./utils/List";
 import SideModal from "../../utils/SideModal";
 import AddUpdate from "./utils/AddUpdate";
 import { useIsMobile } from "../../utils/use-mobile";
+import ExportButton from "../../utils/ExportButton";
+import ImportButton from "../../utils/ImportButton";
 
 export default function Index() {
   const [items, setItems] = useState([]);
@@ -67,7 +69,43 @@ export default function Index() {
             placeholder="Search customers..."
             width={isMobile ? "w-full" : "w-1/3"}
           />
-          <div className="flex items-center ml-auto min-w-fit">
+          <div className="flex items-center gap-2 ml-auto min-w-fit">
+            <ExportButton
+              currentData={items}
+              columns={[
+                "first_name",
+                "last_name",
+                "email",
+                "phone",
+                "address",
+                "state",
+                "country",
+                "created_at",
+              ]}
+              headers={{
+                first_name: "First Name",
+                last_name: "Last Name",
+                email: "Email",
+                phone: "Phone",
+                address: "Address",
+                state: "State",
+                country: "Country",
+                created_at: "Created At",
+              }}
+              filename="customers"
+              fetchAllEndpoint="/customers"
+            />
+            <ImportButton
+              endpoint="/customers/import"
+              onSuccess={fetch}
+              templateHeaders={[
+                "first_name",
+                "last_name",
+                "email",
+                "phone",
+                "address",
+              ]}
+            />
             <Button name="Add Customer" onClick={() => setShowCreate(true)} />
           </div>
         </div>

@@ -9,6 +9,7 @@ import TableList from "./utils/List";
 // import AddUpdate from "./utils/AddUpdate";
 import { useIsMobile } from "../../utils/use-mobile";
 import { useNavigate } from "react-router-dom";
+import ExportButton from "../../utils/ExportButton";
 
 export default function Index() {
   const [items, setItems] = useState([]);
@@ -68,7 +69,30 @@ export default function Index() {
             placeholder="Search orders..."
             width={isMobile ? "w-full" : "w-1/3"}
           />
-          <div className="flex items-center ml-auto min-w-fit">
+          <div className="flex items-center gap-2 ml-auto min-w-fit">
+            <ExportButton
+              currentData={items}
+              columns={[
+                "order_code",
+                "customer_name",
+                "order_date",
+                "due_date",
+                "status",
+                "total_amount",
+                "created_at",
+              ]}
+              headers={{
+                order_code: "Order Code",
+                customer_name: "Customer",
+                order_date: "Order Date",
+                due_date: "Due Date",
+                status: "Status",
+                total_amount: "Total Amount",
+                created_at: "Created At",
+              }}
+              filename="orders"
+              fetchAllEndpoint="/orders"
+            />
             <Button
               name="Add Order"
               onClick={() => {

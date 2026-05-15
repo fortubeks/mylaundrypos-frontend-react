@@ -1,13 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 // import { ButtonPrimary } from "../utils/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { setSidebar } from "../store/slices/generalSlice";
+import { setNotificationPanelOpen } from "../store/slices/notificationSlice";
 import { getProfileMenuItems } from "../dashboard/Navlinks";
 import { useIsMobile } from "../utils/use-mobile";
 import { Logout } from "../utils/Logout";
 import { AnimatePresence, motion } from "framer-motion";
-import { RiMenu3Line } from "react-icons/ri";
+import { RiMenu3Line, RiNotification3Line } from "react-icons/ri";
+import NotificationPanel from "./NotificationPanel";
+import { NotificationService } from "../services/notification";
 
 const PAGE_TITLES = {
   dashboard: "Dashboard",
@@ -31,6 +34,7 @@ export default function TopBar() {
   const dispatch = useDispatch();
   const open = useSelector((state) => state.general.sidebar);
   const isMobile = useIsMobile();
+  const unreadCount = useSelector((s) => s.notifications.unreadCount);
 
   const segment = location?.pathname?.split("/")?.slice(2)[0] ?? "";
   const pageTitle =
@@ -40,26 +44,49 @@ export default function TopBar() {
       .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
       .join(" ");
 
+  // Fetch notifications on mount
+  useEffect(() => {
+    NotificationService.fetchNotifications();
+  }, []);
+
   return (
-    <div className="px-3 sm:px-5 sticky top-0 left-0 flex items-center justify-between z-[999] gap-2 sm:gap-4 border border-[#E7E7E7] bg-white rounded-t-[20px] transition-all duration-500 ease-in-out min-h-[56px]">
-      {isMobile && (
-        <button
-          onClick={() => dispatch(setSidebar(!open))}
-          className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 shrink-0"
-          aria-label="Toggle sidebar"
-        >
-          <RiMenu3Line className="text-xl text-[#292D32]" />
-        </button>
-      )}
+    <>
+      <div className="px-3 sm:px-5 sticky top-0 left-0 flex items-center justify-between z-[999] gap-2 sm:gap-4 border border-[#E7E7E7] bg-white rounded-t-[20px] transition-all duration-500 ease-in-out min-h-[56px]">
+        {isMobile && (
+          <button
+            onClick={() => dispatch(setSidebar(!open))}
+            className="flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 shrink-0"
+            aria-label="Toggle sidebar"
+          >
+            <RiMenu3Line className="text-xl text-[#292D32]" />
+          </button>
+        )}
 
-      <h2 className="font-semibold text-[#292D32] text-base capitalize flex-1 truncate">
-        {pageTitle}
-      </h2>
+        <h2 className="font-semibold text-[#292D32] text-base capitalize flex-1 truncate">
+          {pageTitle}
+        </h2>
 
-      <div className="flex gap-2 sm:gap-4 items-center py-2 shrink-0">
-        <ProfileDropdown />
+        <div className="flex gap-2 sm:gap-4 items-center py-2 shrink-0">
+          {/* Bell icon */}
+          <button
+            onClick={() => dispatch(setNotificationPanelOpen(true))}
+            className="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Notifications"
+          >
+            <RiNotification3Line className="text-xl text-[#292D32]" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-4 h-4 bg-[#00BE9C] text-white text-[10px] font-bold rounded-full flex items-center justify-center leading-none">
+                {unreadCount > 9 ? "9+" : unreadCount}
+              </span>
+            )}
+          </button>
+
+          <ProfileDropdown />
+        </div>
       </div>
-    </div>
+
+      <NotificationPanel />
+    </>
   );
 }
 

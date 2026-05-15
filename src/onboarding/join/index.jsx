@@ -12,6 +12,7 @@ export default function Create() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [state, setState] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [referralSource, setReferralSource] = useState("");
@@ -59,6 +60,7 @@ export default function Create() {
         password,
         name,
         phone,
+        state: state || null,
         referral_source: referralSource || null,
         captcha: captchaToken,
       });
@@ -121,6 +123,13 @@ export default function Create() {
               placeholder="e.g +1234567890"
               value={phone}
               setValue={setPhone}
+            />
+            <Input
+              name="State / City"
+              type="text"
+              placeholder="e.g Lagos"
+              value={state}
+              setValue={setState}
             />
             <div className="flex flex-col gap-2 w-full">
               <label htmlFor="referral_source" className="text-sm font-normal">

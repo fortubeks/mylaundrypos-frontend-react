@@ -6,6 +6,7 @@ import NavigatorPager from "../../utils/NavigatorPager";
 import toast from "../../utils/Toast";
 import { useIsMobile } from "../../utils/use-mobile";
 import BookingDetail from "./BookingDetail";
+import ExportButton from "../../utils/ExportButton";
 
 const STATUS_COLORS = {
   pending: "bg-yellow-50 text-yellow-700 border-yellow-200",
@@ -116,7 +117,29 @@ export default function Bookings() {
             placeholder="Search by name, phone, code…"
             width={isMobile ? "w-full" : "w-72"}
           />
-          <div className="flex gap-2 ml-auto flex-wrap">
+          <div className="flex gap-2 ml-auto flex-wrap items-center">
+            <ExportButton
+              currentData={items}
+              columns={[
+                "booking_code",
+                "customer_name",
+                "customer_phone",
+                "status",
+                "total_amount",
+                "created_at",
+              ]}
+              headers={{
+                booking_code: "Booking Code",
+                customer_name: "Customer Name",
+                customer_phone: "Phone",
+                status: "Status",
+                total_amount: "Total Amount",
+                created_at: "Created At",
+              }}
+              filename="bookings"
+              fetchAllEndpoint="/bookings"
+              fetchAllParams={{ status: statusFilter }}
+            />
             {["", "pending", "confirmed", "completed", "cancelled"].map((s) => (
               <button
                 key={s}

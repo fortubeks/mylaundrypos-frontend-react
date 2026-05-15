@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { cleanUpErr, RequestService, UserService } from "../../../services";
 import toast from "../../../utils/Toast";
 import { FaPencilAlt } from "react-icons/fa";
@@ -6,12 +7,15 @@ import { PopOut } from "../../general";
 import { Input } from "../../../utils/Input";
 import { Button, ButtonBorder } from "../../../utils/Button";
 import { isBusinessInfoComplete } from "../../../utils/businessInfoValidator";
+import { FiChevronDown } from "react-icons/fi";
+import { useDropdownPos } from "../../../utils/useDropdownPos";
 
 export default function StoreInfoCard({ isFirstTime = false }) {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [item, setItem] = useState({});
   const [businessComplete, setBusinessComplete] = useState(true);
+  const [countries, setCountries] = useState([]);
   const [data, setSettings] = useState({
     business_name: "",
     business_phone: "",
@@ -30,8 +34,19 @@ export default function StoreInfoCard({ isFirstTime = false }) {
       console.log(error);
     }
   };
+
+  const fetchCountries = async () => {
+    try {
+      const response = await RequestService.get("/customers/countries");
+      setCountries(response.data.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchSettings();
+    fetchCountries();
   }, []);
 
   const submit = async () => {
@@ -214,6 +229,7 @@ export default function StoreInfoCard({ isFirstTime = false }) {
               submit={submit}
               loading={loading}
               setShowModal={setShowModal}
+              countries={countries}
             />
           }
           onClick={() => setShowModal(false)}
@@ -223,7 +239,45 @@ export default function StoreInfoCard({ isFirstTime = false }) {
   );
 }
 
-const ModalContent = ({ item, setItem, submit, loading, setShowModal }) => {
+const ModalContent = ({
+  item,
+  setItem,
+  submit,
+  loading,
+  setShowModal,
+  countries,
+}) => {
+  const [currencySearch, setCurrencySearch] = useState("");
+  const [currencyOpen, setCurrencyOpen] = useState(false);
+  const {
+    triggerRef: currencyRef,
+    listRef: currencyListRef,
+    pos: currencyPos,
+  } = useDropdownPos(currencyOpen, () => setCurrencyOpen(false));
+
+  const filteredCurrencies = countries.filter(
+    (c) =>
+      c.currency &&
+      (c.currency.toLowerCase().includes(currencySearch.toLowerCase()) ||
+        c.currency_name.toLowerCase().includes(currencySearch.toLowerCase())),
+  );
+
+  // Deduplicate by currency code
+  const uniqueCurrencies = filteredCurrencies.filter(
+    (c, idx, arr) => arr.findIndex((x) => x.currency === c.currency) === idx,
+  );
+
+  const selectedCurrencyLabel = item?.business_currency
+    ? (() => {
+        const found = countries.find(
+          (c) => c.currency === item.business_currency,
+        );
+        return found
+          ? `${found.currency} – ${found.currency_name}`
+          : item.business_currency;
+      })()
+    : "Select currency";
+
   return (
     <div className="relative w-full p-4 overflow-y-auto bg-white no-scrollbar rounded-3xl lg:p-11">
       <div className="px-2 pr-14">
@@ -263,11 +317,91 @@ const ModalContent = ({ item, setItem, submit, loading, setShowModal }) => {
             </div>
             <div>
               <span>Business Currency</span>
-              <Input
-                type="text"
-                selected={item?.business_currency || ""}
-                setSelected={(e) => setItem({ ...item, business_currency: e })}
-              />
+              <div className="relative mt-1">
+                <button
+                  ref={currencyRef}
+                  type="button"
+                  onClick={() => setCurrencyOpen((o) => !o)}
+                  className="w-full flex items-center justify-between rounded-xl bg-[#F6F6F6] px-4 h-10 text-sm text-left"
+                >
+                  <span
+                    className={
+                      item?.business_currency
+                        ? "text-gray-900"
+                        : "text-gray-400"
+                    }
+                  >
+                    {selectedCurrencyLabel}
+                  </span>
+                  <FiChevronDown
+                    className={`transition-transform ${currencyOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+                {currencyOpen &&
+                  createPortal(
+                    <>
+                      <div
+                        className="fixed inset-0 z-[9999998]"
+                        onClick={() => setCurrencyOpen(false)}
+                      />
+                      <div
+                        ref={currencyListRef}
+                        className="bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden flex flex-col z-[9999999]"
+                        style={{
+                          position: "fixed",
+                          top: currencyPos.top,
+                          left: currencyPos.left,
+                          width: currencyPos.width,
+                          maxHeight: 224,
+                        }}
+                      >
+                        <div className="p-2 border-b">
+                          <input
+                            autoFocus
+                            type="text"
+                            value={currencySearch}
+                            onChange={(e) => setCurrencySearch(e.target.value)}
+                            placeholder="Search currency…"
+                            className="w-full px-3 py-1.5 text-sm rounded-lg bg-gray-100 outline-none"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </div>
+                        <ul className="overflow-y-auto">
+                          {uniqueCurrencies.length === 0 ? (
+                            <li className="px-4 py-3 text-sm text-gray-400 text-center">
+                              No results
+                            </li>
+                          ) : (
+                            uniqueCurrencies.map((c) => (
+                              <li
+                                key={c.currency}
+                                onClick={() => {
+                                  setItem({
+                                    ...item,
+                                    business_currency: c.currency,
+                                  });
+                                  setCurrencyOpen(false);
+                                  setCurrencySearch("");
+                                }}
+                                className={`px-4 py-2 text-sm cursor-pointer hover:bg-gray-50 ${
+                                  item?.business_currency === c.currency
+                                    ? "bg-green-50 font-semibold"
+                                    : ""
+                                }`}
+                              >
+                                {c.currency} – {c.currency_name}
+                                {c.currency_symbol
+                                  ? ` (${c.currency_symbol})`
+                                  : ""}
+                              </li>
+                            ))
+                          )}
+                        </ul>
+                      </div>
+                    </>,
+                    document.body,
+                  )}
+              </div>
             </div>
           </div>
         </div>

@@ -4,11 +4,13 @@ import { persistReducer } from "redux-persist";
 import thunk from "redux-thunk";
 import userSlice from "./slices/userSlice";
 import generalSlice from "./slices/generalSlice";
+import notificationSlice from "./slices/notificationSlice";
 import { LOGOUT } from "./asyncActions/logout";
 
 const rootReducer = combineReducers({
   user: userSlice,
   general: generalSlice,
+  notifications: notificationSlice,
 });
 
 const appReducer = (state, action) => {

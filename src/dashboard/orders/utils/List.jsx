@@ -1,10 +1,12 @@
-import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
+import { FaPencilAlt, FaTrashAlt, FaPrint } from "react-icons/fa";
 import TableHead from "../../../utils/TableHead";
 import { BarLoader } from "../../../utils/Loader";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { cleanUpErr, RequestService } from "../../../services";
 import toast from "../../../utils/Toast";
 import { useNavigate } from "react-router-dom";
+import ReceiptModal from "./ReceiptModal";
 
 export default function TableList({
   itemsToDisplay,
@@ -78,8 +80,11 @@ export default function TableList({
 
 const List = ({ items, fetch }) => {
   const [showDelete, setShowDelete] = useState(false);
+  const [showReceipt, setShowReceipt] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const navigate = useNavigate();
+  const laundry = useSelector((state) => state.user.user?.laundry);
+  const businessName = laundry?.name || "LAUNDRY POS";
 
   const deleteItem = async () => {
     setDisabled(true);
@@ -100,45 +105,58 @@ const List = ({ items, fetch }) => {
   };
 
   return (
-    <tr className="h-fit">
-      {/* <td className="px-3 py-4 text-sm">{items?.name}</td> */}
-      <td className="px-3 py-4 text-sm">
-        {items?.customer?.first_name + " " + items?.customer?.last_name ||
-          "N/A"}
-      </td>
-      <td className="px-3 py-4 text-sm max-w-[250px] whitespace-normal word-break">
-        {items?.items
-          ?.map(
-            (item) => item?.service_item?.name + " (x" + item?.quantity + ")",
-          )
-          .join(", ") || 0}
-      </td>
-      <td className="px-3 py-4 text-sm">{items?.order_date || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{items?.due_date || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">{items?.status || "N/A"}</td>
-      <td className="px-3 py-4 text-sm">₦{items?.total_amount}</td>
-      <td className="px-3 py-4 text-sm">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              navigate(`/dashboard/orders/update-order/${items?.id}`);
-            }}
-          >
-            <FaPencilAlt className="text-gray-500 hover:text-gray-700" />
-          </button>
-          <button className="" onClick={() => setShowDelete(true)}>
-            <FaTrashAlt className="text-gray-500 hover:text-gray-700" />
-          </button>
-        </div>
-      </td>
-      {showDelete && (
-        <Delete
-          setShowModal={setShowDelete}
-          onClick={deleteItem}
-          disabled={disabled}
+    <>
+      <tr className="h-fit">
+        {/* <td className="px-3 py-4 text-sm">{items?.name}</td> */}
+        <td className="px-3 py-4 text-sm">
+          {items?.customer?.first_name + " " + items?.customer?.last_name ||
+            "N/A"}
+        </td>
+        <td className="px-3 py-4 text-sm max-w-[250px] whitespace-normal word-break">
+          {items?.items
+            ?.map(
+              (item) => item?.service_item?.name + " (x" + item?.quantity + ")",
+            )
+            .join(", ") || 0}
+        </td>
+        <td className="px-3 py-4 text-sm">{items?.order_date || "N/A"}</td>
+        <td className="px-3 py-4 text-sm">{items?.due_date || "N/A"}</td>
+        <td className="px-3 py-4 text-sm">{items?.status || "N/A"}</td>
+        <td className="px-3 py-4 text-sm">₦{items?.total_amount}</td>
+        <td className="px-3 py-4 text-sm">
+          <div className="flex items-center gap-3">
+            <button title="Print Receipt" onClick={() => setShowReceipt(true)}>
+              <FaPrint className="text-gray-500 hover:text-blue-600" />
+            </button>
+            <button
+              onClick={() => {
+                navigate(`/dashboard/orders/update-order/${items?.id}`);
+              }}
+            >
+              <FaPencilAlt className="text-gray-500 hover:text-gray-700" />
+            </button>
+            <button className="" onClick={() => setShowDelete(true)}>
+              <FaTrashAlt className="text-gray-500 hover:text-gray-700" />
+            </button>
+          </div>
+        </td>
+        {showDelete && (
+          <Delete
+            setShowModal={setShowDelete}
+            onClick={deleteItem}
+            disabled={disabled}
+          />
+        )}
+      </tr>
+      {showReceipt && items?.customer && (
+        <ReceiptModal
+          order={items}
+          customer={items.customer}
+          businessName={businessName}
+          onClose={() => setShowReceipt(false)}
         />
       )}
-    </tr>
+    </>
   );
 };
 

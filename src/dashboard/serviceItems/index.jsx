@@ -8,6 +8,7 @@ import TableList from "./utils/List";
 import SideModal from "../../utils/SideModal";
 import AddUpdate from "./utils/AddUpdate";
 import { useIsMobile } from "../../utils/use-mobile";
+import ExportButton from "../../utils/ExportButton";
 
 export default function Index() {
   const [items, setItems] = useState([]);
@@ -69,13 +70,27 @@ export default function Index() {
                 : "Manage your service catalogue"}
             </p>
           </div>
-          <Button
-            name="Add Service Item"
-            onClick={() => {
-              setShowCreate(true);
-              setSelectedItem(null);
-            }}
-          />
+          <div className="flex items-center gap-2">
+            <ExportButton
+              currentData={items}
+              columns={["name", "description", "price", "created_at"]}
+              headers={{
+                name: "Name",
+                description: "Description",
+                price: "Price",
+                created_at: "Created At",
+              }}
+              filename="service-items"
+              fetchAllEndpoint="/service-items"
+            />
+            <Button
+              name="Add Service Item"
+              onClick={() => {
+                setShowCreate(true);
+                setSelectedItem(null);
+              }}
+            />
+          </div>
         </div>
         {/* Search */}
         <Search

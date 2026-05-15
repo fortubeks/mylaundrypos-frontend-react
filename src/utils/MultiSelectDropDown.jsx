@@ -1,5 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { FaCaretDown, FaCheck } from "react-icons/fa";
+import { createPortal } from "react-dom";
+import { useDropdownPos } from "./useDropdownPos";
 
 export const MultiSelectDropDown = ({
   items,
@@ -10,31 +12,19 @@ export const MultiSelectDropDown = ({
   slide = true,
 }) => {
   const [open, setOpen] = useState(false);
-  const dropdownRef = useRef(null);
-  const [dropdownWidth, setDropdownWidth] = useState(0);
-
-  useEffect(() => {
-    if (dropdownRef.current) {
-      setDropdownWidth(dropdownRef.current.offsetWidth);
-    }
-  }, [dropdownRef]);
-
-  // const handleToggle = (item) => {
-  //   if (selected.includes(item)) {
-  //     setSelected(selected.filter((sel) => sel !== item));
-  //   } else {
-  //     setSelected([...selected, item]);
-  //   }
-  // };
   const [isFocused, setIsFocused] = useState(false);
+  const { triggerRef, listRef, pos } = useDropdownPos(open, () =>
+    setOpen(false),
+  );
 
   const hasValue = selected && selected.length !== 0;
   const showLabel = isFocused || hasValue;
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="w-full h-10 font-medium" ref={dropdownRef}>
+      <div className="w-full h-10 font-medium">
         <div
+          ref={triggerRef}
           onClick={() => {
             setOpen(!open);
             setIsFocused(!isFocused);
@@ -63,76 +53,87 @@ export const MultiSelectDropDown = ({
               )}
             </span>
           </div>
-          <FaCaretDown className={`${open && "rotate-180"} text-xl`} />
+          <FaCaretDown className={`${open ? "rotate-180" : ""} text-xl`} />
         </div>
-        {open && (
-          <div
-            className={`bg-white backdrop-blur-[8px] shadow-[0px_4px_4px_0px_rgba(18,18,18,0.10)] mt-[2px] px-3 py-2 flex flex-col gap-3 rounded-xl overflow-y-auto absolute z-10 `}
-            style={{ width: dropdownWidth }}
-          >
-            <li
-              className={`px-2 py-1 text-sm cursor-pointer flex items-center gap-2`}
-              onClick={() => {
-                setSelected([]);
-                setOpen(false);
-              }}
-            >
-              <span
-                className={`border rounded flex justify-center items-center
-              ${
-                selected?.length === 0
-                  ? "border-secondary"
-                  : "border-dashed border-[#939393]"
-              }`}
+
+        {open &&
+          createPortal(
+            <>
+              <div
+                className="fixed inset-0 z-[9999998]"
+                onClick={() => setOpen(false)}
+              />
+              <div
+                ref={listRef}
+                className="bg-white shadow-[0px_4px_12px_0px_rgba(18,18,18,0.15)] px-3 py-2 flex flex-col gap-3 rounded-xl overflow-y-auto z-[9999999] max-h-[240px]"
+                style={{
+                  position: "fixed",
+                  top: pos.top,
+                  left: pos.left,
+                  width: pos.width,
+                }}
               >
-                <span
-                  className={`rounded flex justify-center items-center w-5 h-5 ${
-                    selected?.length === 0 ? "bg-secondary" : ""
-                  }`}
-                >
-                  {selected?.length === 0 && (
-                    <FaCheck className="text-white text-xs" />
-                  )}
-                </span>
-              </span>{" "}
-              Select option
-            </li>
-            {items.map((item, index) => {
-              return (
                 <li
-                  key={index}
-                  className={`px-2 py-1 text-sm cursor-pointer flex items-center gap-2`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onChange(item);
+                  className="px-2 py-1 text-sm cursor-pointer flex items-center gap-2"
+                  onClick={() => {
+                    setSelected([]);
+                    setOpen(false);
                   }}
                 >
                   <span
-                    className={`border rounded flex justify-center items-center
-                     ${
-                       selected.find((sel) => sel.id === item.id)
-                         ? ""
-                         : "border-dashed border-[#939393]"
-                     }`}
+                    className={`border rounded flex justify-center items-center ${
+                      selected?.length === 0
+                        ? "border-secondary"
+                        : "border-dashed border-[#939393]"
+                    }`}
                   >
-                    <div
-                      className={`rounded flex h-5 w-5 justify-center items-center ${
-                        selected.find((sel) => sel.id === item.id)
-                          ? "bg-secondary"
-                          : ""
+                    <span
+                      className={`rounded flex justify-center items-center w-5 h-5 ${
+                        selected?.length === 0 ? "bg-secondary" : ""
                       }`}
                     >
-                      {selected.find((sel) => sel.id === item.id) && (
+                      {selected?.length === 0 && (
                         <FaCheck className="text-white text-xs" />
                       )}
-                    </div>
+                    </span>
                   </span>{" "}
-                  {item.name}
+                  Select option
                 </li>
-              );
-            })}
-          </div>
-        )}
+                {items.map((item, index) => (
+                  <li
+                    key={index}
+                    className="px-2 py-1 text-sm cursor-pointer flex items-center gap-2"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onChange(item);
+                    }}
+                  >
+                    <span
+                      className={`border rounded flex justify-center items-center ${
+                        selected.find((sel) => sel.id === item.id)
+                          ? ""
+                          : "border-dashed border-[#939393]"
+                      }`}
+                    >
+                      <div
+                        className={`rounded flex h-5 w-5 justify-center items-center ${
+                          selected.find((sel) => sel.id === item.id)
+                            ? "bg-secondary"
+                            : ""
+                        }`}
+                      >
+                        {selected.find((sel) => sel.id === item.id) && (
+                          <FaCheck className="text-white text-xs" />
+                        )}
+                      </div>
+                    </span>{" "}
+                    {item.name}
+                  </li>
+                ))}
+              </div>
+            </>,
+            document.body,
+          )}
       </div>
     </div>
   );
