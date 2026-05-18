@@ -22,6 +22,7 @@ export default function CreateOrder() {
   const [customers, setCustomers] = useState([]);
   const [serviceItems, setServiceItems] = useState([]);
   const [search, setSearch] = useState("");
+  const [customerSearch, setCustomerSearch] = useState("");
   const [businessInfoComplete, setBusinessInfoComplete] = useState(true);
   const isMobile = useIsMobile();
 
@@ -102,12 +103,10 @@ export default function CreateOrder() {
 
   const fetch = async () => {
     try {
-      const response = await RequestService.get("/customers");
       const responseItems = await RequestService.getParam("/service-items", {
         per_page: 30,
         search: search,
       });
-      setCustomers(response.data.data.data);
       setServiceItems(responseItems.data.data.data);
     } catch (error) {
       console.log(error);
@@ -116,6 +115,22 @@ export default function CreateOrder() {
   useEffect(() => {
     fetch();
   }, [search]);
+
+  // Server-side customer search — debounced so we don't hammer the API on every keypress
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      try {
+        const response = await RequestService.getParam("/customers", {
+          search: customerSearch,
+          per_page: 50,
+        });
+        setCustomers(response.data.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [customerSearch]);
 
   const validateForm = (form) => {
     const errors = {};
@@ -307,6 +322,7 @@ export default function CreateOrder() {
                 placeholder="Customer"
                 error={errors.customer}
                 showErrors={showErrors}
+                onSearch={setCustomerSearch}
               />
             </div>
             <SelectDropDownImage

@@ -152,6 +152,18 @@ const STYLES = `
   }
 `;
 
+/**
+ * Resolve a social media handle or full URL into a usable href.
+ * If the stored value is already a full URL (starts with http/https), use it
+ * directly. Otherwise prepend the platform base URL.
+ */
+function socialUrl(base, handle) {
+  if (!handle) return null;
+  const trimmed = handle.trim();
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  return `${base}/${trimmed}`;
+}
+
 export default function LaundryLandingPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
@@ -220,16 +232,15 @@ export default function LaundryLandingPage() {
       </div>
     );
 
-  const base = (
-    import.meta.env.VITE_API_IMAGE_BASE_URL ||
-    import.meta.env.VITE_API_BASE_URL?.replace("/api", "") + "/storage/"
-  ).replace(/\/$/, "");
+  const base = import.meta.env.VITE_API_IMAGE_BASE_URL;
+  //   import.meta.env.VITE_API_BASE_URL?.replace("/api", "") + "/storage/"
+  // ).replace(/\/$/, "");
 
   const logoSrc = laundry.logo
-    ? `${base}/logos/${laundry.logo}`
+    ? `${base}logos/${laundry.logo}`
     : "/logos/blue-icon.png";
   const coverSrc = laundry.cover_image
-    ? `${base}/covers/${laundry.cover_image}`
+    ? `${base}covers/${laundry.cover_image}`
     : null;
   const hasContact =
     laundry.phone ||
@@ -469,7 +480,7 @@ export default function LaundryLandingPage() {
                   "Professional Laundry Services at Your Fingertips"}
               </p>
 
-              {laundry.description && (
+              {/* {laundry.description && (
                 <p
                   className="fa4 text-white/82 text-[15px] leading-[1.85] mb-9 max-w-[500px]"
                   style={{ textShadow: "0 1px 10px rgba(0,0,0,0.55)" }}
@@ -477,7 +488,7 @@ export default function LaundryLandingPage() {
                   {laundry.description.slice(0, 190)}
                   {laundry.description.length > 190 ? "…" : ""}
                 </p>
-              )}
+              )} */}
 
               {/* CTAs */}
               <div className="fa5 flex flex-wrap gap-3 mb-10">
@@ -1124,7 +1135,7 @@ export default function LaundryLandingPage() {
                 )}
                 {laundry.instagram && (
                   <a
-                    href={`https://instagram.com/${laundry.instagram}`}
+                    href={socialUrl("https://instagram.com", laundry.instagram)}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2.5 text-white font-extrabold text-sm px-7 py-3.5 rounded-full shadow-lg transition-all hover:scale-105"
@@ -1138,7 +1149,7 @@ export default function LaundryLandingPage() {
                 )}
                 {laundry.facebook && (
                   <a
-                    href={`https://facebook.com/${laundry.facebook}`}
+                    href={socialUrl("https://facebook.com", laundry.facebook)}
                     target="_blank"
                     rel="noreferrer"
                     className="flex items-center gap-2.5 bg-[#1877f2] hover:bg-[#0e6ad4] text-white font-extrabold text-sm px-7 py-3.5 rounded-full shadow-lg shadow-blue-500/20 transition-all hover:scale-105"
@@ -1205,7 +1216,10 @@ export default function LaundryLandingPage() {
                   )}
                   {laundry.instagram && (
                     <a
-                      href={`https://instagram.com/${laundry.instagram}`}
+                      href={socialUrl(
+                        "https://instagram.com",
+                        laundry.instagram,
+                      )}
                       target="_blank"
                       rel="noreferrer"
                       className="w-9 h-9 rounded-xl bg-white/8 hover:bg-pink-600 border border-white/8 flex items-center justify-center transition-all hover:border-transparent"
@@ -1215,7 +1229,7 @@ export default function LaundryLandingPage() {
                   )}
                   {laundry.facebook && (
                     <a
-                      href={`https://facebook.com/${laundry.facebook}`}
+                      href={socialUrl("https://facebook.com", laundry.facebook)}
                       target="_blank"
                       rel="noreferrer"
                       className="w-9 h-9 rounded-xl bg-white/8 hover:bg-[#1877f2] border border-white/8 flex items-center justify-center transition-all hover:border-transparent"

@@ -28,6 +28,7 @@ export default function LandingPageEditor() {
         const data = await BookingService.getLandingPage();
         setLaundry(data);
         setForm({
+          name: data.name || "",
           tagline: data.tagline || "",
           description: data.description || "",
           bank_name: data.bank_name || "",
@@ -239,6 +240,13 @@ export default function LandingPageEditor() {
 
         {/* Business info */}
         <Section title="Business Info">
+          <Field
+            label="Business Name"
+            placeholder="e.g. Sparkle Laundry"
+            value={form.name}
+            onChange={(v) => setForm({ ...form, name: v })}
+            max={120}
+          />
           <Field
             label="Tagline"
             placeholder="e.g. Fresh & Clean, Every Time"

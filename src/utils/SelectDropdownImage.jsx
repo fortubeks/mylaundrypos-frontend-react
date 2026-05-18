@@ -16,6 +16,7 @@ export const SelectDropDownImage = ({
   empty = "No items found",
   error = false,
   showErrors = false,
+  onSearch,
 }) => {
   const [open, setOpen] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
@@ -24,6 +25,10 @@ export const SelectDropDownImage = ({
     setOpen(false);
     setSearchTerm("");
   });
+
+  useEffect(() => {
+    if (onSearch) onSearch(searchTerm);
+  }, [searchTerm]);
 
   const hasValue = selected && Object.keys(selected).length > 0;
   const showLabel = hasValue;
