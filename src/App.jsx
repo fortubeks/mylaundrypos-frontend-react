@@ -4,6 +4,7 @@ import {
   Outlet,
   RouterProvider,
 } from "react-router-dom";
+import { useEffect } from "react";
 import "./index.css";
 import Construction from "./Construction";
 import NotFound from "./NotFound";
@@ -33,6 +34,9 @@ import Bookings from "./dashboard/bookings";
 import LandingPageEditor from "./dashboard/landingPage";
 import LaundryLandingPage from "./public/LaundryLandingPage";
 import BookingPage from "./public/BookingPage";
+import { trackPageView } from "./analytics";
+
+let lastTrackedPath = "";
 
 const router = createBrowserRouter([
   {
@@ -181,6 +185,27 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  useEffect(() => {
+    const trackLocation = (location) => {
+      const nextPath = `${location.pathname}${location.search}${location.hash}`;
+
+      if (nextPath === lastTrackedPath) {
+        return;
+      }
+
+      lastTrackedPath = nextPath;
+      trackPageView(nextPath);
+    };
+
+    trackLocation(router.state.location);
+
+    const unsubscribe = router.subscribe((state) => {
+      trackLocation(state.location);
+    });
+
+    return unsubscribe;
+  }, []);
+
   return (
     <div className="App">
       <RouterProvider router={router}></RouterProvider>
