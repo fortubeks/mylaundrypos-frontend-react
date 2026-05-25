@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import toast from "../../utils/Toast";
 import { AuthService, cleanUpErr } from "../../services";
 import { useIsMobile } from "../../utils/use-mobile";
+import { trackSignUpConversion } from "../../analytics";
 
 export default function Verify() {
   const navigate = useNavigate();
@@ -39,6 +40,7 @@ export default function Verify() {
       const response = await AuthService.verifyEmail({ email, otp });
       console.log("Verification response:", response);
       toast.success("Email verified successfully!");
+      trackSignUpConversion();
       // Store that user just verified and redirect to settings
       localStorage.setItem(
         "laundry::auth",
