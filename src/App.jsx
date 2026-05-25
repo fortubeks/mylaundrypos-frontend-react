@@ -186,6 +186,9 @@ const router = createBrowserRouter([
 
 function App() {
   useEffect(() => {
+    const initialPath = `${router.state.location.pathname}${router.state.location.search}${router.state.location.hash}`;
+    lastTrackedPath = initialPath;
+
     const trackLocation = (location) => {
       const nextPath = `${location.pathname}${location.search}${location.hash}`;
 
@@ -196,8 +199,6 @@ function App() {
       lastTrackedPath = nextPath;
       trackPageView(nextPath);
     };
-
-    trackLocation(router.state.location);
 
     const unsubscribe = router.subscribe((state) => {
       trackLocation(state.location);

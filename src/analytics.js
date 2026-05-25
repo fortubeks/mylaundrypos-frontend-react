@@ -1,12 +1,30 @@
-const GA_MEASUREMENT_ID = "G-FTY3Y5NX6V";
-const SIGN_UP_CONVERSION_ID = "AW-10990925394/FaVjCIOPhLMcENLs8Pgo";
+const SIGN_UP_CONVERSION_ID = "AW-10990925394/cRHBCJGhqrMcENLs8Pgo";
+// const DASHBOARD_CONVERSION_ID = "AW-10990925394/8x7mCM-mqLMcENLs8Pgo";
+
+function trackConversion(sendTo, sessionKey) {
+  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+    return;
+  }
+
+  if (sessionKey && window.sessionStorage.getItem(sessionKey)) {
+    return;
+  }
+
+  window.gtag("event", "conversion", {
+    send_to: sendTo,
+  });
+
+  if (sessionKey) {
+    window.sessionStorage.setItem(sessionKey, "true");
+  }
+}
 
 export function trackPageView(pagePath) {
   if (typeof window === "undefined" || typeof window.gtag !== "function") {
     return;
   }
 
-  window.gtag("config", GA_MEASUREMENT_ID, {
+  window.gtag("event", "page_view", {
     page_path: pagePath,
     page_title: document.title,
     page_location: window.location.href,
@@ -14,11 +32,9 @@ export function trackPageView(pagePath) {
 }
 
 export function trackSignUpConversion() {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") {
-    return;
-  }
-
-  window.gtag("event", "conversion", {
-    send_to: SIGN_UP_CONVERSION_ID,
-  });
+  trackConversion(SIGN_UP_CONVERSION_ID);
 }
+
+// export function trackDashboardConversion() {
+//   trackConversion(DASHBOARD_CONVERSION_ID, "laundry::dashboard-conversion");
+// }
