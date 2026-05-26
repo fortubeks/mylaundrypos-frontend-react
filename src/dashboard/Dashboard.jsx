@@ -9,7 +9,6 @@ import { Logout } from "../utils/Logout";
 import { setShowSearch } from "../store/slices/generalSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { SubscriptionService } from "../services";
-import { trackDashboardConversion } from "../analytics";
 import {
   updateSubscription,
   setSubscriptionLoading,
@@ -30,10 +29,6 @@ export default function Dashboard() {
   // const [showTutorial, setShowTutorial] = useState(false);
   const search = useSelector((state) => state.general.showSearch);
   const subscription = useSelector((state) => state.user.subscription);
-
-  useEffect(() => {
-    trackDashboardConversion();
-  }, []);
 
   // Fetch subscription status once on mount (if not already loaded)
   useEffect(() => {
