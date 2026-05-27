@@ -35,10 +35,15 @@ export const NotificationService = {
     await api.delete(`/notifications/${id}`);
   },
 
-  async updateEmailPreference(enabled) {
-    const res = await api.put("/user/settings/notification-preferences", {
-      booking_email_notifications: enabled,
-    });
+  async updateEmailPreference(type, enabled) {
+    const payload =
+      type === "order"
+        ? { order_email_notifications: enabled }
+        : { booking_email_notifications: enabled };
+    const res = await api.put(
+      "/user/settings/notification-preferences",
+      payload,
+    );
     return res.data.data;
   },
 };
