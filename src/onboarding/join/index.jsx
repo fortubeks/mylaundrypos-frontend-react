@@ -92,12 +92,12 @@ export default function Create() {
 
   return (
     <main
-      className="h-screen p-5 overflow-hidden flex justify-center items-center relative bg-cover bg-center bg-no-repeat before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[rgba(52,71,103,0.6)] before:z-0"
+      className=" p-5 md:p-14 overflow-auto flex justify-center items-center relative bg-cover bg-center bg-no-repeat before:absolute before:top-0 before:left-0 before:w-full before:h-full before:bg-[rgba(52,71,103,0.6)] before:z-0"
       style={{
         backgroundImage: `url(${"https://images.unsplash.com/photo-1497294815431-9365093b7331?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1950&q=80"})`,
       }}
     >
-      <section className="z-10 w-full md:w-1/2 flex justify-center items-center">
+      <section className="z-10 h-full py-10 w-full md:w-1/2 flex justify-center items-center">
         <div className="bg-white w-full rounded-xl flex flex-col md:gap-5 p-5 md:p-7">
           <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
             <h3 className="text-3xl font-bold">Sign Up</h3>
@@ -110,43 +110,50 @@ export default function Create() {
               value={name}
               setValue={setName}
             />
-            <Input
-              name="Email address"
-              type="email"
-              placeholder="e.g johndoe@gmail.com"
-              value={email}
-              setValue={setEmail}
-            />
-            <Input
-              name="Phone Number"
-              type="tel"
-              placeholder="e.g +1234567890"
-              value={phone}
-              setValue={setPhone}
-            />
-            <Input
-              name="State / City"
-              type="text"
-              placeholder="e.g Lagos"
-              value={state}
-              setValue={setState}
-            />
-            <div className="flex flex-col gap-2 w-full">
-              <label htmlFor="referral_source" className="text-sm font-normal">
-                How did you find us? (Optional)
-              </label>
-              <select
-                value={referralSource}
-                onChange={(e) => setReferralSource(e.target.value)}
-                className="bg-inherit border border-[#E0E0E0] rounded-xl px-4 h-10 placeholder:text-[#9D9D9D] text-sm"
-              >
-                <option value="">Select an option...</option>
-                <option value="google_ads">Google Ads</option>
-                <option value="instagram">Instagram</option>
-                <option value="facebook">Facebook</option>
-                <option value="friend">From a Friend</option>
-                <option value="other">Other</option>
-              </select>
+            <div className="flex flex-col md:grid grid-cols-2 gap-5">
+              <Input
+                name="Email address"
+                type="email"
+                placeholder="e.g johndoe@gmail.com"
+                value={email}
+                setValue={setEmail}
+              />
+              <Input
+                name="Phone Number"
+                type="tel"
+                placeholder="e.g +1234567890"
+                value={phone}
+                setValue={setPhone}
+              />
+            </div>
+            <div className="flex flex-col md:grid grid-cols-2 gap-5">
+              <Input
+                name="State / City"
+                type="text"
+                placeholder="e.g Lagos"
+                value={state}
+                setValue={setState}
+              />
+              <div className="flex flex-col gap-2 w-full">
+                <label
+                  htmlFor="referral_source"
+                  className="text-sm font-normal"
+                >
+                  How did you find us? (Optional)
+                </label>
+                <select
+                  value={referralSource}
+                  onChange={(e) => setReferralSource(e.target.value)}
+                  className="bg-inherit border border-[#E0E0E0] rounded-xl px-4 h-10 placeholder:text-[#9D9D9D] text-sm"
+                >
+                  <option value="">Select an option...</option>
+                  <option value="google_ads">Google Ads</option>
+                  <option value="instagram">Instagram</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="friend">From a Friend</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
             </div>
             <input
               type="text"
