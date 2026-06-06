@@ -145,7 +145,7 @@ export default function Login() {
             disabled={email && password}
             loading={loading}
           />
-          <GoogleButton />
+          <GoogleButton label="Sign in with Google" />
         </div>
       </form>
       <div className="flex flex-col md:flex-row gap-5 w-full justify-between items-center text-xs">

@@ -55,7 +55,7 @@ export default function Create() {
     }
     setLoading(true);
     try {
-      const register = await AuthService.register({
+      await AuthService.register({
         email,
         password,
         name,
@@ -64,7 +64,6 @@ export default function Create() {
         referral_source: referralSource || null,
         captcha: captchaToken,
       });
-      console.log(register);
 
       ["laundry::auth", "::auth", "hiddenTime"].forEach((key) =>
         localStorage.removeItem(key),
@@ -101,6 +100,17 @@ export default function Create() {
         <div className="bg-white w-full rounded-xl flex flex-col md:gap-5 p-5 md:p-7">
           <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
             <h3 className="text-3xl font-bold">Sign Up</h3>
+          </div>
+          <div className="flex flex-col gap-4">
+            <GoogleButton
+              label="Sign up with Google"
+              successMessage="Sign Up Successful"
+            />
+            <div className="flex items-center gap-3 text-sm text-[#626262]">
+              <span className="h-px flex-1 bg-[#E0E0E0]" />
+              <span>or</span>
+              <span className="h-px flex-1 bg-[#E0E0E0]" />
+            </div>
           </div>
           <form className="flex flex-col w-full gap-5 grow">
             <Input
@@ -194,7 +204,6 @@ export default function Create() {
                 }
                 loading={loading}
               />
-              <GoogleButton />
             </div>
           </form>
           <div className="flex gap-5 w-full justify-center items-center text-sm">

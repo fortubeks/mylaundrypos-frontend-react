@@ -120,19 +120,31 @@
 //   );
 // }
 
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
 import { AuthService, cleanUpErr, UserService } from "../services";
+import { isVerified } from "../store/slices/userSlice";
 import toast from "../utils/Toast";
 
 const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+const dashboardRoute = "/dashboard/dashboard";
 
-export default function GoogleButton() {
+let googleIdentityInitialized = false;
+let activeCredentialHandler = null;
+
+export default function GoogleButton({
+  label = "Sign in with Google",
+  successMessage = "Login Successful",
+}) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const hiddenButtonRef = useRef(null);
+  const hasRenderedButtonRef = useRef(false);
+  const [isGoogleReady, setIsGoogleReady] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   useEffect(() => {
-    if (!window.google) return;
-
     const handleGoogleCredential = async (response) => {
       try {
         const idToken = response.credential;
@@ -147,72 +159,168 @@ export default function GoogleButton() {
           name: payload.name,
         };
 
-        console.log("Google Credential Received:", data);
-
         const res = await AuthService.socialAuth(data);
+        const authData = res?.data?.data || res?.data;
+
+        if (!authData?.token || !authData?.user?.id) {
+          throw new Error("Google authentication did not return a valid session.");
+        }
 
         // useAuthStore.getState().setSession({
-        //   token: res?.data?.token,
-        //   user: res?.data?.user,
+        //   token: authData.token,
+        //   user: authData.user,
         // });
 
         localStorage.setItem(
           "laundry::auth",
           JSON.stringify({
-            token: res?.data?.token,
-            userId: res?.data?.user.id,
+            token: authData.token,
+            userId: authData.user.id,
           }),
         );
 
         await UserService.getUser();
+        dispatch(isVerified(true));
 
-        toast.success("Login Successful");
+        toast.success(successMessage);
 
-        const route = "/dashboard";
-
-        navigate(route, { replace: true });
+        navigate(dashboardRoute, { replace: true });
       } catch (error) {
         cleanUpErr(error);
       }
     };
 
-    window.google.accounts.id.initialize({
-      client_id: googleClientId,
-      callback: handleGoogleCredential,
-      auto_select: false,
-    });
+    activeCredentialHandler = handleGoogleCredential;
 
-    // render hidden google button
-    window.google.accounts.id.renderButton(
-      document.getElementById("hidden-google-btn"),
-      {
+    const hiddenButtonContainer = hiddenButtonRef.current;
+
+    if (!hiddenButtonContainer) {
+      return undefined;
+    }
+
+    let observer;
+    let loadTimeoutId;
+    let googlePollId;
+
+    const syncGoogleReadyState = () => {
+      const renderedButton = hiddenButtonContainer.querySelector(
+        "div[role=button]",
+      );
+
+      if (renderedButton) {
+        setIsGoogleReady(true);
+        setLoadFailed(false);
+        return true;
+      }
+
+      return false;
+    };
+
+    const initializeGoogleButton = () => {
+      if (!window.google) {
+        return;
+      }
+
+      if (!googleIdentityInitialized) {
+        window.google.accounts.id.initialize({
+          client_id: googleClientId,
+          callback: (response) => activeCredentialHandler?.(response),
+          auto_select: false,
+        });
+
+        googleIdentityInitialized = true;
+      }
+
+      if (hasRenderedButtonRef.current) {
+        syncGoogleReadyState();
+        return;
+      }
+
+      window.google.accounts.id.renderButton(hiddenButtonContainer, {
         theme: "outline",
         size: "large",
-      },
+      });
+
+      hasRenderedButtonRef.current = true;
+
+      if (syncGoogleReadyState()) {
+        return;
+      }
+
+      observer = new MutationObserver(() => {
+        if (syncGoogleReadyState()) {
+          observer.disconnect();
+        }
+      });
+
+      observer.observe(hiddenButtonContainer, {
+        childList: true,
+        subtree: true,
+      });
+    };
+
+    const googleScript = document.querySelector(
+      'script[src="https://accounts.google.com/gsi/client"]',
     );
-  }, [navigate]);
+
+    const handleGoogleLoadTimeout = () => {
+      if (!hasRenderedButtonRef.current && !window.google) {
+        setLoadFailed(true);
+      }
+    };
+
+    loadTimeoutId = window.setTimeout(handleGoogleLoadTimeout, 8000);
+
+    googlePollId = window.setInterval(() => {
+      if (window.google) {
+        initializeGoogleButton();
+        window.clearInterval(googlePollId);
+      }
+    }, 250);
+
+    if (window.google) {
+      initializeGoogleButton();
+    } else if (googleScript) {
+      googleScript.addEventListener("load", initializeGoogleButton);
+    } else {
+      setLoadFailed(true);
+    }
+
+    return () => {
+      observer?.disconnect();
+      window.clearInterval(googlePollId);
+      window.clearTimeout(loadTimeoutId);
+      googleScript?.removeEventListener("load", initializeGoogleButton);
+
+      if (activeCredentialHandler === handleGoogleCredential) {
+        activeCredentialHandler = null;
+      }
+    };
+  }, [dispatch, navigate, successMessage]);
 
   const handleCustomGoogleLogin = () => {
-    const googleBtn = document.querySelector(
-      "#hidden-google-btn div[role=button]",
-    );
+    const googleBtn = hiddenButtonRef.current?.querySelector("div[role=button]");
 
     if (googleBtn) {
       googleBtn.click();
+    } else if (loadFailed) {
+      toast.error("Google sign-in failed to load. Refresh the page or disable blockers.");
     } else {
-      toast.error("Google button not ready. Refresh page.");
+      toast.error("Google sign-in is still loading. Please try again.");
     }
   };
 
   return (
     <div className="w-full">
       {/* Hidden real Google button */}
-      <div id="hidden-google-btn" style={{ display: "none" }} />
+      <div ref={hiddenButtonRef} style={{ display: "none" }} />
 
       {/* Your custom button */}
       <button
+        type="button"
         onClick={handleCustomGoogleLogin}
-        className="inline-flex w-full items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors rounded-lg px-7 border bg-gray-100 hover:bg-gray-200"
+        disabled={!isGoogleReady}
+        className="inline-flex w-full items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors rounded-lg px-7 border bg-gray-100 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <svg
           width="20"
@@ -238,7 +346,7 @@ export default function GoogleButton() {
             fill="#EB4335"
           />
         </svg>
-        Sign up with Google
+        {isGoogleReady ? label : loadFailed ? "Google unavailable" : "Loading Google..."}
       </button>
     </div>
   );

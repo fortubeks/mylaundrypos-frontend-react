@@ -8,7 +8,6 @@ export const UserService = {
       "Content-Type": "application/json",
     };
     const response = await api.get(`/user`, { headers });
-    console.log(response.data.data);
     store.dispatch(updateUser(response.data.data));
     return response.data.data;
   },
