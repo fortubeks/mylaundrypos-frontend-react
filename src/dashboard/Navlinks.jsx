@@ -88,21 +88,25 @@ export const otherLinks = [
 ];
 
 export const getProfileMenuItems = () => [
-  // {
-  //   name: "Update Profile",
-  //   icon: <FaCaretRight className="text-[#212121] text-lg" />,
-  //   path: "/dashboard/settings/update-profile",
-  // },
   {
-    name: "Privacy Policy",
+    name: "Profile",
     icon: "",
-    path: "http://laundrypos.com/privacy-policy",
-    external: true,
+    path: "/dashboard/settings",
   },
   {
-    name: "Terms of Service",
+    name: "Billing",
     icon: "",
-    path: "http://laundrypos.com/terms-of-service",
+    path: "/dashboard/billing",
+  },
+  {
+    name: "Settings",
+    icon: "",
+    path: "/dashboard/settings",
+  },
+  {
+    name: "Support",
+    icon: "",
+    path: "mailto:support@mylaundrypos.com",
     external: true,
   },
   { name: "Log Out", icon: "", isLogout: true },

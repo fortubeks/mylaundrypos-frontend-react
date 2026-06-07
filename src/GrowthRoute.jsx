@@ -1,11 +1,11 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import FeatureLockedPage from "./dashboard/general/FeatureLockedPage";
 
 /**
  * Wraps a route that requires an active Growth subscription.
  * Starter subscribers and unsubscribed users are redirected to /dashboard/pricing.
  */
-const GrowthRoute = ({ children }) => {
+const GrowthRoute = ({ children, featureName = "This page", description }) => {
   const subscription = useSelector((state) => state.user.subscription);
   const subscriptionLoading = useSelector(
     (state) => state.user.subscriptionLoading,
@@ -20,10 +20,17 @@ const GrowthRoute = ({ children }) => {
   }
 
   const isGrowth =
-    subscription?.has_premium && subscription?.subscription?.plan === "growth";
+    subscription?.access?.marketing ||
+    (subscription?.has_premium && subscription?.subscription?.plan === "growth");
 
   if (!isGrowth) {
-    return <Navigate to="/dashboard/pricing" replace />;
+    return (
+      <FeatureLockedPage
+        featureName={featureName}
+        requiredPlan="Growth"
+        description={description}
+      />
+    );
   }
 
   return children;

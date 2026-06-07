@@ -149,9 +149,16 @@ const router = createBrowserRouter([
         element: <Pricing />,
       },
       {
+        path: "billing",
+        element: <Pricing />,
+      },
+      {
         path: "reports",
         element: (
-          <SubscribedRoute>
+          <SubscribedRoute
+            featureName="Reports & Insights"
+            description="Upgrade to Starter to unlock revenue tracking, analytics, and historical performance reports."
+          >
             <Reports />
           </SubscribedRoute>
         ),
@@ -159,15 +166,21 @@ const router = createBrowserRouter([
       {
         path: "marketing",
         element: (
-          <SubscribedRoute>
+          <GrowthRoute
+            featureName="Marketing"
+            description="Upgrade to Growth to create campaigns, manage audiences, and send marketing messages from the app."
+          >
             <Marketing />
-          </SubscribedRoute>
+          </GrowthRoute>
         ),
       },
       {
         path: "bookings",
         element: (
-          <GrowthRoute>
+          <GrowthRoute
+            featureName="Bookings"
+            description="Upgrade to Growth to accept online bookings and manage them from your dashboard."
+          >
             <Bookings />
           </GrowthRoute>
         ),
@@ -175,7 +188,10 @@ const router = createBrowserRouter([
       {
         path: "landing-page",
         element: (
-          <GrowthRoute>
+          <GrowthRoute
+            featureName="Landing Page"
+            description="Upgrade to Growth to publish and manage your public landing page and booking links."
+          >
             <LandingPageEditor />
           </GrowthRoute>
         ),

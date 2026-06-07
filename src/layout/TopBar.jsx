@@ -25,6 +25,7 @@ const PAGE_TITLES = {
   bookings: "Bookings",
   "landing-page": "Landing Page",
   pricing: "Pricing & Plans",
+  billing: "Billing & Subscriptions",
   settings: "Settings",
   profile: "Profile",
 };
@@ -153,13 +154,7 @@ function ProfileDropdown() {
               </div>
               <div className="relative">
                 {profileMenuItems.map((item, index) => {
-                  const nextItem = profileMenuItems[index + 1];
-                  const showDivider =
-                    nextItem &&
-                    !(
-                      item.name === "Privacy Policy" &&
-                      nextItem.name === "Terms of Service"
-                    );
+                  const showDivider = index < profileMenuItems.length - 1;
 
                   return (
                     <div key={index}>

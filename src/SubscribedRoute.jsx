@@ -1,12 +1,16 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
+import FeatureLockedPage from "./dashboard/general/FeatureLockedPage";
 
 /**
  * Wraps a route that requires an active Pro subscription.
  * Redirects unsubscribed users to /dashboard/pricing.
  * The Dashboard parent already fetches subscription on mount.
  */
-const SubscribedRoute = ({ children }) => {
+const SubscribedRoute = ({
+  children,
+  featureName = "This page",
+  description,
+}) => {
   const subscription = useSelector((state) => state.user.subscription);
   const subscriptionLoading = useSelector(
     (state) => state.user.subscriptionLoading,
@@ -22,7 +26,13 @@ const SubscribedRoute = ({ children }) => {
   }
 
   if (!subscription?.has_premium) {
-    return <Navigate to="/dashboard/pricing" replace />;
+    return (
+      <FeatureLockedPage
+        featureName={featureName}
+        requiredPlan="Starter"
+        description={description}
+      />
+    );
   }
 
   return children;

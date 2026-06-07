@@ -43,14 +43,18 @@ export function usePaystack() {
   }, []);
 
   const openPaystack = useCallback(
-    async ({ email, amount, reference, onSuccess, onClose }) => {
+    async ({ email, amount, reference, accessCode, onSuccess, onClose }) => {
       await waitForPaystack();
 
       const handler = window.PaystackPop.setup({
         key: PUBLIC_KEY,
         email,
-        amount,
-        ref: reference,
+        ...(accessCode
+          ? { access_code: accessCode }
+          : {
+              amount,
+              ref: reference,
+            }),
         callback: (response) => {
           if (onSuccess) onSuccess(response);
         },

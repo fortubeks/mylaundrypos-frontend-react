@@ -6,6 +6,11 @@ export const SubscriptionService = {
     return response.data.data;
   },
 
+  async getBillingOverview() {
+    const response = await api.get("/subscription/billing");
+    return response.data.data;
+  },
+
   async getStatus() {
     const response = await api.get("/subscription/status");
     return response.data.data;
