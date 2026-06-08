@@ -60,7 +60,7 @@ export default function Index() {
         <Filter selected={period} setSelected={setPeriod} />
       </div>
       <div className="p-5 w-full flex flex-col gap-3">
-        <div className="flex flex-col md:grid grid-cols-4 grid-rows-1 gap-4">
+        <div className="flex flex-col lg:grid grid-cols-4 grid-rows-1 gap-4">
           <AnalyticCard
             name="Total Orders"
             icon={<FaShoppingCart className="w-8 h-8 text-[#4A90E2]" />}
@@ -135,7 +135,7 @@ export default function Index() {
             Access frequently used features quickly
           </p>
         </div>
-        <div className="flex flex-col md:grid grid-cols-4 gap-4">
+        <div className="flex flex-col lg:grid grid-cols-4 gap-4">
           <button
             className="bg-[#4A90E2] text-white py-4 rounded-lg font-semibold hover:bg-[#3a78c2] transition"
             onClick={() => navigate("/dashboard/orders")}

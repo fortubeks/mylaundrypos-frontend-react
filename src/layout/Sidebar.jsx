@@ -137,8 +137,8 @@ export default function Sidebar() {
             // Skip profile link — it lives in the TopBar now
             if (isProfileLink) return null;
 
-            // Hide "Upgrade to Pro" link when user already has premium
-            if (opt.proLink && hasPremium) return null;
+            // Hide the upgrade link when the user already has a paid plan.
+            if (opt.proLink && hasPaid) return null;
 
             // Render the "Upgrade to Pro" link as a styled NavLink
             if (opt.proLink) {

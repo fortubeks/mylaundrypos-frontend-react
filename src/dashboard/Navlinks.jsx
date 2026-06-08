@@ -106,8 +106,7 @@ export const getProfileMenuItems = () => [
   {
     name: "Support",
     icon: "",
-    path: "mailto:support@mylaundrypos.com",
-    external: true,
+    path: "/dashboard/support",
   },
   { name: "Log Out", icon: "", isLogout: true },
 ];

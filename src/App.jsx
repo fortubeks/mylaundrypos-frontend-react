@@ -32,6 +32,7 @@ import Pricing from "./dashboard/pricing";
 import Reports from "./dashboard/reports";
 import Bookings from "./dashboard/bookings";
 import LandingPageEditor from "./dashboard/landingPage";
+import Support from "./dashboard/support";
 import LaundryLandingPage from "./public/LaundryLandingPage";
 import BookingPage from "./public/BookingPage";
 import { trackPageView } from "./analytics";
@@ -151,6 +152,10 @@ const router = createBrowserRouter([
       {
         path: "billing",
         element: <Pricing />,
+      },
+      {
+        path: "support",
+        element: <Support />,
       },
       {
         path: "reports",

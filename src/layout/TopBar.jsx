@@ -28,6 +28,7 @@ const PAGE_TITLES = {
   billing: "Billing & Subscriptions",
   settings: "Settings",
   profile: "Profile",
+  support: "Support",
 };
 
 export default function TopBar() {

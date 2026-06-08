@@ -63,7 +63,13 @@ const formatCurrency = (amount, currency = "NGN") => {
     style: "currency",
     currency,
     minimumFractionDigits: 0,
-  }).format(amount > 1000 ? amount / 100 : amount);
+  }).format(amount);
+};
+
+const formatPaystackAmount = (amount, currency = "NGN") => {
+  if (amount == null) return "-";
+
+  return formatCurrency(amount / 100, currency);
 };
 
 const formatDate = (value) => {
@@ -418,7 +424,7 @@ export default function Pricing() {
             title="Last payment"
             value={
               payments[0]
-                ? formatCurrency(payments[0].amount_paid, payments[0].currency)
+                ? formatPaystackAmount(payments[0].amount_paid, payments[0].currency)
                 : "-"
             }
             hint={
@@ -527,7 +533,7 @@ export default function Pricing() {
             {
               key: "amount_paid",
               label: "Amount",
-              render: (row) => formatCurrency(row.amount_paid, row.currency),
+              render: (row) => formatPaystackAmount(row.amount_paid, row.currency),
             },
             {
               key: "payment_channel",
