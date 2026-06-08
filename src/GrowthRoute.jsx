@@ -21,7 +21,7 @@ const GrowthRoute = ({ children, featureName = "This page", description }) => {
 
   const isGrowth =
     subscription?.access?.marketing ||
-    (subscription?.has_premium && subscription?.subscription?.plan === "growth");
+    (subscription?.has_paid && subscription?.subscription?.plan === "growth");
 
   if (!isGrowth) {
     return (

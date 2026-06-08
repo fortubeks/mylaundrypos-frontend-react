@@ -46,7 +46,7 @@ export const navLinks = [
     path: "marketing",
     name: "Marketing",
     icon: <FcSalesPerformance className="text-lg" />,
-    requiresSubscription: true,
+    requiresGrowth: true,
   },
   {
     path: "bookings",

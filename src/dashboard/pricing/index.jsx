@@ -79,6 +79,9 @@ const formatDate = (value) => {
 function planButtonLabel(plan, currentPlan, isActive, renewablePlan) {
   if (plan.id === "free") return "Included";
   if (isActive && currentPlan === plan.id) return "Current Plan";
+  if (isActive && currentPlan === "growth" && plan.id === "starter") {
+    return "Growth Active";
+  }
   if (!isActive && renewablePlan === plan.id) return `Renew ${plan.name}`;
   if (isActive && currentPlan === "starter" && plan.id === "growth") {
     return "Upgrade to Growth";
@@ -96,9 +99,14 @@ function PlanCard({
   onChoosePlan,
 }) {
   const isCurrentPlan = isActive && currentPlan === plan.id;
+  const isDowngradeWhileGrowthActive =
+    isActive && currentPlan === "growth" && plan.id === "starter";
   const lockedFeatures = plan.restricted || [];
   const disabled =
-    plan.id === "free" || activatingPlan === plan.id || isCurrentPlan;
+    plan.id === "free" ||
+    activatingPlan === plan.id ||
+    isCurrentPlan ||
+    isDowngradeWhileGrowthActive;
 
   return (
     <div
@@ -258,7 +266,7 @@ export default function Pricing() {
           latest_subscription: billingData?.latest_subscription,
           renewable_plan: billingData?.renewable_plan,
           access: billingData?.access,
-          has_premium: billingData?.access?.reports ?? false,
+          has_paid: billingData?.access?.reports ?? false,
           is_active: billingData?.current_subscription?.is_active ?? false,
         }),
       );

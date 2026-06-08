@@ -27,7 +27,7 @@ export const SubscriptionService = {
 
   /**
    * Verify payment after Paystack popup completes.
-   * Returns { subscription, has_premium, is_active }.
+    * Returns { subscription, has_paid, is_active }.
    */
   async verifyPayment(reference) {
     const response = await api.post("/subscription/verify", { reference });

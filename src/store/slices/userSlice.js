@@ -11,7 +11,7 @@ const initialState = {
   message: "",
   error: "",
   loading: false,
-  subscription: null, // { plan, status, has_premium, is_active, ends_at }
+  subscription: null, // { plan, status, has_paid, is_active, ends_at }
   subscriptionLoading: false,
 };
 export const userSlice = createSlice({

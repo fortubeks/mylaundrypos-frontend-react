@@ -2,7 +2,7 @@ import { useSelector } from "react-redux";
 import FeatureLockedPage from "./dashboard/general/FeatureLockedPage";
 
 /**
- * Wraps a route that requires an active Pro subscription.
+ * Wraps a route that requires an active paid subscription.
  * Redirects unsubscribed users to /dashboard/pricing.
  * The Dashboard parent already fetches subscription on mount.
  */
@@ -25,7 +25,7 @@ const SubscribedRoute = ({
     );
   }
 
-  if (!subscription?.has_premium) {
+  if (!subscription?.has_paid) {
     return (
       <FeatureLockedPage
         featureName={featureName}
