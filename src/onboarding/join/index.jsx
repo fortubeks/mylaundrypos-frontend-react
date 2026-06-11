@@ -5,7 +5,6 @@ import { Button } from "../../utils/Button";
 import toast from "../../utils/Toast";
 import { cleanUpErr, AuthService } from "../../services";
 import GoogleButton from "../GoogleButton";
-import { Turnstile } from "@marsidev/react-turnstile";
 
 export default function Create() {
   const navigate = useNavigate();
@@ -17,7 +16,6 @@ export default function Create() {
   const [rePassword, setRePassword] = useState("");
   const [referralSource, setReferralSource] = useState("");
   const [loading, setLoading] = useState(false);
-  const [captchaToken, setCaptchaToken] = useState(null);
 
   // const validatePassword = (password) => {
   //   const errors = [];
@@ -50,9 +48,6 @@ export default function Create() {
       return toast.error("Password must be at least 5 characters long");
     if (password !== rePassword) return toast.error("Passwords do not match");
 
-    if (!captchaToken) {
-      return toast.error("Please verify you're not a robot.");
-    }
     setLoading(true);
     try {
       await AuthService.register({
@@ -62,7 +57,6 @@ export default function Create() {
         phone,
         state: state || null,
         referral_source: referralSource || null,
-        captcha: captchaToken,
       });
 
       ["laundry::auth", "::auth", "hiddenTime"].forEach((key) =>
@@ -184,11 +178,6 @@ export default function Create() {
                 setValue={setRePassword}
               />
             </div>
-            <Turnstile
-              siteKey={import.meta.env.VITE_API_TURNSTILE_SITE_KEY}
-              onSuccess={(token) => setCaptchaToken(token)}
-              onExpire={() => setCaptchaToken(null)}
-            />
             <div className="w-full flex flex-col gap-3 items-center justify-center mt-auto mb-4">
               <Button
                 name="Sign Up"
