@@ -40,6 +40,9 @@ export default function Verify() {
       const response = await AuthService.verifyEmail({ email, otp });
       console.log("Verification response:", response);
       toast.success("Email verified successfully!");
+      if (typeof window.fbq === "function") {
+        window.fbq("track", "Lead");
+      }
       trackSignUpConversion();
       // Store that user just verified and redirect to settings
       localStorage.setItem(

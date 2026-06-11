@@ -20,15 +20,21 @@ function trackConversion(sendTo, sessionKey) {
 }
 
 export function trackPageView(pagePath) {
-  if (typeof window === "undefined" || typeof window.gtag !== "function") {
+  if (typeof window === "undefined") {
     return;
   }
 
-  window.gtag("event", "page_view", {
-    page_path: pagePath,
-    page_title: document.title,
-    page_location: window.location.href,
-  });
+  if (typeof window.gtag === "function") {
+    window.gtag("event", "page_view", {
+      page_path: pagePath,
+      page_title: document.title,
+      page_location: window.location.href,
+    });
+  }
+
+  if (typeof window.fbq === "function") {
+    window.fbq("track", "PageView");
+  }
 }
 
 export function trackSignUpConversion() {

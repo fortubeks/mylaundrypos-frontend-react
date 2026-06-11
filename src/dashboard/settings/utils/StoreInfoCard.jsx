@@ -412,7 +412,7 @@ const ModalContent = ({
           <Button
             name="Save Changes"
             onClick={() => submit()}
-            disabled={loading}
+            loading={loading}
           ></Button>
         </div>
       </form>
