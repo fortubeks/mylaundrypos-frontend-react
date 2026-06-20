@@ -320,8 +320,8 @@ export default function Pricing() {
     try {
       await openPaystack({
         email: user?.email,
+        amount: checkout.amount,
         reference: checkout.reference,
-        accessCode: checkout.access_code,
         onSuccess: async (transaction) => {
           try {
             const verified = await SubscriptionService.verifyPayment(

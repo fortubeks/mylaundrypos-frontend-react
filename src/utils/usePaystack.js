@@ -49,12 +49,9 @@ export function usePaystack() {
       const handler = window.PaystackPop.setup({
         key: PUBLIC_KEY,
         email,
-        ...(accessCode
-          ? { access_code: accessCode }
-          : {
-              amount,
-              ref: reference,
-            }),
+        amount,
+        ref: reference,
+        channels: ["card"],
         callback: (response) => {
           if (onSuccess) onSuccess(response);
         },
