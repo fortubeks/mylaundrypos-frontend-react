@@ -3,13 +3,20 @@ import { Button, CircularLoader } from "../../utils/Button";
 import OTPInput, { ResendOTP } from "otp-input-react";
 import React, { useState } from "react";
 import toast from "../../utils/Toast";
-import { AuthService, cleanUpErr } from "../../services";
+import { AuthService, cleanUpErr, UserService } from "../../services";
 import { useIsMobile } from "../../utils/use-mobile";
 import { trackSignUpConversion } from "../../analytics";
+import { FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
+import { isVerified } from "../../store/slices/userSlice";
+import { useDispatch } from "react-redux";
+
+const SUPPORT_PHONE = "+2349165426799";
+const SUPPORT_WHATSAPP = "2349165426799";
 
 export default function Verify() {
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(false);
   const [resendKey, setResendKey] = useState(0);
@@ -52,7 +59,9 @@ export default function Verify() {
           userId: response?.data?.data?.user?.id,
         }),
       );
-      navigate("/dashboard/settings", {
+      await UserService.getUser();
+      dispatch(isVerified(true));
+      navigate("/dashboard/dashboard", {
         state: {
           from: "verification",
           name,
@@ -138,6 +147,34 @@ export default function Verify() {
                 );
               }}
             />
+            <div className="w-full rounded-2xl border border-[#E7E7E7] bg-[#FAFAFA] px-4 py-4 text-sm text-[#4B5563]">
+              <p className="font-semibold text-[#212121] text-center">
+                Still did not receive your code?
+              </p>
+              <p className="mt-2 text-center leading-6">
+                Please check your spam or promotions folder first. If the code is
+                still missing, our support team can help you quickly through
+                WhatsApp or a phone call.
+              </p>
+              <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <a
+                  href={`https://wa.me/${SUPPORT_WHATSAPP}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#EEFDF4] px-4 py-3 font-semibold text-[#1F9D55] transition hover:opacity-90"
+                >
+                  <FaWhatsapp />
+                  WhatsApp {SUPPORT_PHONE}
+                </a>
+                <a
+                  href={`tel:${SUPPORT_PHONE}`}
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-[#FFF1F2] px-4 py-3 font-semibold text-[#C53030] transition hover:opacity-90"
+                >
+                  <FaPhoneAlt />
+                  Call {SUPPORT_PHONE}
+                </a>
+              </div>
+            </div>
             <div className="w-full flex justify-center my-auto mb-14">
               <Button name="Verify" width="50%" onClick={handleVerify} />
             </div>
