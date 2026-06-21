@@ -48,13 +48,11 @@ export default function StoreInfoCard() {
   };
 
   const handleFileChange = async (e, type) => {
-    console.log(e);
     const file = e.target.files?.[0];
-    const formData = new FormData();
+    if (!file) return;
 
-    if (file) {
-      formData.append(type, file);
-    }
+    const formData = new FormData();
+    formData.append(type, file);
     try {
       const response = await RequestService.postForm(
         "/user/change-logo",
@@ -62,7 +60,8 @@ export default function StoreInfoCard() {
       );
       console.log(response);
       toast.success("Logo updated");
-      UserService.getUser();
+      await Promise.all([UserService.getUser(), fetchSettings()]);
+      e.target.value = "";
     } catch (error) {
       console.log(error);
       cleanUpErr(error);
@@ -141,7 +140,6 @@ export default function StoreInfoCard() {
                     accept="image/*"
                     className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                     onChange={(e) => {
-                      console.log(e);
                       handleFileChange(e, "business_logo");
                     }}
                   />

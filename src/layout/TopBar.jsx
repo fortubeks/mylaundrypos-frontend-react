@@ -108,6 +108,9 @@ function ProfileDropdown() {
         .join("")
         .toUpperCase()
     : "UN";
+  const businessLogoUrl = user?.app_settings?.business_logo
+    ? `${import.meta.env.VITE_API_IMAGE_BASE_URL}${"logo_images/"}${user.app_settings.business_logo}`
+    : "";
 
   const handleLogout = () => {
     Logout("Logging out", "/login");
@@ -120,7 +123,15 @@ function ProfileDropdown() {
         className="w-9 h-9 bg-gray-200 rounded-full flex items-center justify-center hover:bg-gray-300 transition-colors relative shrink-0"
         aria-label="Profile menu"
       >
-        <span className="text-gray-600 font-medium text-sm">{initials}</span>
+        {businessLogoUrl ? (
+          <img
+            src={businessLogoUrl}
+            alt={`${user?.app_settings?.business_name || user?.name || "Business"} logo`}
+            className="w-full h-full rounded-full object-cover"
+          />
+        ) : (
+          <span className="text-gray-600 font-medium text-sm">{initials}</span>
+        )}
         <span className="w-2 h-2 bg-[#00BE9C] block absolute bottom-0 right-0 rounded-full border border-white"></span>
       </button>
 
@@ -141,9 +152,17 @@ function ProfileDropdown() {
               <div className="px-3">
                 <div className="flex items-center gap-3 px-3 py-3 bg-[#F9F8F8] rounded-[10px]">
                   <div className="w-10 h-10 bg-gray-200 relative rounded-full flex items-center justify-center shrink-0">
-                    <span className="text-gray-600 font-medium">
-                      {initials}
-                    </span>
+                    {businessLogoUrl ? (
+                      <img
+                        src={businessLogoUrl}
+                        alt={`${user?.app_settings?.business_name || user?.name || "Business"} logo`}
+                        className="w-full h-full rounded-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-600 font-medium">
+                        {initials}
+                      </span>
+                    )}
                     <span className="w-2 h-2 bg-[#00BE9C] block absolute bottom-0 right-1 rounded-full"></span>
                   </div>
                   <div className="flex flex-col gap-1 min-w-0">

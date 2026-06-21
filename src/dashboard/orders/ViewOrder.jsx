@@ -1,5 +1,6 @@
 import Modal from "../../utils/Modal";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { cleanUpErr, RequestService } from "../../services";
 import toast from "../../utils/Toast";
 import ComponentCard from "../../utils/ComponentCard";
@@ -30,6 +31,7 @@ import ReceiptModal from "./utils/ReceiptModal";
 import { FaPrint } from "react-icons/fa";
 
 export default function ViewOrder() {
+  const user = useSelector((state) => state.user.user);
   const navigate = useNavigate();
   const params = useParams();
   const [data, setData] = useState({});
@@ -42,6 +44,7 @@ export default function ViewOrder() {
   const [showAddPaymentModal, setShowAddPaymentModal] = useState(false);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [businessName, setBusinessName] = useState("LAUNDRY POS");
+  const [businessLogo, setBusinessLogo] = useState("");
   const isMobile = useIsMobile();
 
   const isEditing = Boolean(params.id);
@@ -71,6 +74,9 @@ export default function ViewOrder() {
         if (settingsRes.data.data?.setting?.business_name) {
           setBusinessName(settingsRes.data.data?.setting?.business_name);
         }
+        if (settingsRes.data.data?.setting?.business_logo) {
+          setBusinessLogo(settingsRes.data.data?.setting?.business_logo);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -78,6 +84,15 @@ export default function ViewOrder() {
 
     fetchDependencies();
   }, []);
+
+  useEffect(() => {
+    if (user?.app_settings?.business_name) {
+      setBusinessName(user.app_settings.business_name);
+    }
+    if (user?.app_settings?.business_logo) {
+      setBusinessLogo(user.app_settings.business_logo);
+    }
+  }, [user]);
 
   const fetchOrder = async () => {
     setLoading(true);
@@ -532,6 +547,7 @@ export default function ViewOrder() {
           order={item}
           customer={form.customer}
           businessName={businessName}
+          businessLogo={businessLogo}
           onClose={() => setShowReceiptModal(false)}
         />
       )}

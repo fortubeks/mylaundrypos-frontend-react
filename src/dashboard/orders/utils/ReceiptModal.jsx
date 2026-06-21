@@ -1,11 +1,20 @@
 import { formatDate } from "./functions";
+import { useSelector } from "react-redux";
 
 export default function ReceiptModal({
   order,
   customer,
   businessName = "LAUNDRY POS",
+  businessLogo = "",
   onClose,
 }) {
+  const user = useSelector((state) => state.user.user);
+  const resolvedBusinessLogo =
+    businessLogo || user?.app_settings?.business_logo || "";
+  const businessLogoUrl = resolvedBusinessLogo
+    ? `${import.meta.env.VITE_API_IMAGE_BASE_URL}${"logo_images/"}${resolvedBusinessLogo}`
+    : "/logos/green-blue-icon.png";
+
   const handlePrint = () => {
     const receiptWindow = window.open("", "", "height=600,width=800");
     const html = `
@@ -35,6 +44,13 @@ export default function ReceiptModal({
               margin-bottom: 20px;
               border-bottom: 2px solid #333;
               padding-bottom: 10px;
+            }
+            .header img {
+              display: block;
+              max-width: 80px;
+              max-height: 80px;
+              margin: 0 auto 10px;
+              object-fit: contain;
             }
             .header h1 {
               font-size: 24px;
@@ -128,6 +144,7 @@ export default function ReceiptModal({
         <body>
           <div class="receipt">
             <div class="header">
+              <img src="${businessLogoUrl}" alt="${businessName} logo" />
               <h1>${businessName}</h1>
               <p>${new Date().toLocaleString()}</p>
             </div>
@@ -249,6 +266,11 @@ export default function ReceiptModal({
         {/* Receipt Content */}
         <div className="p-6 border-b border-gray-200 light">
           <div className="text-center mb-6">
+            <img
+              src={businessLogoUrl}
+              alt={`${businessName} logo`}
+              className="mx-auto mb-3 h-16 w-16 rounded object-contain"
+            />
             <h2 className="text-2xl font-bold">{businessName}</h2>
             <p className="text-sm text-gray-600">
               {new Date().toLocaleString()}
