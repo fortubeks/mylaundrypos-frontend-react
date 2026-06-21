@@ -98,7 +98,10 @@ export default function Verify() {
           <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
             <h3 className="text-3xl font-bold">Account Created</h3>
           </div>
-          <form className="flex flex-col w-full gap-5 grow items-center">
+          <form
+            className="flex flex-col w-full gap-5 grow items-center"
+            onSubmit={handleVerify}
+          >
             <p className="text-lg mt-2 text-center">
               Please check your email for the verification code.
             </p>
@@ -130,6 +133,7 @@ export default function Verify() {
               renderButton={(buttonProps) => {
                 return (
                   <button
+                    type="button"
                     className="min-w-fit text-sm underline ml-auto flex items-center justify-center gap-2 relative cursor-pointer"
                     disabled={loading || buttonProps.remainingTime !== 0}
                     onClick={handleResend}
@@ -176,7 +180,7 @@ export default function Verify() {
               </div>
             </div>
             <div className="w-full flex justify-center my-auto mb-14">
-              <Button name="Verify" width="50%" onClick={handleVerify} />
+              <Button name="Verify" width="50%" type="submit" />
             </div>
           </form>
         </div>

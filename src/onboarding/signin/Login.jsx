@@ -105,7 +105,7 @@ export default function Login() {
       <div className="flex mx-auto -mt-5 -translate-y-10 text-white bg-black rounded-xl w-full py-10 justify-center items-center">
         <h3 className="text-3xl font-bold">Sign In</h3>
       </div>
-      <form className="flex flex-col w-full gap-5 grow">
+      <form className="flex flex-col w-full gap-5 grow" onSubmit={submit}>
         <Input
           name="Email address"
           type="email"
@@ -141,7 +141,7 @@ export default function Login() {
           <Button
             name="Login"
             width="100%"
-            onClick={submit}
+            type="submit"
             disabled={email && password}
             loading={loading}
           />
