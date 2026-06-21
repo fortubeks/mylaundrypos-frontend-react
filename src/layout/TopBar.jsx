@@ -11,6 +11,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { RiMenu3Line, RiNotification3Line } from "react-icons/ri";
 import NotificationPanel from "./NotificationPanel";
 import { NotificationService } from "../services/notification";
+import { IMAGE_BASE_URL } from "../config/env";
 
 const PAGE_TITLES = {
   dashboard: "Dashboard",
@@ -109,7 +110,7 @@ function ProfileDropdown() {
         .toUpperCase()
     : "UN";
   const businessLogoUrl = user?.app_settings?.business_logo
-    ? `${import.meta.env.VITE_API_IMAGE_BASE_URL}${"logo_images/"}${user.app_settings.business_logo}`
+    ? `${IMAGE_BASE_URL}${"logo_images/"}${user.app_settings.business_logo}`
     : "";
 
   const handleLogout = () => {

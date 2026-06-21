@@ -5,6 +5,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import { PopOut } from "../../general";
 import { Input } from "../../../utils/Input";
 import { Button, ButtonBorder } from "../../../utils/Button";
+import { IMAGE_BASE_URL } from "../../../config/env";
 
 export default function StoreInfoCard() {
   const [showModal, setShowModal] = useState(false);
@@ -122,7 +123,7 @@ export default function StoreInfoCard() {
                   <img
                     src={
                       data?.setting?.business_logo
-                        ? `${import.meta.env.VITE_API_IMAGE_BASE_URL}${"logo_images/"}${data?.setting?.business_logo}`
+                        ? `${IMAGE_BASE_URL}${"logo_images/"}${data?.setting?.business_logo}`
                         : "/logos/green-blue-icon.png"
                     }
                     alt="Business Logo"

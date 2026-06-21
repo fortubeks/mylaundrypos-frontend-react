@@ -9,6 +9,7 @@ import { Button, ButtonBorder } from "../../../utils/Button";
 import { isBusinessInfoComplete } from "../../../utils/businessInfoValidator";
 import { FiChevronDown } from "react-icons/fi";
 import { useDropdownPos } from "../../../utils/useDropdownPos";
+import { IMAGE_BASE_URL } from "../../../config/env";
 
 export default function StoreInfoCard({ isFirstTime = false }) {
   const [showModal, setShowModal] = useState(false);
@@ -166,7 +167,7 @@ export default function StoreInfoCard({ isFirstTime = false }) {
                   <img
                     src={
                       data?.setting?.business_logo
-                        ? `${import.meta.env.VITE_API_IMAGE_BASE_URL}${"logo_images/"}${data?.setting?.business_logo}`
+                        ? `${IMAGE_BASE_URL}${"logo_images/"}${data?.setting?.business_logo}`
                         : "/logos/green-blue-icon.png"
                     }
                     alt="Business Logo"

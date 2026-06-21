@@ -1,5 +1,6 @@
 import { formatDate } from "./functions";
 import { useSelector } from "react-redux";
+import { IMAGE_BASE_URL } from "../../../config/env";
 
 export default function ReceiptModal({
   order,
@@ -12,7 +13,7 @@ export default function ReceiptModal({
   const resolvedBusinessLogo =
     businessLogo || user?.app_settings?.business_logo || "";
   const businessLogoUrl = resolvedBusinessLogo
-    ? `${import.meta.env.VITE_API_IMAGE_BASE_URL}${"logo_images/"}${resolvedBusinessLogo}`
+    ? `${IMAGE_BASE_URL}${"logo_images/"}${resolvedBusinessLogo}`
     : "/logos/green-blue-icon.png";
 
   const handlePrint = () => {

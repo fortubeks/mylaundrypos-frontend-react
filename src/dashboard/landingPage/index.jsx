@@ -3,12 +3,7 @@ import { BookingService, cleanUpErr } from "../../services";
 import { BarLoader } from "../../utils/Loader";
 import toast from "../../utils/Toast";
 import { FiExternalLink, FiCopy, FiUpload, FiCheck } from "react-icons/fi";
-
-const BASE = import.meta.env.VITE_APP_BASE_URL || window.location.origin;
-// Use the dedicated image base URL (includes trailing slash)
-const IMG =
-  import.meta.env.VITE_API_IMAGE_BASE_URL ||
-  import.meta.env.VITE_API_BASE_URL?.replace("/api", "") + "/storage/";
+import { APP_BASE_URL as BASE, IMAGE_BASE_URL as IMG } from "../../config/env";
 
 export default function LandingPageEditor() {
   const [laundry, setLaundry] = useState(null);

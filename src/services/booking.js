@@ -1,9 +1,10 @@
 import api from "./https";
 import axios from "axios";
+import { API_BASE_URL } from "../config/env";
 
 // A separate axios instance without auth header for public routes
 const publicApi = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
+  baseURL: API_BASE_URL,
 });
 
 export const PublicService = {

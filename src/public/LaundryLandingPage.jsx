@@ -16,6 +16,7 @@ import {
   FiPackage,
 } from "react-icons/fi";
 import { FaWhatsapp } from "react-icons/fa";
+import { IMAGE_BASE_URL } from "../config/env";
 
 const NAV_LINKS = [
   { label: "About", id: "about" },
@@ -232,9 +233,7 @@ export default function LaundryLandingPage() {
       </div>
     );
 
-  const base = import.meta.env.VITE_API_IMAGE_BASE_URL;
-  //   import.meta.env.VITE_API_BASE_URL?.replace("/api", "") + "/storage/"
-  // ).replace(/\/$/, "");
+  const base = IMAGE_BASE_URL;
 
   const logoSrc = laundry.logo
     ? `${base}logos/${laundry.logo}`
