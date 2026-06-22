@@ -9,5 +9,10 @@ export const IMAGE_BASE_URL =
   import.meta.env.VITE_API_IMAGE_BASE_URL ||
   `${API_BASE_URL.replace(/\/api\/?$/, "")}/storage/`;
 
+export const FRONTEND_BASE_URL =
+  import.meta.env.VITE_FRONTEND_BASE_URL ||
+  import.meta.env.VITE_APP_BASE_URL ||
+  window.location.origin;
+
 export const APP_BASE_URL =
-  import.meta.env.VITE_APP_BASE_URL || window.location.origin;
+  FRONTEND_BASE_URL;

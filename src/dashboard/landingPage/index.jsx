@@ -3,7 +3,7 @@ import { BookingService, cleanUpErr } from "../../services";
 import { BarLoader } from "../../utils/Loader";
 import toast from "../../utils/Toast";
 import { FiExternalLink, FiCopy, FiUpload, FiCheck } from "react-icons/fi";
-import { APP_BASE_URL as BASE, IMAGE_BASE_URL as IMG } from "../../config/env";
+import { FRONTEND_BASE_URL as BASE, IMAGE_BASE_URL as IMG } from "../../config/env";
 
 export default function LandingPageEditor() {
   const [laundry, setLaundry] = useState(null);
