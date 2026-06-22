@@ -39,6 +39,7 @@ export default function CreateOrder() {
     total_amount: item?.total_amount || "",
     order_date: item?.order_date || new Date().toISOString().split("T")[0],
     due_date: item?.due_date || new Date().toISOString().split("T")[0],
+    notes: item?.notes || "",
     status: item?.status
       ? { name: item.status.charAt(0).toUpperCase() + item.status.slice(1) }
       : { name: "Pending" },
@@ -120,17 +121,65 @@ export default function CreateOrder() {
   useEffect(() => {
     const timer = setTimeout(async () => {
       try {
-        const response = await RequestService.getParam("/customers", {
-          search: customerSearch,
-          per_page: 50,
-        });
-        setCustomers(response.data.data.data);
+        await loadCustomers(customerSearch);
       } catch (error) {
         console.log(error);
       }
     }, 300);
     return () => clearTimeout(timer);
   }, [customerSearch]);
+
+  const loadCustomers = async (searchValue = "") => {
+    const response = await RequestService.getParam("/customers", {
+      search: searchValue,
+      per_page: 50,
+    });
+    const customerList = response?.data?.data?.data || [];
+    setCustomers(customerList);
+    return customerList;
+  };
+
+  const handleCustomerCreated = async (createdCustomer) => {
+    const normalizedCustomer = createdCustomer
+      ? {
+          ...createdCustomer,
+          name: `${createdCustomer.first_name || ""} ${
+            createdCustomer.last_name ? createdCustomer.last_name : ""
+          }`.trim(),
+        }
+      : null;
+
+    try {
+      const updatedCustomers = await loadCustomers("");
+      const matchedCustomer =
+        updatedCustomers.find((customer) => customer.id === createdCustomer?.id) ||
+        normalizedCustomer;
+
+      if (matchedCustomer) {
+        setForm((prev) => ({
+          ...prev,
+          customer: {
+            ...matchedCustomer,
+            name: `${matchedCustomer.first_name || ""} ${
+              matchedCustomer.last_name ? matchedCustomer.last_name : ""
+            }`.trim(),
+          },
+        }));
+      }
+
+      setCustomerSearch("");
+    } catch (error) {
+      console.log(error);
+      if (normalizedCustomer) {
+        setCustomers((prev) => {
+          const exists = prev.some((customer) => customer.id === normalizedCustomer.id);
+          return exists ? prev : [normalizedCustomer, ...prev];
+        });
+        setForm((prev) => ({ ...prev, customer: normalizedCustomer }));
+        setCustomerSearch("");
+      }
+    }
+  };
 
   const validateForm = (form) => {
     const errors = {};
@@ -189,6 +238,7 @@ export default function CreateOrder() {
       total_amount: form.total_amount,
       order_date: form.order_date,
       due_date: form.due_date,
+      notes: form.notes?.trim() || undefined,
       status: form.status?.name.toLowerCase(),
       items: form.items.map((i) => ({
         id: i.id,
@@ -354,6 +404,19 @@ export default function CreateOrder() {
                 showErrors={showErrors}
               />
             </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-[#201B1D]">
+                Optional Note
+              </label>
+              <textarea
+                value={form.notes}
+                onChange={(e) => handleChange("notes", e.target.value)}
+                rows={4}
+                maxLength={1000}
+                placeholder="Add any special instruction or internal note for this order"
+                className="w-full rounded-xl border border-input bg-card px-3 py-3 text-sm text-[#201B1D] outline-none focus:border-primary"
+              />
+            </div>
           </div>
           {form.items.length > 0 && (
             <div className="px-3 py-2 border-t border-b flex flex-col gap-5 text-xs">
@@ -422,11 +485,16 @@ export default function CreateOrder() {
           </div>
         </form>
       </div>
-      {showModal && (
-        <Modal
-          child={<CreateCustomer setShowModal={setShowModal} fetch={fetch} />}
-        />
-      )}
+        {showModal && (
+          <Modal
+          child={
+            <CreateCustomer
+              setShowModal={setShowModal}
+              onCreated={handleCustomerCreated}
+            />
+          }
+          />
+        )}
       {businessInfoModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[99999]">
           <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 shadow-lg">

@@ -199,6 +199,7 @@ export default function ViewOrder() {
       total_amount: form.total_amount,
       order_date: form.order_date,
       due_date: form.due_date,
+      notes: form.notes?.trim() || undefined,
       status: form.status?.name.toLowerCase(),
       items: form.items.map((i) => ({
         id: i.id,
@@ -363,6 +364,19 @@ export default function ViewOrder() {
                 setSelected={(value) => handleChange("due_date", value)}
                 error={errors.due_date}
                 showErrors={showErrors}
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-[#201B1D]">
+                Optional Note
+              </label>
+              <textarea
+                value={form.notes}
+                onChange={(e) => handleChange("notes", e.target.value)}
+                rows={4}
+                maxLength={1000}
+                placeholder="Add any special instruction or internal note for this order"
+                className="w-full rounded-xl border border-input bg-card px-3 py-3 text-sm text-[#201B1D] outline-none focus:border-primary"
               />
             </div>
           </div>

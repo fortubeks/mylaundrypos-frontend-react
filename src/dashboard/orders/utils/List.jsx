@@ -85,6 +85,7 @@ const List = ({ items, fetch }) => {
   const navigate = useNavigate();
   const laundry = useSelector((state) => state.user.user?.laundry);
   const businessName = laundry?.name || "LAUNDRY POS";
+  const customerName = `${items?.customer?.first_name ?? ""} ${items?.customer?.last_name ?? ""}`.trim();
 
   const deleteItem = async () => {
     setDisabled(true);
@@ -109,8 +110,7 @@ const List = ({ items, fetch }) => {
       <tr className="h-fit">
         {/* <td className="px-3 py-4 text-sm">{items?.name}</td> */}
         <td className="px-3 py-4 text-sm">
-          {items?.customer?.first_name + " " + items?.customer?.last_name ||
-            "N/A"}
+          {customerName || "N/A"}
         </td>
         <td className="px-3 py-4 text-sm max-w-[250px] whitespace-normal word-break">
           {items?.items

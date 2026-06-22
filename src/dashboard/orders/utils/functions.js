@@ -118,6 +118,7 @@ const getInitialForm = (item = null) => ({
   total_amount: item?.total_amount || 0,
   order_date: item?.order_date || new Date().toISOString().split("T")[0],
   due_date: item?.due_date || new Date().toISOString().split("T")[0],
+  notes: item?.notes || "",
   status: item?.status
     ? { name: item.status.charAt(0).toUpperCase() + item.status.slice(1) }
     : { name: "Pending" },

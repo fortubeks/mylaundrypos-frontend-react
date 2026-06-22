@@ -15,6 +15,14 @@ export default function ReceiptModal({
   const businessLogoUrl = resolvedBusinessLogo
     ? `${IMAGE_BASE_URL}${"logo_images/"}${resolvedBusinessLogo}`
     : "/logos/green-blue-icon.png";
+  const escapedNotes = order.notes
+    ? order.notes
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+    : "";
 
   const handlePrint = () => {
     const receiptWindow = window.open("", "", "height=600,width=800");
@@ -81,6 +89,14 @@ export default function ReceiptModal({
             .customer-info-label {
               font-weight: bold;
               margin-bottom: 5px;
+            }
+            .notes-box {
+              margin-bottom: 20px;
+              font-size: 12px;
+              padding: 10px;
+              border: 1px dashed #999;
+              background: #fafafa;
+              white-space: pre-wrap;
             }
             table {
               width: 100%;
@@ -169,20 +185,31 @@ export default function ReceiptModal({
               </div>
             </div>
 
-            <div class="customer-info">
-              <div class="customer-info-label">CUSTOMER INFORMATION</div>
+             <div class="customer-info">
+               <div class="customer-info-label">CUSTOMER INFORMATION</div>
               <div style="margin-bottom: 8px;">
                 <strong>${customer.first_name} ${customer.last_name || ""}</strong>
               </div>
               <div style="margin-bottom: 4px;">
                 <strong>Phone:</strong> ${customer.phone || "N/A"}
               </div>
-              <div>
-                <strong>Email:</strong> ${customer.email || "N/A"}
-              </div>
-            </div>
-
-            <table>
+               <div>
+                 <strong>Email:</strong> ${customer.email || "N/A"}
+               </div>
+             </div>
+ 
+             ${
+               order.notes
+                 ? `
+               <div class="notes-box">
+                 <strong>Note:</strong><br />
+                 ${escapedNotes}
+               </div>
+             `
+                 : ""
+             }
+ 
+             <table>
               <thead>
                 <tr>
                   <th>Service Item</th>
@@ -313,6 +340,13 @@ export default function ReceiptModal({
               <strong>Email:</strong> {customer.email || "N/A"}
             </p>
           </div>
+
+          {order.notes && (
+            <div className="mb-6 rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4">
+              <h3 className="font-bold text-sm mb-2">NOTE</h3>
+              <p className="text-sm whitespace-pre-wrap">{order.notes}</p>
+            </div>
+          )}
 
           {/* Items Table */}
           <div className="mb-6">

@@ -7,7 +7,7 @@ import toast from "../../../utils/Toast";
 // import DropDown from "../../../utils/SelectDropdown";
 import { cleanUpErr, RequestService } from "../../../services";
 
-export default function CreateCustomer({ setShowModal, fetch }) {
+export default function CreateCustomer({ setShowModal, fetch, onCreated }) {
   // const [title, setTitle] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -111,7 +111,9 @@ export default function CreateCustomer({ setShowModal, fetch }) {
 
       response = await RequestService.post("/customers", payload);
       console.log(response);
-      fetch();
+      const createdCustomer = response?.data?.data;
+      fetch?.();
+      onCreated?.(createdCustomer);
       toast.success(`Customer added successfully`);
       setShowModal(false);
     } catch (error) {

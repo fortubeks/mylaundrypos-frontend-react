@@ -23,6 +23,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
     total_amount: item?.total_amount || "",
     order_date: item?.order_date || new Date().toISOString().split("T")[0],
     due_date: item?.due_date || new Date().toISOString().split("T")[0],
+    notes: item?.notes || "",
     status: item?.status
       ? { name: item.status.charAt(0).toUpperCase() + item.status.slice(1) }
       : { name: "Pending" },
@@ -92,6 +93,7 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
       total_amount: form.total_amount,
       order_date: form.order_date,
       due_date: form.due_date,
+      notes: form.notes?.trim() || undefined,
       status: form.status?.name.toLowerCase(),
       items: form.items.map((i) => ({
         id: i.id,
@@ -179,6 +181,19 @@ export default function AddUpdate({ setShowCreate, item, fetch }) {
             selected={form.due_date}
             setSelected={(value) => handleChange("due_date", value)}
           />
+          <div className="col-span-2 flex flex-col gap-2">
+            <label className="text-sm font-medium text-[#201B1D]">
+              Optional Note
+            </label>
+            <textarea
+              value={form.notes}
+              onChange={(e) => handleChange("notes", e.target.value)}
+              rows={4}
+              maxLength={1000}
+              placeholder="Add any special instruction or internal note for this order"
+              className="w-full rounded-xl border border-input bg-card px-3 py-3 text-sm text-[#201B1D] outline-none focus:border-primary"
+            />
+          </div>
 
           <div className="col-span-2">
             <MultiSelectDropDown
