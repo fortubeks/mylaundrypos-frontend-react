@@ -102,15 +102,31 @@ function getPeriodRange(period) {
   }
 }
 
+// Dashboard summary metrics are calculated from created_at on the API, so the
+// trend uses the same timestamp to stay aligned with the summary cards.
+function getOrderDate(order) {
+  const value = order.created_at ?? order.order_date;
+  if (!value) return null;
+
+  try {
+    const date = parseISO(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  } catch {
+    return null;
+  }
+}
+
+function getOrderRevenue(order) {
+  const revenue = Number(order.total_amount);
+  return Number.isFinite(revenue) ? revenue : 0;
+}
+
 function filterByPeriod(orders, period) {
   const range = getPeriodRange(period);
   if (!range) return orders;
   return orders.filter((o) => {
-    try {
-      return isWithinInterval(parseISO(o.order_date ?? o.created_at), range);
-    } catch {
-      return false;
-    }
+    const date = getOrderDate(o);
+    return date ? isWithinInterval(date, range) : false;
   });
 }
 
@@ -126,15 +142,12 @@ function buildTrendBuckets(orders, period) {
     ];
     return slots.map(({ label, hours }) => {
       const subset = orders.filter((o) => {
-        try {
-          return hours.includes(getHours(parseISO(o.created_at)));
-        } catch {
-          return false;
-        }
+        const date = getOrderDate(o);
+        return date ? hours.includes(getHours(date)) : false;
       });
       return {
         label,
-        revenue: subset.reduce((s, o) => s + +o.total_amount, 0),
+        revenue: subset.reduce((sum, order) => sum + getOrderRevenue(order), 0),
         orders: subset.length,
       };
     });
@@ -145,36 +158,26 @@ function buildTrendBuckets(orders, period) {
     const toIdx = { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4, 6: 5, 0: 6 };
     return days.map((label, idx) => {
       const subset = orders.filter((o) => {
-        try {
-          return toIdx[getDay(parseISO(o.order_date ?? o.created_at))] === idx;
-        } catch {
-          return false;
-        }
+        const date = getOrderDate(o);
+        return date ? toIdx[getDay(date)] === idx : false;
       });
       return {
         label,
-        revenue: subset.reduce((s, o) => s + +o.total_amount, 0),
+        revenue: subset.reduce((sum, order) => sum + getOrderRevenue(order), 0),
         orders: subset.length,
       };
     });
   }
 
   if (period === "This Month") {
-    return ["Wk 1", "Wk 2", "Wk 3", "Wk 4"].map((label, idx) => {
+    return ["Wk 1", "Wk 2", "Wk 3", "Wk 4", "Wk 5"].map((label, idx) => {
       const subset = orders.filter((o) => {
-        try {
-          return (
-            Math.floor(
-              (getDate(parseISO(o.order_date ?? o.created_at)) - 1) / 7,
-            ) === idx
-          );
-        } catch {
-          return false;
-        }
+        const date = getOrderDate(o);
+        return date ? Math.floor((getDate(date) - 1) / 7) === idx : false;
       });
       return {
         label,
-        revenue: subset.reduce((s, o) => s + +o.total_amount, 0),
+        revenue: subset.reduce((sum, order) => sum + getOrderRevenue(order), 0),
         orders: subset.length,
       };
     });
@@ -196,15 +199,12 @@ function buildTrendBuckets(orders, period) {
       "Dec",
     ].map((label, idx) => {
       const subset = orders.filter((o) => {
-        try {
-          return getMonth(parseISO(o.order_date ?? o.created_at)) === idx;
-        } catch {
-          return false;
-        }
+        const date = getOrderDate(o);
+        return date ? getMonth(date) === idx : false;
       });
       return {
         label,
-        revenue: subset.reduce((s, o) => s + +o.total_amount, 0),
+        revenue: subset.reduce((sum, order) => sum + getOrderRevenue(order), 0),
         orders: subset.length,
       };
     });
@@ -216,16 +216,12 @@ function buildTrendBuckets(orders, period) {
     const y = d.getFullYear(),
       m = d.getMonth();
     const subset = orders.filter((o) => {
-      try {
-        const od = parseISO(o.order_date ?? o.created_at);
-        return od.getFullYear() === y && od.getMonth() === m;
-      } catch {
-        return false;
-      }
+      const date = getOrderDate(o);
+      return date ? date.getFullYear() === y && date.getMonth() === m : false;
     });
     return {
       label: format(d, "MMM yy"),
-      revenue: subset.reduce((s, o) => s + +o.total_amount, 0),
+      revenue: subset.reduce((sum, order) => sum + getOrderRevenue(order), 0),
       orders: subset.length,
     };
   });
@@ -238,7 +234,7 @@ function computeTopServices(orders) {
       const name = item.service_item?.name ?? "Other";
       if (!map[name]) map[name] = { name, count: 0, revenue: 0 };
       map[name].count += +(item.quantity ?? 1);
-      map[name].revenue += +item.subtotal ?? 0;
+      map[name].revenue += +(item.subtotal ?? 0);
     });
   });
   return Object.values(map)
@@ -309,39 +305,47 @@ function MetricCard({ label, value, sub, icon, color, pct }) {
   );
 }
 
-function TrendChart({ buckets }) {
+function TrendChart({ buckets, period }) {
   const max = Math.max(...buckets.map((b) => b.revenue), 1);
   const hasData = buckets.some((b) => b.revenue > 0);
   return (
     <div className="bg-white border border-[#EFEFEF] rounded-2xl p-5 h-full flex flex-col">
-      <p className="text-sm font-semibold text-[#212121] mb-5">Revenue Trend</p>
+      <p className="text-sm font-semibold text-[#212121] mb-5">
+        {period === "All Time"
+          ? "Revenue Trend (Last 12 Months)"
+          : "Revenue Trend"}
+      </p>
       {!hasData ? (
         <div className="flex-1 flex items-center justify-center text-[#bbb] text-sm">
-          No orders in this period.
+          No revenue in this period.
         </div>
       ) : (
-        <div className="flex items-end gap-1.5 flex-1 min-h-[120px]">
-          {buckets.map((b, i) => {
+        <div className="flex items-end gap-2 flex-1 min-h-[140px] overflow-x-auto pb-1">
+          {buckets.map((b) => {
             const heightPct =
               b.revenue > 0 ? Math.max((b.revenue / max) * 100, 5) : 0;
             return (
               <div
-                key={i}
-                className="flex-1 flex flex-col items-center gap-1 h-full justify-end group"
+                key={b.label}
+                className="flex-1 min-w-9 flex flex-col items-center h-full group"
               >
                 {/* Hover value label */}
-                <span className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-semibold text-primary whitespace-nowrap">
+                <span className="h-4 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-[10px] font-semibold text-primary whitespace-nowrap">
                   {b.revenue > 0 ? fmtShort(b.revenue) : ""}
                 </span>
-                <div
-                  title={`${b.label}: ${fmtCurrency(b.revenue)} · ${b.orders} order${b.orders !== 1 ? "s" : ""}`}
-                  className="w-full rounded-t-md transition-all duration-500 cursor-default hover:opacity-75"
-                  style={{
-                    height: `${heightPct}%`,
-                    backgroundColor: b.revenue > 0 ? "#008aff" : "#F3F3F3",
-                  }}
-                />
-                <span className="text-[9px] text-[#959595] truncate w-full text-center">
+                <div className="w-full flex-1 flex items-end mt-1">
+                  <div
+                    title={`${b.label}: ${fmtCurrency(b.revenue)} · ${b.orders} order${b.orders !== 1 ? "s" : ""}`}
+                    aria-label={`${b.label}: ${fmtCurrency(b.revenue)}, ${b.orders} order${b.orders !== 1 ? "s" : ""}`}
+                    tabIndex={0}
+                    className="w-full rounded-t-md transition-all duration-500 cursor-default hover:opacity-75 focus:opacity-75 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    style={{
+                      height: b.revenue > 0 ? `${heightPct}%` : "2px",
+                      backgroundColor: b.revenue > 0 ? "#008aff" : "#F3F3F3",
+                    }}
+                  />
+                </div>
+                <span className="h-4 mt-1 text-[9px] text-[#959595] truncate w-full text-center">
                   {b.label}
                 </span>
               </div>
@@ -574,8 +578,25 @@ export default function Reports() {
   const fetchOrders = useCallback(async () => {
     setOrdersLoading(true);
     try {
-      const res = await RequestService.getParam("/orders", { per_page: 500 });
-      setAllOrders(res?.data?.data?.data ?? []);
+      const firstResponse = await RequestService.getParam("/orders", {
+        per_page: 500,
+        page: 1,
+      });
+      const firstPage = firstResponse?.data?.data;
+      const lastPage = Math.max(Number(firstPage?.last_page) || 1, 1);
+      const remainingResponses = await Promise.all(
+        Array.from({ length: lastPage - 1 }, (_, index) =>
+          RequestService.getParam("/orders", {
+            per_page: 500,
+            page: index + 2,
+          }),
+        ),
+      );
+      const remainingOrders = remainingResponses.flatMap(
+        (response) => response?.data?.data?.data ?? [],
+      );
+
+      setAllOrders([...(firstPage?.data ?? []), ...remainingOrders]);
     } catch (e) {
       cleanUpErr(e);
     } finally {
@@ -660,7 +681,7 @@ export default function Reports() {
                   Loading trend…
                 </div>
               ) : (
-                <TrendChart buckets={buckets} />
+                <TrendChart buckets={buckets} period={period} />
               )}
             </div>
             {ordersLoading ? (
